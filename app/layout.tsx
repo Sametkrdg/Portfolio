@@ -19,6 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://samet-karadag.dev"),
   title: "Samet Karadağ | Backend Developer",
   description: "Bridging Backend Logic with Creative Frontend Vision.",
   keywords: [
