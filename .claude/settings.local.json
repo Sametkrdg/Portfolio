@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\({...p.dependencies,...p.devDependencies}, null, 2\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\);const all={...p.dependencies,...p.devDependencies};['ai','@ai-sdk/google','@ai-sdk/react','@vercel/kv'].forEach\\(k=>console.log\\(k,'->',all[k]??'NOT INSTALLED'\\)\\)\")",
+      "Bash(npm uninstall *)",
+      "Bash(node -e ' *)",
+      "Bash(npm list *)",
+      "Bash(npm run *)"
+    ]
+  }
+}

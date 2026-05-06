@@ -1,0 +1,7 @@
+# Project Working Principles
+
+- **Pre-flight Check:** Before writing any code, always check the current state in `AGENTS.md`.
+- **Instruction Focus:** Concentrate strictly on the specific instructions provided by the user for the tasks at hand.
+- **Architectural Integrity:** Do not make independent major architectural decisions; strictly adhere to the provided `TechDesign` details.
+- **Minimalist Reading:** Keep file reading operations to a minimum. Only access target files and `AGENTS.md`.
+- **Action-Oriented:** Avoid unnecessary explanations or conversational filler; move directly to action.

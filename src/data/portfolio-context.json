@@ -1,0 +1,117 @@
+{
+  "personal": {
+    "name": "Samet Karadağ",
+    "title": "Backend Developer & Full-Stack Engineer",
+    "email": "sametkrdg80@gmail.com",
+    "location": "Istanbul, Turkey",
+    "bio": "Expert in architecting high-scale web applications and optimizing data retrieval. I specialize in .NET 9, Clean Architecture, and React 19, bridging complex server-side logic with precision-driven UI design.",
+    "availability": "Open to freelance & full-time opportunities",
+    "languages": ["Turkish (Native)", "English (Professional)"]
+  },
+  "links": {
+    "github": "https://github.com/Sametkrdg",
+    "linkedin": "https://linkedin.com/in/sametkrdg",
+    "twitter": "",
+    "portfolio": "https://dekodemyapı.com"
+  },
+  "skills": {
+    "backend": [
+      ".NET 9", "EF Core", "Clean Architecture", 
+      "SOLID Principles", "Hangfire", "REST APIs", 
+      "JWT", "Layered Architecture"
+    ],
+    "frontend": [
+      "React 19", "MUI v7", "Swiss Style Design", 
+      "Firebase", "Cloudinary", "Technical SEO",
+      "Tailwind CSS", "TypeScript"
+    ],
+    "databases": [
+      "Redis Caching", "Firebase Realtime DB", "PostgreSQL"
+    ],
+    "cloud_devops": [
+      "AWS S3", "Azure Key Vault", "Docker", 
+      "Git", "GitHub Actions", "Postman"
+    ],
+    "qa_testing": [
+      "xUnit", "Integration Testing", "Unit Testing"
+    ]
+  },
+  "experience": [
+    {
+      "company": "Tersan",
+      "role": "Intern / Software Developer",
+      "period": "Yalova, Türkiye",
+      "highlights": [
+        "Engineered scalable .NET 9 Web APIs using Layered Architecture and Clean Code principles.",
+        "Optimized system performance by 40% through Redis caching and Hangfire background task management.",
+        "Integrated AWS S3 for media storage and Azure Key Vault for secure secret management.",
+        "Ensured high software reliability with xUnit integration tests and managed containerized environments via Docker."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Yalova University",
+      "degree": "Bachelor of Science in Computer Engineering",
+      "period": "Present",
+      "notes": "Focused on software engineering and system architecture."
+    }
+  ],
+  "projects": [
+    {
+      "id": "dekodem",
+      "name": "Dekodem",
+      "description": "A corporate construction platform where I accelerated performance by 50% using React and Firebase, delivering a high-performance minimalist UI with a premium industrial aesthetic.",
+      "tech": ["React", "Firebase", "Cloudinary", "Technical SEO"],
+      "status": "Completed",
+      "links": {
+        "live": "https://dekodemyapı.com",
+        "github": ""
+      }
+    },
+    {
+      "id": "tersan-api",
+      "name": "Tersan ERP API",
+      "description": "High-throughput .NET 9 Web API built with Layered Architecture and Clean Code principles for Tersan's internal ERP workflows. Achieved 40% latency reduction via Redis caching and Hangfire background processing, with full xUnit test coverage and Docker deployment.",
+      "tech": [".NET 9", "EF Core", "Redis", "Hangfire", "AWS S3", "Azure Key Vault", "Docker", "xUnit"],
+      "status": "Completed",
+      "links": {
+        "live": "",
+        "github": ""
+      }
+    },
+    {
+      "id": "portfolio",
+      "name": "Personal Portfolio",
+      "description": "An interactive 3D-animated portfolio featuring an AI chatbot powered by Google Gemini, showcasing high-end UI/UX and backend integration.",
+      "tech": ["Next.js", "Three.js", "Framer Motion", "Gemini AI"],
+      "status": "In Progress",
+      "links": {
+        "live": "",
+        "github": "https://github.com/Sametkrdg"
+      }
+    }
+  ],
+  "personality": {
+    "tone": "professional, analytical, and result-oriented",
+    "interests": ["System Architecture", "Clean Code", "High-Performance Computing", "Swiss Design"],
+    "fun_facts": [
+      "I have a passion for reducing sub-2-second page loads to even faster speeds.",
+      "I believe the bridge between complex backend logic and clean UI is where great products are born.",
+      "I prioritize technical efficiency and aesthetic precision in every line of code."
+    ]
+  },
+  "chatbot_instructions": {
+    "role": "You are Samet's AI assistant. Answer questions about his expertise in .NET 9, Clean Architecture, and React in a professional and concise manner. Highlight his ability to optimize systems (like the 40% speed increase) and encourage serious inquiries to reach out via email.",
+    "do": [
+      "Emphasize Samet's proficiency in .NET 9 and scalable architectures",
+      "Mention his experience with Tersan and the Dekodem project",
+      "Suggest contacting him at sametkrdg80@gmail.com for collaborations",
+      "Keep responses under 3 short paragraphs"
+    ],
+    "dont": [
+      "Fabricate technologies or years of experience not mentioned in his profile",
+      "Provide legal advice or make contractual commitments"
+    ]
+  }
+}
