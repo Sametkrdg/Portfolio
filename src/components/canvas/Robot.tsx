@@ -5,22 +5,41 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { getAssetUrl } from "@/src/utils/getAssetUrl";
+import { useAudioStore } from "@/src/store/audioStore";
 
 const MODEL_URL = getAssetUrl("models/space_maintenance_robot.glb");
 
 interface Props {
-  analyserRef?: React.MutableRefObject<AnalyserNode | null>;
+  /** Override scale; useful when embedding in a small sticky canvas */
+  scale?:    number;
+  /** Override base group position */
+  position?: [number, number, number];
+  /**
+   * Base Euler rotation (radians).
+   * Audio-reactive yaw spins around this baseline so the model never drifts
+   * away from its intended facing direction.
+   */
+  rotation?: [number, number, number];
 }
 
-export default function Robot({ analyserRef }: Props) {
+/*
+ * Audio-reactive robot. Reads the AnalyserNode straight from the global
+ * audio store (no React subscription, no prop drilling) so the same model
+ * works in any canvas — Hero, sticky bottom-right widget, etc.
+ *
+ * All animation is ref-mutation inside useFrame — never setState at 60 fps.
+ */
+export default function Robot({
+  scale    = 1,
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+}: Props) {
   const { scene } = useGLTF(MODEL_URL);
   const groupRef  = useRef<THREE.Group>(null);
   const dataArray = useMemo(() => new Uint8Array(128), []);
 
-  /* Clone so the same GLB cache entry can be re-used across HMR reloads */
   const clonedScene = useMemo(() => scene.clone(true), [scene]);
 
-  /* Collect MeshStandardMaterials once; prime their emissive colour */
   const stdMaterials = useMemo(() => {
     const mats: THREE.MeshStandardMaterial[] = [];
     clonedScene.traverse((obj) => {
@@ -48,24 +67,28 @@ export default function Robot({ analyserRef }: Props) {
   }, [clonedScene]);
 
   useFrame(({ clock }) => {
-    if (!groupRef.current) return;
+    const g = groupRef.current;
+    if (!g) return;
     const t = clock.getElapsedTime();
 
-    /* Idle float — always active, no state */
-    groupRef.current.position.y = Math.sin(t * 0.55) * 0.08;
+    /* Idle pose: anchor to the supplied baseline rotation so the model keeps
+     * facing the user; add a gentle yaw wobble + bob on top. */
+    g.position.y = position[1] + Math.sin(t * 0.55) * 0.08;
+    g.rotation.x = rotation[0];
+    g.rotation.y = rotation[1] + Math.sin(t * 0.4) * 0.08;
+    g.rotation.z = rotation[2];
 
-    /* Default slow rotation */
-    groupRef.current.rotation.y += 0.003;
-
-    if (!analyserRef?.current) {
-      /* No audio: zero out emissive */
+    const analyser = useAudioStore.getState().analyser;
+    if (!analyser) {
+      g.scale.setScalar(scale);
+      g.position.x = position[0];
       for (const mat of stdMaterials) mat.emissiveIntensity = 0;
       return;
     }
 
-    analyserRef.current.getByteFrequencyData(dataArray);
+    analyser.getByteFrequencyData(dataArray);
 
-    /* Bass: bins 0-3  (~0–520 Hz @ fftSize 256 / 44100 Hz) */
+    /* Bass: bins 0-3 */
     let bassSum = 0;
     for (let i = 0; i < 4; i++) bassSum += dataArray[i];
     const bass = bassSum / (4 * 255);
@@ -80,24 +103,23 @@ export default function Robot({ analyserRef }: Props) {
     for (let i = 16; i < 48; i++) trebleSum += dataArray[i];
     const treble = trebleSum / (32 * 255);
 
-    /* Bass  → scale pulse (no setState — direct ref mutation) */
-    groupRef.current.scale.setScalar(1 + bass * 0.22);
+    /* Dance — ref-only mutations, anchored to baseline rotation/position so
+     * the robot always returns to facing the visitor. */
+    g.position.y = position[1] + Math.sin(t * 0.55) * 0.08 + bass * 0.35;
+    g.position.x = position[0] + Math.sin(t * 2.2) * mid * 0.25;
+    g.scale.setScalar(scale * (1 + bass * 0.25));
+    g.rotation.y = rotation[1] + Math.sin(t * 0.4) * 0.08 + Math.sin(t * 3.1) * mid * 0.18;
 
-    /* Mid   → extra rotation boost on the beat */
-    groupRef.current.rotation.y += mid * 0.045;
-
-    /* Treble → cyan emissive glow across all standard materials */
     for (const mat of stdMaterials) {
       mat.emissiveIntensity = treble * 2.2;
     }
   });
 
   return (
-    <group ref={groupRef} position={[0.6, -0.8, 0]}>
+    <group ref={groupRef} position={position} scale={scale} rotation={rotation}>
       <primitive object={clonedScene} />
     </group>
   );
 }
 
-/* Kick off the network fetch before the component mounts */
 useGLTF.preload(MODEL_URL);

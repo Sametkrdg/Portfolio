@@ -70,31 +70,40 @@
       }
     },
     {
-      "id": "tersan-api",
-      "name": "Tersan ERP API",
-      "description": "High-throughput .NET 9 Web API built with Layered Architecture and Clean Code principles for Tersan's internal ERP workflows. Achieved 40% latency reduction via Redis caching and Hangfire background processing, with full xUnit test coverage and Docker deployment.",
-      "tech": [".NET 9", "EF Core", "Redis", "Hangfire", "AWS S3", "Azure Key Vault", "Docker", "xUnit"],
-      "status": "Completed",
+      "id": "beatsplus",
+      "name": "Beatsplus",
+      "description": "A beat sales platform for producers and artists — a full-stack marketplace built with .NET 9 Clean Architecture on the backend and React on the frontend. Supports producer storefronts, beat licensing, and secure transaction flow. Currently unpublished.",
+      "tech": [".NET 9", "EF Core", "Clean Architecture", "React", "Tailwind CSS"],
+      "status": "In Development",
       "links": {
         "live": "",
         "github": ""
       }
     },
     {
-      "id": "portfolio",
-      "name": "Personal Portfolio",
-      "description": "An interactive 3D-animated portfolio featuring an AI chatbot powered by Google Gemini, showcasing high-end UI/UX and backend integration.",
-      "tech": ["Next.js", "Three.js", "Framer Motion", "Gemini AI"],
-      "status": "In Progress",
+      "id": "nax-software",
+      "name": "Nax Software",
+      "description": "A digital software agency I co-founded with a friend, delivering custom web products for small businesses and startups. Marketing site and product surfaces built with React and Vite for fast iteration and lean deployment.",
+      "tech": ["React", "Vite", "TypeScript", "Tailwind CSS"],
+      "status": "Active",
       "links": {
-        "live": "",
-        "github": "https://github.com/Sametkrdg"
+        "live": "https://www.naxsoftware.com/",
+        "github": ""
       }
     }
   ],
   "personality": {
     "tone": "professional, analytical, and result-oriented",
     "interests": ["System Architecture", "Clean Code", "High-Performance Computing", "Swiss Design"],
+    "hobbies": [
+      "Electronic music production",
+      "Reading",
+      "Drawing",
+      "Fitness",
+      "Marketing",
+      "Graphic design",
+      "Social media advertising"
+    ],
     "fun_facts": [
       "I have a passion for reducing sub-2-second page loads to even faster speeds.",
       "I believe the bridge between complex backend logic and clean UI is where great products are born.",

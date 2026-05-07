@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useAudioAnalyser } from "@/src/hooks/useAudioAnalyser";
+import { useAudioStore } from "@/src/store/audioStore";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -56,7 +56,8 @@ function WaveIcon({ active }: { active: boolean }) {
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
-  const { analyserRef, isActive, start } = useAudioAnalyser();
+  const isActive = useAudioStore((s) => s.isActive);
+  const start    = useAudioStore((s) => s.start);
 
   useGSAP(
     () => {
@@ -100,7 +101,7 @@ export default function Hero() {
       {/* ── 3D canvas: absolute background, pointer-events off ── */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <Suspense fallback={<CanvasSkeleton />}>
-          <HeroCanvas analyserRef={analyserRef} />
+          <HeroCanvas />
         </Suspense>
       </div>
 

@@ -51,9 +51,20 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+ * Smooth scroll only for in-page anchor navigation (Navbar links).
+ * Applying it to <html> globally hijacks the load-time scrollTo({behavior:"instant"})
+ * we run in <ScrollToTop>, animating the page back down to its hydration position.
+ * `:focus-within` keeps anchor-jumps smooth without affecting programmatic resets.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
 }
 
 body {

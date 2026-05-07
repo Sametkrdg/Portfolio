@@ -15,8 +15,29 @@ interface SortFrame {
   codeLine:  number; // -1 = fully done
 }
 
-/* ── Pseudocode display ─────────────────────────────────────────────────── */
-const CODE_LINES = [
+type AlgoKey = "quick" | "bubble" | "merge";
+
+interface AlgoSpec {
+  key:        AlgoKey;
+  label:      string;
+  display:    string;
+  codeLines:  readonly string[];
+  status:     (codeLine: number) => string;
+  precompute: (initial: number[]) => SortFrame[];
+}
+
+/* ── Array helpers ──────────────────────────────────────────────────────── */
+function makeArray(n: number): number[] {
+  const arr = Array.from({ length: n }, (_, i) => Math.round(((i + 1) / n) * 100));
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* ── QuickSort ──────────────────────────────────────────────────────────── */
+const QUICK_CODE = [
   "function quickSort(arr, lo, hi) {",
   "  if (lo ≥ hi) return",
   "  pivot ← arr[hi]",
@@ -31,18 +52,7 @@ const CODE_LINES = [
   "}",
 ];
 
-/* ── Array helpers ──────────────────────────────────────────────────────── */
-function makeArray(n: number): number[] {
-  const arr = Array.from({ length: n }, (_, i) => Math.round(((i + 1) / n) * 100));
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-/* ── QuickSort: pre-compute all animation frames ────────────────────────── */
-function precompute(initial: number[]): SortFrame[] {
+function precomputeQuick(initial: number[]): SortFrame[] {
   const frames: SortFrame[] = [];
   const arr = [...initial];
   const doneSet = new Set<number>();
@@ -52,19 +62,19 @@ function precompute(initial: number[]): SortFrame[] {
   }
 
   function partition(lo: number, hi: number): number {
-    snap([hi], hi, 2);            // select pivot
+    snap([hi], hi, 2);
     let i = lo - 1;
     for (let j = lo; j < hi; j++) {
-      snap([j, hi], hi, 5);       // comparison
+      snap([j, hi], hi, 5);
       if (arr[j] <= arr[hi]) {
         i++;
         [arr[i], arr[j]] = [arr[j], arr[i]];
-        snap([i, j], hi, 6);      // swap
+        snap([i, j], hi, 6);
       }
     }
     [arr[i + 1], arr[hi]] = [arr[hi], arr[i + 1]];
     doneSet.add(i + 1);
-    snap([i + 1], i + 1, 7);     // place pivot
+    snap([i + 1], i + 1, 7);
     snap([], null, 8);
     return i + 1;
   }
@@ -88,7 +98,173 @@ function precompute(initial: number[]): SortFrame[] {
   return frames;
 }
 
-/* ── Bar visual style (pure function, no hooks) ─────────────────────────── */
+function statusQuick(codeLine: number): string {
+  switch (codeLine) {
+    case -1: return "Sorted!";
+    case  2: return "Pivot selected";
+    case  5: return "Comparing";
+    case  6: return "Swapping";
+    case  7: return "Pivot placed";
+    case  9: return "Recurse left";
+    case 10: return "Recurse right";
+    default: return "Running…";
+  }
+}
+
+/* ── BubbleSort ─────────────────────────────────────────────────────────── */
+const BUBBLE_CODE = [
+  "function bubbleSort(arr) {",
+  "  n ← arr.length",
+  "  for (i = 0; i < n − 1; i++)",
+  "    swapped ← false",
+  "    for (j = 0; j < n − i − 1; j++)",
+  "      if (arr[j] > arr[j+1])",
+  "        swap(arr[j], arr[j+1])",
+  "        swapped ← true",
+  "    if (!swapped) break",
+  "  // array sorted ✓",
+  "}",
+];
+
+function precomputeBubble(initial: number[]): SortFrame[] {
+  const frames: SortFrame[] = [];
+  const arr = [...initial];
+  const doneSet = new Set<number>();
+  const n = arr.length;
+
+  function snap(comparing: number[], codeLine: number) {
+    frames.push({ bars: [...arr], comparing, pivot: null, sorted: [...doneSet], codeLine });
+  }
+
+  snap([], 0);
+  for (let i = 0; i < n - 1; i++) {
+    snap([], 2);
+    let swapped = false;
+    snap([], 3);
+    for (let j = 0; j < n - i - 1; j++) {
+      snap([j, j + 1], 5);
+      if (arr[j] > arr[j + 1]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+        swapped = true;
+        snap([j, j + 1], 6);
+      }
+    }
+    doneSet.add(n - i - 1);
+    snap([], 8);
+    if (!swapped) break;
+  }
+  for (let i = 0; i < n; i++) doneSet.add(i);
+  snap([], -1);
+  return frames;
+}
+
+function statusBubble(codeLine: number): string {
+  switch (codeLine) {
+    case -1: return "Sorted!";
+    case  3: return "Pass start";
+    case  5: return "Comparing";
+    case  6: return "Swapping";
+    case  8: return "Pass complete";
+    default: return "Running…";
+  }
+}
+
+/* ── MergeSort ──────────────────────────────────────────────────────────── */
+const MERGE_CODE = [
+  "function mergeSort(arr, lo, hi) {",
+  "  if (lo ≥ hi) return",
+  "  mid ← (lo + hi) >> 1",
+  "  mergeSort(arr, lo, mid)",
+  "  mergeSort(arr, mid+1, hi)",
+  "  merge(arr, lo, mid, hi)",
+  "}",
+  "function merge(arr, lo, mid, hi) {",
+  "  L ← arr[lo..mid]; R ← arr[mid+1..hi]",
+  "  while (L && R) pick smaller →",
+  "  copy remainder back",
+  "}",
+];
+
+function precomputeMerge(initial: number[]): SortFrame[] {
+  const frames: SortFrame[] = [];
+  const arr = [...initial];
+  const doneSet = new Set<number>();
+
+  function snap(comparing: number[], codeLine: number) {
+    frames.push({ bars: [...arr], comparing, pivot: null, sorted: [...doneSet], codeLine });
+  }
+
+  function merge(lo: number, mid: number, hi: number) {
+    snap([], 7);
+    const L = arr.slice(lo, mid + 1);
+    const R = arr.slice(mid + 1, hi + 1);
+    snap([], 8);
+    let i = 0, j = 0, k = lo;
+    while (i < L.length && j < R.length) {
+      snap([lo + i, mid + 1 + j], 9);
+      if (L[i] <= R[j]) {
+        arr[k++] = L[i++];
+      } else {
+        arr[k++] = R[j++];
+      }
+      snap([k - 1], 9);
+    }
+    while (i < L.length) {
+      arr[k++] = L[i++];
+      snap([k - 1], 10);
+    }
+    while (j < R.length) {
+      arr[k++] = R[j++];
+      snap([k - 1], 10);
+    }
+    /* The merged segment [lo..hi] is now locally sorted relative to itself */
+    if (lo === 0 && hi === arr.length - 1) {
+      for (let x = lo; x <= hi; x++) doneSet.add(x);
+    }
+  }
+
+  function ms(lo: number, hi: number) {
+    if (lo >= hi) {
+      snap([], 1);
+      return;
+    }
+    snap([], 0);
+    const mid = (lo + hi) >> 1;
+    snap([], 2);
+    ms(lo, mid);
+    snap([], 3);
+    ms(mid + 1, hi);
+    snap([], 4);
+    merge(lo, mid, hi);
+    snap([], 5);
+  }
+
+  ms(0, arr.length - 1);
+  for (let i = 0; i < arr.length; i++) doneSet.add(i);
+  snap([], -1);
+  return frames;
+}
+
+function statusMerge(codeLine: number): string {
+  switch (codeLine) {
+    case -1: return "Sorted!";
+    case  2: return "Split left";
+    case  3: return "Split right";
+    case  4: return "Merging";
+    case  9: return "Comparing";
+    case 10: return "Copying remainder";
+    default: return "Running…";
+  }
+}
+
+/* ── Registry ───────────────────────────────────────────────────────────── */
+const ALGOS: Record<AlgoKey, AlgoSpec> = {
+  quick:  { key: "quick",  label: "Quick Sort",  display: "QuickSort",  codeLines: QUICK_CODE,  status: statusQuick,  precompute: precomputeQuick  },
+  bubble: { key: "bubble", label: "Bubble Sort", display: "BubbleSort", codeLines: BUBBLE_CODE, status: statusBubble, precompute: precomputeBubble },
+  merge:  { key: "merge",  label: "Merge Sort",  display: "MergeSort",  codeLines: MERGE_CODE,  status: statusMerge,  precompute: precomputeMerge  },
+};
+
+/* ── Bar visual style ───────────────────────────────────────────────────── */
 function barStyle(idx: number, frame: SortFrame): React.CSSProperties {
   let bg    = "rgba(180,77,255,0.38)";
   let glow  = "none";
@@ -113,62 +289,13 @@ function barStyle(idx: number, frame: SortFrame): React.CSSProperties {
   };
 }
 
-/* ── Status badge text ──────────────────────────────────────────────────── */
-function statusOf(codeLine: number): string {
-  switch (codeLine) {
-    case -1: return "Sorted!";
-    case  2: return "Pivot selected";
-    case  5: return "Comparing";
-    case  6: return "Swapping";
-    case  7: return "Pivot placed";
-    case  9: return "Recurse left";
-    case 10: return "Recurse right";
-    default: return "Running…";
-  }
-}
-
 /* ── Icons ──────────────────────────────────────────────────────────────── */
-function IconPlay() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="5 3 19 12 5 21 5 3" />
-    </svg>
-  );
-}
-function IconPause() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <rect x="6"  y="4" width="4" height="16" rx="1" />
-      <rect x="14" y="4" width="4" height="16" rx="1" />
-    </svg>
-  );
-}
-function IconStepFwd() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="5 3 15 12 5 21 5 3" />
-      <rect x="17" y="4" width="3" height="16" rx="1" />
-    </svg>
-  );
-}
-function IconStepBack() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="19 3 9 12 19 21 19 3" />
-      <rect x="4" y="4" width="3" height="16" rx="1" />
-    </svg>
-  );
-}
-function IconReset() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-      <path d="M3 3v5h5" />
-    </svg>
-  );
-}
+function IconPlay()      { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>; }
+function IconPause()     { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>; }
+function IconStepFwd()   { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 15 12 5 21 5 3" /><rect x="17" y="4" width="3" height="16" rx="1" /></svg>; }
+function IconStepBack()  { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 3 9 12 19 21 19 3" /><rect x="4" y="4" width="3" height="16" rx="1" /></svg>; }
+function IconReset()     { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>; }
 
-/* ── Toolbar button ─────────────────────────────────────────────────────── */
 function ToolBtn({
   onClick, disabled = false, title, children,
 }: {
@@ -180,10 +307,7 @@ function ToolBtn({
       disabled={disabled}
       title={title}
       className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-30"
-      style={{
-        background: "rgba(255,255,255,0.05)",
-        color: "var(--color-text-secondary)",
-      }}
+      style={{ background: "rgba(255,255,255,0.05)", color: "var(--color-text-secondary)" }}
       onMouseEnter={(e) => { if (!disabled) (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,217,255,0.12)"; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)"; }}
     >
@@ -194,28 +318,44 @@ function ToolBtn({
 
 /* ── Main component ─────────────────────────────────────────────────────── */
 export default function Algorithms() {
-  /* ─ State ─ */
+  const [algoKey,  setAlgoKey]  = useState<AlgoKey>("quick");
   const [seed,     setSeed]     = useState(0);
   const [frameIdx, setFrameIdx] = useState(0);
   const [playing,  setPlaying]  = useState(false);
-  const [speed,    setSpeed]    = useState(6); // 1=slow → 10=fast
+  const [speed,    setSpeed]    = useState(6);
 
-  /* ─ Derived ─ */
+  const algo = ALGOS[algoKey];
+
   const initialArr = useMemo(() => makeArray(BAR_COUNT), [seed]); // eslint-disable-line react-hooks/exhaustive-deps
-  const frames     = useMemo(() => precompute(initialArr), [initialArr]);
-  const delay      = (11 - speed) * 48;                           // 480ms → 48ms
+  const frames     = useMemo(() => algo.precompute(initialArr), [algo, initialArr]);
+  const delay      = (11 - speed) * 48;
   const frame      = frames[frameIdx] ?? frames[0];
   const isDone     = frameIdx >= frames.length - 1;
   const progress   = frames.length > 1 ? frameIdx / (frames.length - 1) : 0;
 
-  /* ─ Code panel auto-scroll ─ */
-  const codeRef = useRef<HTMLDivElement>(null);
+  /* Reset playback whenever the algorithm changes */
   useEffect(() => {
-    const el = codeRef.current?.querySelector("[data-active='true']") as HTMLElement | null;
-    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setFrameIdx(0);
+    setPlaying(false);
+  }, [algoKey]);
+
+  const codeRef = useRef<HTMLDivElement>(null);
+  /*
+   * Auto-scroll the pseudocode panel — but ONLY scroll the inner container,
+   * never the page viewport. `el.scrollIntoView()` walks up the ancestor chain
+   * and can scroll <html> too, which on initial mount yanks the whole page
+   * down to the Algorithms section. We compute scrollTop on the codeRef
+   * container directly so the document never moves.
+   */
+  useEffect(() => {
+    const container = codeRef.current;
+    if (!container) return;
+    const el = container.querySelector("[data-active='true']") as HTMLElement | null;
+    if (!el) return;
+    const target = el.offsetTop - container.clientHeight / 2 + el.clientHeight / 2;
+    container.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
   }, [frame.codeLine]);
 
-  /* ─ Playback interval ─ */
   useEffect(() => {
     if (!playing) return;
     const id = setInterval(() => {
@@ -227,7 +367,6 @@ export default function Algorithms() {
     return () => clearInterval(id);
   }, [playing, delay, frames.length]);
 
-  /* ─ Handlers ─ */
   const reset = useCallback(() => {
     setPlaying(false);
     setFrameIdx(0);
@@ -249,19 +388,14 @@ export default function Algorithms() {
     setPlaying((p) => !p);
   }, [isDone]);
 
-  /* ─ Render ─ */
   return (
     <section
       id="algorithms"
       className="relative flex flex-col items-center border-t border-[var(--color-bg-muted)] px-4 py-24 sm:px-6"
     >
-      {/* Ambient background glow */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 55% 40% at 50% 0%, rgba(180,77,255,0.05) 0%, transparent 70%)",
-        }}
+        style={{ background: "radial-gradient(ellipse 55% 40% at 50% 0%, rgba(180,77,255,0.05) 0%, transparent 70%)" }}
         aria-hidden
       />
 
@@ -269,7 +403,7 @@ export default function Algorithms() {
 
         {/* ── Header ── */}
         <motion.div
-          className="mb-10 text-center"
+          className="mb-8 text-center"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -282,7 +416,7 @@ export default function Algorithms() {
             Algorithm Visualization
           </p>
           <h2 className="text-4xl font-black tracking-tight text-[var(--color-text-primary)] sm:text-5xl">
-            QuickSort{" "}
+            {algo.display}{" "}
             <span
               className="text-[var(--color-cyan-neon)]"
               style={{ textShadow: "0 0 36px rgba(0,217,255,0.35)" }}
@@ -294,6 +428,44 @@ export default function Algorithms() {
             Every step pre-computed — replay, pause, and single-step through the algorithm.
           </p>
         </motion.div>
+
+        {/* ── Algorithm selector tabs ── */}
+        <div className="mb-6 flex justify-center">
+          <div
+            role="tablist"
+            aria-label="Sorting algorithm"
+            className="inline-flex items-center gap-1 rounded-full border p-1"
+            style={{
+              borderColor: "rgba(180,77,255,0.18)",
+              background:  "rgba(5,8,15,0.8)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            {(Object.keys(ALGOS) as AlgoKey[]).map((k) => {
+              const isActive = k === algoKey;
+              return (
+                <button
+                  key={k}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setAlgoKey(k)}
+                  className="rounded-full px-4 py-1.5 text-[12px] font-semibold transition-all"
+                  style={{
+                    background: isActive
+                      ? "linear-gradient(135deg, var(--color-cyan-neon), var(--color-purple-neon))"
+                      : "transparent",
+                    color: isActive
+                      ? "var(--color-bg-base)"
+                      : "var(--color-text-secondary)",
+                    boxShadow: isActive ? "0 0 20px rgba(0,217,255,0.3)" : "none",
+                  }}
+                >
+                  {ALGOS[k].label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* ── Main card ── */}
         <motion.div
@@ -308,15 +480,13 @@ export default function Algorithms() {
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
         >
-          {/* ── Visualization + Code panel ── */}
           <div className="flex">
 
-            {/* Bars area */}
+            {/* Bars */}
             <div className="flex flex-1 flex-col p-5 pb-0">
-              {/* Status badge */}
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
-                  QuickSort · {frames.length} steps
+                  {algo.display} · {frames.length} steps
                 </span>
                 <span
                   className="rounded-full px-3 py-0.5 text-[11px] font-semibold"
@@ -340,18 +510,16 @@ export default function Algorithms() {
                     }`,
                   }}
                 >
-                  {statusOf(frame.codeLine)}
+                  {algo.status(frame.codeLine)}
                 </span>
               </div>
 
-              {/* Bars */}
               <div className="flex h-48 items-end gap-[3px]" aria-hidden>
                 {Array.from({ length: BAR_COUNT }, (_, i) => (
                   <div key={i} className="flex-1" style={barStyle(i, frame)} />
                 ))}
               </div>
 
-              {/* Progress track */}
               <div className="mt-3 h-px w-full overflow-hidden rounded-full bg-[var(--color-bg-muted)]">
                 <div
                   className="h-full rounded-full"
@@ -367,7 +535,7 @@ export default function Algorithms() {
               </p>
             </div>
 
-            {/* Code panel — hidden on small screens */}
+            {/* Code panel */}
             <div
               ref={codeRef}
               className="hidden w-64 shrink-0 overflow-y-auto border-l lg:block"
@@ -380,7 +548,7 @@ export default function Algorithms() {
               <p className="sticky top-0 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(0,0,0,0.5)] px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
                 pseudocode
               </p>
-              {CODE_LINES.map((line, i) => {
+              {algo.codeLines.map((line, i) => {
                 const isActive = i === frame.codeLine;
                 return (
                   <div
@@ -398,11 +566,7 @@ export default function Algorithms() {
                     <code
                       className="whitespace-pre text-[11px] leading-relaxed"
                       style={{
-                        color: isActive
-                          ? "var(--color-cyan-neon)"
-                          : i === 11
-                            ? "rgba(255,255,255,0.2)"
-                            : "rgba(255,255,255,0.55)",
+                        color: isActive ? "var(--color-cyan-neon)" : "rgba(255,255,255,0.55)",
                         fontFamily: "var(--font-geist-mono)",
                       }}
                     >
@@ -414,54 +578,37 @@ export default function Algorithms() {
             </div>
           </div>
 
-          {/* ── Toolbar ── */}
+          {/* Toolbar */}
           <div
             className="flex flex-wrap items-center gap-3 border-t px-5 py-3"
             style={{
-              borderColor:     "rgba(180,77,255,0.12)",
-              background:      "rgba(0,0,0,0.45)",
-              backdropFilter:  "blur(20px)",
+              borderColor:    "rgba(180,77,255,0.12)",
+              background:     "rgba(0,0,0,0.45)",
+              backdropFilter: "blur(20px)",
             }}
           >
-            {/* Playback controls */}
             <div className="flex items-center gap-1.5">
-              <ToolBtn onClick={reset} title="New array">
-                <IconReset />
-              </ToolBtn>
-              <ToolBtn onClick={stepBack} disabled={frameIdx === 0} title="Step back">
-                <IconStepBack />
-              </ToolBtn>
+              <ToolBtn onClick={reset} title="New array"><IconReset /></ToolBtn>
+              <ToolBtn onClick={stepBack} disabled={frameIdx === 0} title="Step back"><IconStepBack /></ToolBtn>
               <button
                 onClick={togglePlay}
                 title={playing ? "Pause" : "Play"}
                 className="flex h-8 w-16 items-center justify-center gap-1.5 rounded-lg text-[12px] font-semibold text-[var(--color-bg-base)] transition-opacity hover:opacity-90"
-                style={{
-                  background: "linear-gradient(135deg, var(--color-cyan-neon), var(--color-purple-neon))",
-                }}
+                style={{ background: "linear-gradient(135deg, var(--color-cyan-neon), var(--color-purple-neon))" }}
               >
                 {playing ? <IconPause /> : <IconPlay />}
                 {playing ? "Pause" : isDone ? "Replay" : "Play"}
               </button>
-              <ToolBtn onClick={stepFwd} disabled={isDone} title="Step forward">
-                <IconStepFwd />
-              </ToolBtn>
+              <ToolBtn onClick={stepFwd} disabled={isDone} title="Step forward"><IconStepFwd /></ToolBtn>
             </div>
 
-            {/* Divider */}
             <div className="h-6 w-px bg-[rgba(255,255,255,0.08)]" />
 
-            {/* Speed */}
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
-                Speed
-              </span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">Speed</span>
               <span className="text-[9px] text-[var(--color-text-muted)]">Slow</span>
               <input
-                type="range"
-                min={1}
-                max={10}
-                step={1}
-                value={speed}
+                type="range" min={1} max={10} step={1} value={speed}
                 onChange={(e) => setSpeed(+e.target.value)}
                 className="h-1 w-24 cursor-pointer appearance-none rounded-full"
                 style={{ accentColor: "var(--color-cyan-neon)" }}
@@ -470,7 +617,6 @@ export default function Algorithms() {
               <span className="text-[9px] text-[var(--color-text-muted)]">Fast</span>
             </div>
 
-            {/* Legend */}
             <div className="ml-auto hidden items-center gap-3 sm:flex">
               {[
                 { color: "rgba(180,77,255,0.6)",  label: "Default" },

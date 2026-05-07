@@ -141,10 +141,12 @@ export default function About() {
           <div className="about-paragraphs flex flex-col gap-5">
             <p className="about-paragraph text-base leading-relaxed text-[var(--color-text-secondary)]">
               I&apos;m a backend-first developer with a deep passion for scalable system design.
-              At{" "}
-              <span className="font-semibold text-[var(--color-text-primary)]">Tersan</span>,
-              I engineered .NET 9 Web APIs using Layered Architecture and Clean Code
-              principles — reducing system latency by{" "}
+              I cut my teeth as a{" "}
+              <span className="font-semibold text-[var(--color-text-primary)]">
+                Backend Developer intern at Tersan
+              </span>
+              , where I engineered .NET 9 Web APIs using Layered Architecture and Clean
+              Code principles — reducing system latency by{" "}
               <span className="font-semibold text-[var(--color-cyan-neon)]">40%</span>{" "}
               through Redis caching and Hangfire background task management.
             </p>
@@ -168,6 +170,32 @@ export default function About() {
               and open to full-time or freelance roles where engineering depth
               meets creative ambition.
             </p>
+          </div>
+
+          {/* ── Hobbies ── */}
+          <div className="about-hobbies flex flex-col gap-3 pt-2">
+            <span className="text-[11px] font-semibold tracking-[0.35em] uppercase text-[var(--color-purple-neon)]">
+              Beyond Code
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {[
+                "Electronic Music Production",
+                "Reading",
+                "Drawing",
+                "Fitness",
+                "Marketing",
+                "Graphic Design",
+                "Social Media Advertising",
+              ].map((hobby) => (
+                <span
+                  key={hobby}
+                  className="rounded-full border border-[var(--color-bg-muted)] px-3 py-1 text-[11px] text-[var(--color-text-secondary)]"
+                  style={{ background: "rgba(13,17,23,0.6)" }}
+                >
+                  {hobby}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Contact shortcut */}

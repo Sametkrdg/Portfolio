@@ -8,7 +8,9 @@
       "Bash(npm uninstall *)",
       "Bash(node -e ' *)",
       "Bash(npm list *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(Test-Path \"d:\\\\Yazılım\\\\Web\\\\samet-karadag-portfolio\\\\README.md\")",
+      "Bash(Test-Path \"d:\\\\Yazılım\\\\Web\\\\samet-karadag-portfolio\\\\DEPLOYMENT.md\")"
     ]
   }
 }

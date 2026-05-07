@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import { Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/src/components/ui/Navbar";
-import Chatbot from "@/src/components/ui/Chatbot";
+import RobotChatbot from "@/src/components/ui/RobotChatbot";
+import ScrollToTop from "@/src/components/utils/ScrollToTop";
 import "./globals.css";
 
 const inter = Inter({
@@ -58,9 +59,10 @@ export default function RootLayout({
       className={`${inter.variable} ${geistMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--color-bg-base)] text-[var(--color-text-primary)] pt-16">
+        <ScrollToTop />
         <Navbar />
         {children}
-        <Chatbot />
+        <RobotChatbot />
         <Analytics />
       </body>
     </html>
