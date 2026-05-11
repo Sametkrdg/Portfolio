@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { getAssetUrl } from "@/src/utils/getAssetUrl";
 
-const MUSIC_URL = getAssetUrl("audio/MYSTERY.mp3");
+const MUSIC_URL = getAssetUrl("audio/audio.mp3");
 
 /*
  * Global audio analyser store.
