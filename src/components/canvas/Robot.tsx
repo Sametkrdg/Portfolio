@@ -117,7 +117,11 @@ export default function Robot({
 
   return (
     <group ref={groupRef} position={position} scale={scale} rotation={rotation}>
-      <primitive object={clonedScene} />
+      {/* dispose={null}: the GLB lives in useGLTF's shared cache. We
+       * dispose our cloned geometries/materials manually in useEffect, so
+       * letting R3F auto-dispose here would double-free the cache entry
+       * on the next route mount. */}
+      <primitive object={clonedScene} dispose={null} />
     </group>
   );
 }

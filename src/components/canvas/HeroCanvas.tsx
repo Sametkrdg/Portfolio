@@ -1,11 +1,12 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
-import { useRef, useMemo } from "react";
+import { Environment, Html } from "@react-three/drei";
+import { Suspense, useRef, useMemo } from "react";
 import * as THREE from "three";
 import { getAssetUrl } from "@/src/utils/getAssetUrl";
 import { useAudioStore } from "@/src/store/audioStore";
+import ErrorBoundary from "@/src/components/utils/ErrorBoundary";
 
 const HDR_URL = getAssetUrl("hero-env.hdr");
 
@@ -224,20 +225,46 @@ function RotatingEnvironment() {
  * from a Client Component wrapper so it never runs on the server.
  */
 export default function HeroCanvas() {
+  /*
+   * ErrorBoundary wraps the whole Canvas: WebGL context-lost,
+   * R2-asset failures, or any R3F render exception falls back to the
+   * boundary's "Interactive experience disabled" panel without taking
+   * down the rest of the page (Navbar / About / Projects all keep working).
+   */
   return (
-    <Canvas
-      dpr={[1, 2]}
-      camera={{ position: [0, 0.4, 4.5], fov: 60 }}
-      gl={{ antialias: false, powerPreference: "high-performance" }}
-    >
-      <RotatingEnvironment />
+    <ErrorBoundary>
+      <Canvas
+        /* dpr capped at 1.5: at 2.0 mobile retina fills 4× pixels — particle
+         * fields tank to ~25 fps on mid-range Androids. 1.5 keeps clarity
+         * with ~55% the fragment cost. */
+        dpr={[1, 1.5]}
+        camera={{ position: [0, 0.4, 4.5], fov: 60 }}
+        gl={{ antialias: false, powerPreference: "high-performance" }}
+      >
+        {/* Inner Suspense with a drei <Html> fallback. RotatingEnvironment
+         * fetches the HDRI from R2; on slow connections this can take a few
+         * seconds, and React 19 will crash if useTexture / useLoader suspend
+         * without a boundary. <Html center> renders DOM inside the WebGL
+         * canvas so the user sees feedback instead of a frozen black box. */}
+        <Suspense
+          fallback={
+            <Html center>
+              <span className="text-xs font-semibold tracking-widest text-cyan-400">
+                Loading 3D…
+              </span>
+            </Html>
+          }
+        >
+          <RotatingEnvironment />
+        </Suspense>
 
-      <ambientLight intensity={0.35} />
-      <pointLight position={[2, 3, 2]}   intensity={2.2} color="#00d9ff" />
-      <pointLight position={[-3, -1, 1]} intensity={0.9} color="#b44dff" />
+        <ambientLight intensity={0.35} />
+        <pointLight position={[2, 3, 2]}   intensity={2.2} color="#00d9ff" />
+        <pointLight position={[-3, -1, 1]} intensity={0.9} color="#b44dff" />
 
-      <WarpStars />
-      <Meteors />
-    </Canvas>
+        <WarpStars />
+        <Meteors />
+      </Canvas>
+    </ErrorBoundary>
   );
 }

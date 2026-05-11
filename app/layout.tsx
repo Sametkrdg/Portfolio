@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/src/components/ui/Navbar";
 import RobotChatbot from "@/src/components/ui/RobotChatbot";
 import ScrollToTop from "@/src/components/utils/ScrollToTop";
+import MotionProvider from "@/src/components/utils/MotionProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -60,9 +61,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[var(--color-bg-base)] text-[var(--color-text-primary)] pt-16">
         <ScrollToTop />
-        <Navbar />
-        {children}
-        <RobotChatbot />
+        <MotionProvider>
+          <Navbar />
+          {children}
+          <RobotChatbot />
+        </MotionProvider>
         <Analytics />
       </body>
     </html>

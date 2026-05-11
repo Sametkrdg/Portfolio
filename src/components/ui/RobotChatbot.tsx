@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useChat } from "@ai-sdk/react";
 import { type UIMessage } from "ai";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useChatStore } from "@/src/store/chatStore";
 
 /*
@@ -114,12 +114,27 @@ export default function RobotChatbot() {
 
   /*
    * Y-offset (in px) the robot translates upward when the chat opens.
-   * Matches the chat panel's total rendered height (header ~64 + messages
-   * h-80=320 + form ~64 + borders ≈ 460) plus a small visual gap so the
-   * robot's feet sit just on top of the bubble. Tweak together with the
-   * panel's `h-80` if you change the message-area height.
+   *
+   * The chat panel is ~460 px tall on desktop, but on phones that can
+   * exceed the viewport height. Clamp the lift to ~60% of the viewport
+   * height so the robot stays on-screen on small/short devices.
    */
-  const ROBOT_LIFT = -440;
+  const reducedMotion = useReducedMotion();
+  const [robotLift, setRobotLift] = useState(-440);
+
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return;
+    const compute = () => {
+      const vh = window.innerHeight;
+      /* Desktop: full 440 px lift. Mobile: clamp to 60% of viewport so
+       * the robot never escapes the screen. */
+      const lift = Math.min(440, Math.round(vh * 0.6));
+      setRobotLift(-lift);
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, []);
 
   return (
     /*
@@ -256,11 +271,16 @@ export default function RobotChatbot() {
               )}
 
               {error && (
-                <p className="text-center text-[11px] text-red-400/80">
+                <div
+                  role="alert"
+                  className="mt-1 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-[11px] text-red-200/90"
+                >
                   {error.message.includes("429")
-                    ? "Rate limit reached — wait a moment."
-                    : "Something went wrong. Please try again."}
-                </p>
+                    ? "🛑 Rate limit reached — please wait about a minute before sending another message."
+                    : error.message.includes("502") || error.message.toLowerCase().includes("gemini")
+                      ? "⚠️ The AI service is temporarily unavailable. Please try again shortly — or email Samet directly."
+                      : "Something went wrong sending your message. Try again, or reach Samet at sametkrdg80@gmail.com."}
+                </div>
               )}
 
               <div ref={bottomRef} />
@@ -313,8 +333,14 @@ export default function RobotChatbot() {
        */}
       <motion.div
         className="pointer-events-none fixed bottom-4 right-4 z-[55] sm:bottom-6 sm:right-6"
-        animate={{ y: isOpen ? ROBOT_LIFT : 0 }}
-        transition={{ type: "spring", stiffness: 280, damping: 26 }}
+        animate={{ y: isOpen ? robotLift : 0 }}
+        /* Reduced-motion users get an instant transition (duration 0)
+         * so the robot doesn't appear to fly across the screen. */
+        transition={
+          reducedMotion
+            ? { duration: 0 }
+            : { type: "spring", stiffness: 280, damping: 26 }
+        }
       >
         <div className="relative">
 

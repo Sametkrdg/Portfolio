@@ -7,6 +7,18 @@ import portfolioContext from "@/src/data/portfolio-context.json";
 export const runtime = "edge";
 
 /*
+ * Sliding-window memory size. Gemini 2.5 Flash has a huge context window,
+ * but we cap to the last 20 message parts (10 user + 10 assistant) for:
+ *   - cost: each request is billed by input tokens — long histories add up
+ *   - latency: less context = faster first-token
+ *   - safety: prevents pathological clients from sending megabytes of fake
+ *             history to exhaust our 1,500 daily Gemini quota
+ * The first message is preserved if it's the user-opener, so the assistant
+ * still has the conversation seed.
+ */
+const MAX_HISTORY_MESSAGES = 20;
+
+/*
  * System prompt — JSON is bundled at build time, no file I/O at request time.
  * GOOGLE_GENERATIVE_AI_API_KEY is read server-side only; never reaches the client.
  */
@@ -98,18 +110,33 @@ export async function POST(req: Request) {
     });
   }
 
-  /* ── Stream from Gemini ── */
-  const result = streamText({
-    /*
-     * Verify the model ID at https://ai.google.dev/gemini-api/docs/models
-     * Common IDs: "gemini-2.5-flash" or "gemini-2.5-flash-preview-05-20"
-     */
-    model: google("gemini-2.5-flash"),
-    system: SYSTEM_PROMPT,
-    messages: toCoreMessages(uiMessages),
-    maxOutputTokens: 600,
-    temperature: 0.7,
-  });
+  /* ── Sliding-window memory: keep only the most recent N messages ── */
+  const windowed = uiMessages.slice(-MAX_HISTORY_MESSAGES);
+
+  /* ── Stream from Gemini with graceful error mapping ── */
+  let result;
+  try {
+    result = streamText({
+      /*
+       * Verify the model ID at https://ai.google.dev/gemini-api/docs/models
+       * Common IDs: "gemini-2.5-flash" or "gemini-2.5-flash-preview-05-20"
+       */
+      model: google("gemini-2.5-flash"),
+      system: SYSTEM_PROMPT,
+      messages: toCoreMessages(windowed),
+      maxOutputTokens: 600,
+      temperature: 0.7,
+    });
+  } catch (err) {
+    /* Surfaces upstream Gemini failures (quota exhausted, network, auth)
+     * as a JSON error the client can match on, instead of a half-stream. */
+    const message =
+      err instanceof Error ? err.message : "AI service unavailable.";
+    return new Response(
+      JSON.stringify({ error: `Gemini error: ${message}` }),
+      { status: 502, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
   /*
    * toUIMessageStreamResponse() produces the format that @ai-sdk/react's
