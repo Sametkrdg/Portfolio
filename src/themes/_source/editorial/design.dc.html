@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #EEF0F2; color: #1B2430; font-family: 'Source Sans 3', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #1F3B57; text-decoration: none; }
+  a:hover { color: #B08D42; }
+  ::selection { background: #B08D42; color: #EEF0F2; }
+  input, textarea, button { font: inherit; color: inherit; }
+  @media (max-width: 1080px) {
+    [data-cols] { column-count: 1 !important; }
+    [data-two] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-three] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-feature] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-dispatch] { grid-template-columns: minmax(0, 1fr) !important; gap: 14px !important; }
+    [data-masthead-row] { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+    [data-pad] { padding-left: 22px !important; padding-right: 22px !important; }
+    [data-hero-h1] { font-size: clamp(40px, 11vw, 74px) !important; }
+    [data-chat] { width: calc(100vw - 24px) !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: #EEF0F2;">
+
+  <div data-pad style="border-bottom: 1px solid rgba(27,36,48,0.2); padding: 12px 44px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;">
+    <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #1F3B57;">Edition</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <button type="button" onClick="{{ v.onSelect }}" style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 12px; border: 1px solid {{ v.border }}; background: {{ v.bg }}; color: {{ v.fg }}; cursor: pointer; border-radius: 999px; transition: background 160ms, color 160ms, border-color 160ms;" style-hover="border-color: #B08D42; color: #B08D42;">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <span style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 12.5px; color: #B08D42; margin-left: auto;">{{ variantNote }}</span>
+  </div>
+
+  <header data-pad style="padding: 0 44px; border-bottom: 3px double #1B2430;">
+    <div data-masthead-row style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 26px 0 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: #1F3B57;">{{ t.mastheadKicker }}</span>
+        <h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(30px, 4.2vw, 54px); line-height: 1; letter-spacing: -0.02em;">Samet Karadağ</h1>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px; text-align: right; font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1F3B57;">
+        <span>Vol. II · No. 05</span>
+        <span>{{ t.dateStamp }}</span>
+        <span style="color: #B08D42;">{{ t.availability }}</span>
+      </div>
+    </div>
+    <div style="border-top: 1px solid rgba(27,36,48,0.2); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 4px; padding: 9px 0;">
+      <nav aria-label="Sections" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 6px;">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+          <a href="{{ n.href }}" aria-current="{{ n.current }}" style="font-family: 'Playfair Display', serif; font-weight: {{ n.weight }}; font-size: {{ n.size }}; letter-spacing: 0.02em; padding: 4px 11px; color: {{ n.fg }}; border-bottom: 2px solid {{ n.rule }}; transition: font-size 200ms cubic-bezier(.2,.8,.2,1), color 180ms, border-color 180ms;" style-hover="color: #B08D42;">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 14px;">
+        <div style="display: flex; gap: 4px;">
+          <sc-for list="{{ langs }}" as="l" hint-placeholder-count="2">
+            <button type="button" onClick="{{ l.onSelect }}" style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.14em; padding: 4px 9px; border: 1px solid {{ l.border }}; background: {{ l.bg }}; color: {{ l.fg }}; cursor: pointer;">{{ l.label }}</button>
+          </sc-for>
+        </div>
+        <a href="{{ cvHref }}" download="Samet-Karadag-CV.pdf" style="display: inline-flex; align-items: center; gap: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #1B2430; border-bottom: 1px solid #B08D42; padding-bottom: 2px;" style-hover="color: #B08D42;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>
+          <span>{{ t.ctaSecondary }}</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section id="hero" data-pad aria-labelledby="hero-h" style="padding: 54px 44px 60px; border-bottom: 1px solid rgba(27,36,48,0.2);">
+      <div data-feature style="display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr); gap: 44px;">
+        <div>
+          <div style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: #B08D42; margin-bottom: 22px;">{{ t.heroEyebrow }}</div>
+          <h2 id="hero-h" data-hero-h1 style="margin: 0 0 26px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(42px, 6.4vw, 96px); line-height: 0.98; letter-spacing: -0.03em; max-width: 22ch; text-wrap: balance;">{{ t.heroTitle }}</h2>
+          <p style="margin: 0 0 18px; font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(18px, 2vw, 26px); line-height: 1.4; color: #1F3B57; max-width: 34ch;">{{ t.heroDek }}</p>
+          <div data-cols style="column-count: 2; column-gap: 34px; column-rule: 1px solid rgba(27,36,48,0.18); max-width: 74ch;">
+            <p style="margin: 0; font-size: 16px; line-height: 1.62; text-wrap: pretty;">{{ t.heroBody }}</p>
+          </div>
+        </div>
+        <aside style="border-top: 3px solid #B08D42; padding-top: 18px; display: flex; flex-direction: column; gap: 20px;">
+          <div style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #1F3B57;">{{ t.recordLabel }}</div>
+          <div style="display: flex; flex-direction: column;">
+            <sc-for list="{{ t.stats }}" as="s" hint-placeholder-count="4">
+              <div style="display: flex; align-items: baseline; gap: 14px; padding: 13px 0; border-bottom: 1px solid rgba(27,36,48,0.16);">
+                <span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 30px; letter-spacing: -0.02em; color: #B08D42; min-width: 92px;">{{ s.value }}</span>
+                <span style="font-size: 13.5px; line-height: 1.45; color: #1B2430; text-wrap: pretty;">{{ s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <a href="#contact" style="display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; background: #1F3B57; color: #EEF0F2; padding: 18px 20px; border-top: 3px solid #B08D42;" style-hover="background: #1B2430; color: #EEF0F2;">
+            <span style="display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-family: 'Playfair Display', serif; font-size: 20px;">{{ t.ctaPrimary }}</span>
+              <span style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #B08D42;">{{ t.ctaPrimarySub }}</span>
+            </span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+          </a>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about" data-pad aria-labelledby="about-h" style="padding: 58px 44px; border-bottom: 1px solid rgba(27,36,48,0.2); background: {{ sec.about.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 30px;">
+        <span style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: {{ sec.about.tagFg }};">{{ t.secAbout }}</span>
+        <h2 id="about-h" style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: {{ sec.about.h }}; letter-spacing: -0.025em; transition: font-size 280ms cubic-bezier(.2,.8,.2,1);">{{ t.navAbout }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.about.rule }}; transition: background 240ms;"></span>
+      </div>
+      <div data-feature style="display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr); gap: 44px;">
+        <div data-cols style="column-count: 2; column-gap: 36px; column-rule: 1px solid rgba(27,36,48,0.18);">
+          <p style="margin: 0 0 16px; font-size: 16.5px; line-height: 1.66; text-wrap: pretty;">
+            <span style="float: left; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 74px; line-height: 0.78; margin: 4px 10px 0 0; color: #B08D42;">{{ t.dropCap }}</span>{{ t.aboutLead }}
+          </p>
+          <sc-for list="{{ t.about }}" as="p" hint-placeholder-count="3">
+            <p style="margin: 0 0 16px; font-size: 16.5px; line-height: 1.66; text-wrap: pretty;">{{ p }}</p>
+          </sc-for>
+        </div>
+        <aside style="display: flex; flex-direction: column; gap: 22px;">
+          <blockquote style="margin: 0; border-left: 3px solid #B08D42; padding: 4px 0 4px 18px; font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(19px, 1.9vw, 25px); line-height: 1.36; color: #1F3B57;">{{ t.pullQuote }}</blockquote>
+          <div style="background: #1B2430; color: #EEF0F2; padding: 22px 20px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #B08D42;">{{ t.dossierLabel }}</div>
+            <sc-for list="{{ t.dossier }}" as="d" hint-placeholder-count="4">
+              <div data-two style="display: grid; grid-template-columns: minmax(0, 96px) minmax(0, 1fr); gap: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(238,240,242,0.18);">
+                <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.65;">{{ d.k }}</span>
+                <span style="font-size: 13.5px; line-height: 1.45;">{{ d.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="skills" data-pad aria-labelledby="skills-h" style="padding: 58px 44px; border-bottom: 1px solid rgba(27,36,48,0.2); background: {{ sec.skills.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+        <span style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: {{ sec.skills.tagFg }};">{{ t.secSkills }}</span>
+        <h2 id="skills-h" style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: {{ sec.skills.h }}; letter-spacing: -0.025em; transition: font-size 280ms cubic-bezier(.2,.8,.2,1);">{{ t.navSkills }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.skills.rule }}; transition: background 240ms;"></span>
+      </div>
+      <p style="margin: 0 0 26px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #1F3B57;">{{ t.skillsDek }}</p>
+      <div style="border-top: 1px solid #1B2430;">
+        <sc-for list="{{ t.skills }}" as="g" hint-placeholder-count="5">
+          <div data-dispatch style="display: grid; grid-template-columns: minmax(0, 44px) minmax(0, 230px) minmax(0, 1fr); gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(27,36,48,0.2);">
+            <span style="font-family: 'Playfair Display', serif; font-size: 17px; color: #B08D42;">{{ g.num }}</span>
+            <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 500; font-size: 19px; letter-spacing: -0.01em;">{{ g.title }}</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px 8px; align-content: flex-start;">
+              <sc-for list="{{ g.items }}" as="i" hint-placeholder-count="6">
+                <span style="font-family: 'Source Sans 3', sans-serif; font-size: 12.5px; letter-spacing: 0.06em; padding: 4px 10px; border: 1px solid rgba(27,36,48,0.28); color: #1B2430; background: rgba(255,255,255,0.4);" style-hover="border-color: #B08D42; color: #1F3B57;">{{ i }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="projects" data-pad aria-labelledby="projects-h" style="padding: 58px 44px; border-bottom: 1px solid rgba(27,36,48,0.2); background: {{ sec.projects.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+        <span style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: {{ sec.projects.tagFg }};">{{ t.secProjects }}</span>
+        <h2 id="projects-h" style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: {{ sec.projects.h }}; letter-spacing: -0.025em; transition: font-size 280ms cubic-bezier(.2,.8,.2,1);">{{ t.navProjects }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.projects.rule }}; transition: background 240ms;"></span>
+      </div>
+      <p style="margin: 0 0 30px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #1F3B57;">{{ t.projectsDek }}</p>
+      <div style="display: flex; flex-direction: column;">
+        <sc-for list="{{ t.projects }}" as="p" hint-placeholder-count="4">
+          <article data-feature style="display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr); gap: 44px; padding: 32px 0; border-top: 1px solid rgba(27,36,48,0.2);">
+            <div>
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 12px;">
+                <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #B08D42;">{{ p.index }}</span>
+                <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 9px; background: #1F3B57; color: #EEF0F2;">{{ p.status }}</span>
+              </div>
+              <h3 style="margin: 0 0 14px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.04; letter-spacing: -0.03em;">{{ p.title }}</h3>
+              <p style="margin: 0 0 20px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; line-height: 1.42; color: #1F3B57; max-width: 44ch;">{{ p.dek }}</p>
+              <div data-cols style="column-count: 2; column-gap: 34px; column-rule: 1px solid rgba(27,36,48,0.18);">
+                <h4 style="margin: 0 0 6px; font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #B08D42;">{{ t.labelProblem }}</h4>
+                <p style="margin: 0 0 16px; font-size: 15.5px; line-height: 1.6; text-wrap: pretty;">{{ p.problem }}</p>
+                <h4 style="margin: 0 0 6px; font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #B08D42;">{{ t.labelArchitecture }}</h4>
+                <p style="margin: 0; font-size: 15.5px; line-height: 1.6; text-wrap: pretty;">{{ p.architecture }}</p>
+              </div>
+            </div>
+            <aside style="display: flex; flex-direction: column; gap: 18px;">
+              <div style="border-top: 3px solid #B08D42; padding-top: 14px; display: flex; flex-direction: column; gap: 12px;">
+                <div style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #1F3B57;">{{ t.labelMetrics }}</div>
+                <sc-for list="{{ p.metrics }}" as="m" hint-placeholder-count="2">
+                  <div style="display: flex; align-items: baseline; gap: 12px;">
+                    <span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px; color: #B08D42; letter-spacing: -0.02em;">{{ m.v }}</span>
+                    <span style="font-size: 13px; line-height: 1.4; color: #1B2430;">{{ m.k }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <sc-for list="{{ p.stack }}" as="s" hint-placeholder-count="4">
+                  <span style="font-family: 'Source Sans 3', sans-serif; font-size: 12px; letter-spacing: 0.05em; padding: 3px 8px; border: 1px solid rgba(27,36,48,0.24);">{{ s }}</span>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+                <sc-for list="{{ p.links }}" as="l" hint-placeholder-count="1">
+                  <a href="{{ l.href }}" target="_blank" rel="noreferrer" style="display: inline-flex; align-items: center; gap: 7px; font-family: 'Source Sans 3', sans-serif; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 1px solid #B08D42; padding-bottom: 2px;">
+                    <span>{{ l.label }}</span>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg>
+                  </a>
+                </sc-for>
+              </div>
+            </aside>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="experience" data-pad aria-labelledby="exp-h" style="padding: 58px 44px; border-bottom: 1px solid rgba(27,36,48,0.2); background: {{ sec.experience.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+        <span style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: {{ sec.experience.tagFg }};">{{ t.secExperience }}</span>
+        <h2 id="exp-h" style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: {{ sec.experience.h }}; letter-spacing: -0.025em; transition: font-size 280ms cubic-bezier(.2,.8,.2,1);">{{ t.navExperience }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.experience.rule }}; transition: background 240ms;"></span>
+      </div>
+      <p style="margin: 0 0 26px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #1F3B57;">{{ t.experienceDek }}</p>
+      <div style="border-top: 1px solid #1B2430;">
+        <sc-for list="{{ t.jobs }}" as="j" hint-placeholder-count="3">
+          <article data-dispatch style="display: grid; grid-template-columns: minmax(0, 218px) minmax(0, 1fr); gap: 34px; padding: 28px 0; border-bottom: 1px solid rgba(27,36,48,0.2);">
+            <div style="display: flex; flex-direction: column; gap: 7px;">
+              <div style="font-family: 'Source Sans 3', sans-serif; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #1F3B57;">{{ j.period }}</div>
+              <div style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #B08D42;">{{ j.duration }}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <h3 style="margin: 0 0 4px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(21px, 2.2vw, 29px); letter-spacing: -0.02em;">{{ j.role }}</h3>
+                <div style="font-size: 14.5px; letter-spacing: 0.02em; color: #1F3B57;">{{ j.company }}</div>
+              </div>
+              <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px;">
+                <sc-for list="{{ j.points }}" as="pt" hint-placeholder-count="4">
+                  <li style="display: grid; grid-template-columns: 20px minmax(0, 1fr); font-size: 15.5px; line-height: 1.58;">
+                    <span style="color: #B08D42;">§</span>
+                    <span style="text-wrap: pretty;">{{ pt }}</span>
+                  </li>
+                </sc-for>
+              </ul>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <sc-for list="{{ j.stack }}" as="s" hint-placeholder-count="5">
+                  <span style="font-family: 'Source Sans 3', sans-serif; font-size: 12px; letter-spacing: 0.05em; padding: 3px 8px; border: 1px solid rgba(27,36,48,0.24);">{{ s }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="contact" data-pad aria-labelledby="contact-h" style="padding: 58px 44px 104px; background: {{ sec.contact.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 30px;">
+        <span style="font-family: 'Source Sans 3', sans-serif; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: {{ sec.contact.tagFg }};">{{ t.secContact }}</span>
+        <h2 id="contact-h" style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: {{ sec.contact.h }}; letter-spacing: -0.025em; transition: font-size 280ms cubic-bezier(.2,.8,.2,1);">{{ t.navContact }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.contact.rule }}; transition: background 240ms;"></span>
+      </div>
+      <div data-feature style="display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 44px;">
+        <div style="display: flex; flex-direction: column; gap: 22px;">
+          <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(26px, 3vw, 40px); line-height: 1.1; letter-spacing: -0.03em; max-width: 24ch; text-wrap: balance;">{{ t.contactTitle }}</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.62; color: #1B2430; max-width: 46ch; text-wrap: pretty;">{{ t.contactBody }}</p>
+          <div style="border-top: 3px solid #B08D42;">
+            <sc-for list="{{ contactLinks }}" as="c" hint-placeholder-count="5">
+              <a href="{{ c.href }}" target="_blank" rel="noreferrer" data-two style="display: grid; grid-template-columns: minmax(0, 118px) minmax(0, 1fr); gap: 14px; padding: 13px 0; border-bottom: 1px solid rgba(27,36,48,0.18); overflow-wrap: anywhere;">
+                <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #1F3B57;">{{ c.label }}</span>
+                <span style="font-size: 14.5px;">{{ c.value }}</span>
+              </a>
+            </sc-for>
+          </div>
+          <div style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 13.5px; color: #1F3B57;">{{ t.colophon }}</div>
+        </div>
+
+        <form onSubmit="{{ onSubmitForm }}" style="background: #1F3B57; color: #EEF0F2; padding: 28px 26px; border-top: 3px solid #B08D42; display: flex; flex-direction: column; gap: 18px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 22px;">{{ t.formTitle }}</div>
+          <label style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #B08D42;">{{ t.formName }}</span>
+            <input type="text" value="{{ formName }}" onChange="{{ onFormName }}" required="{{ true }}" style="border: 0; border-bottom: 1px solid rgba(238,240,242,0.4); background: transparent; color: #EEF0F2; padding: 7px 0; font-size: 15px; outline: none;" style-focus="border-bottom-color: #B08D42;" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #B08D42;">{{ t.formEmail }}</span>
+            <input type="email" value="{{ formEmail }}" onChange="{{ onFormEmail }}" required="{{ true }}" style="border: 0; border-bottom: 1px solid rgba(238,240,242,0.4); background: transparent; color: #EEF0F2; padding: 7px 0; font-size: 15px; outline: none;" style-focus="border-bottom-color: #B08D42;" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #B08D42;">{{ t.formMessage }}</span>
+            <textarea rows="4" value="{{ formMessage }}" onChange="{{ onFormMessage }}" required="{{ true }}" style="border: 1px solid rgba(238,240,242,0.4); background: transparent; color: #EEF0F2; padding: 10px; font-size: 15px; outline: none; resize: vertical; font-family: 'Source Sans 3', sans-serif;" style-focus="border-color: #B08D42;"></textarea>
+          </label>
+          <button type="submit" style="align-self: flex-start; background: #B08D42; color: #1B2430; border: 0; padding: 13px 22px; font-family: 'Source Sans 3', sans-serif; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;" style-hover="background: #EEF0F2;">{{ t.formSend }}</button>
+          <div style="font-size: 12px; line-height: 1.5; color: rgba(238,240,242,0.7);">{{ t.formNote }}</div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <sc-if value="{{ showChat }}" hint-placeholder-val="{{ true }}">
+    <div style="position: fixed; right: 24px; bottom: 24px; z-index: 80; display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+      <sc-if value="{{ chatOpen }}">
+        <div data-chat role="log" style="width: 392px; max-height: min(540px, calc(100vh - 130px)); background: #EEF0F2; border: 1px solid #1B2430; border-top: 4px solid #B08D42; box-shadow: 0 22px 54px rgba(27,36,48,0.22); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 18px 13px; border-bottom: 1px solid rgba(27,36,48,0.2);">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-family: 'Playfair Display', serif; font-size: 18px;">{{ t.chatTitle }}</div>
+              <div style="font-family: 'Source Sans 3', sans-serif; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #B08D42;">{{ t.chatStatus }}</div>
+            </div>
+            <button type="button" onClick="{{ onCloseChat }}" aria-label="Close" style="border: 0; background: transparent; color: #1F3B57; cursor: pointer; display: flex; padding: 2px;" style-hover="color: #B08D42;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+          </div>
+          <div style="flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 15px;">
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+              <div style="display: flex; flex-direction: column; gap: 5px; border-left: 2px solid {{ m.rule }}; padding-left: 12px;">
+                <span style="font-family: 'Source Sans 3', sans-serif; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #1F3B57;">{{ m.who }}</span>
+                <span style="font-size: 14px; line-height: 1.56; font-style: {{ m.italic }}; text-wrap: pretty;">{{ m.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="padding: 0 18px 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+              <button type="button" onClick="{{ s.onSelect }}" style="font-family: 'Source Sans 3', sans-serif; font-size: 12px; letter-spacing: 0.04em; padding: 5px 10px; border: 1px solid rgba(27,36,48,0.28); background: transparent; cursor: pointer; color: #1B2430;" style-hover="border-color: #B08D42; color: #1F3B57;">{{ s.label }}</button>
+            </sc-for>
+          </div>
+          <form onSubmit="{{ onSendChat }}" style="display: flex; align-items: center; gap: 10px; padding: 12px 18px 14px; border-top: 1px solid rgba(27,36,48,0.2);">
+            <input type="text" value="{{ chatDraft }}" onChange="{{ onChatDraft }}" placeholder="{{ t.chatPlaceholder }}" aria-label="Message" style="flex: 1; border: 0; background: transparent; font-size: 14px; outline: none; font-family: 'Source Sans 3', sans-serif;" />
+            <button type="submit" aria-label="Send" style="border: 0; background: #1F3B57; color: #EEF0F2; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer;" style-hover="background: #B08D42; color: #1B2430;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            </button>
+          </form>
+        </div>
+      </sc-if>
+      <button type="button" onClick="{{ onToggleChat }}" style="display: inline-flex; align-items: center; gap: 10px; background: #1B2430; color: #EEF0F2; border-top: 3px solid #B08D42; padding: 14px 20px; font-family: 'Playfair Display', serif; font-size: 15px; letter-spacing: 0.01em; cursor: pointer; box-shadow: 0 12px 30px rgba(27,36,48,0.2);" style-hover="background: #1F3B57;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+        <span>{{ chatButtonLabel }}</span>
+      </button>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;tr&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en' | 'tr'&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;showChat&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+const COPY = {
+  en: {
+    navAbout: "The Engineer", navSkills: "Index of Craft", navProjects: "Case Studies", navExperience: "Dispatches", navContact: "Correspondence",
+    secAbout: "Section I", secSkills: "Section II", secProjects: "Section III", secExperience: "Section IV", secContact: "Colophon",
+    mastheadKicker: "A Portfolio in Systems & Interfaces",
+    dateStamp: "İstanbul · MMXXVI",
+    availability: "Open to full-stack posts",
+    heroEyebrow: "Bridging backend logic with creative frontend vision",
+    heroTitle: "Architecture is an argument you have to be able to read.",
+    heroDek: "Full-stack engineer, backend-weighted: .NET 9 on one side, React 19 on the other, one person accountable for both.",
+    heroBody: "Two years of production platforms — a shipyard operations system, an automation suite, a construction group's public face. On the most recent I was the only engineer on the line: API architecture, data access, interface, performance budget. What follows is the record, in order, with the numbers attached.",
+    recordLabel: "The Record",
+    ctaPrimary: "Open correspondence", ctaPrimarySub: "Reply within one working day", ctaSecondary: "The CV",
+    dropCap: "I",
+    aboutLead: " started in frontend, moved to backend, and then refused to choose. The path was deliberate: I wanted to follow a request the whole way — from a click, through a query plan, and back — rather than guess at the half of the system I could not see.",
+    about: [
+      "My default posture is layered architecture with boundaries that actually hold, and code a stranger can read six months after I've left. Redis, Hangfire and structured logging are decisions made at design time, not remedies applied after an incident. Integration tests exist so that release days are uneventful.",
+      "On the frontend I design before I build. Figma first, then JSX — grid, hierarchy, restraint. The discipline is identical to good API design: fewer things, placed exactly. That is why I keep the interface rather than handing it off, and why the numbers on the right are mine to defend."
+    ],
+    pullQuote: "\u201CFewer things, placed exactly — the same rule governs a schema and a spread.\u201D",
+    dossierLabel: "Dossier",
+    dossier: [
+      { k: "Discipline", v: "Full-stack, backend-weighted" },
+      { k: "Core stack", v: ".NET 9 · ASP.NET Core · EF Core · React 19 · TypeScript" },
+      { k: "Education", v: "Computer Engineering, Yalova University (2019—2026)" },
+      { k: "Languages", v: "Turkish (native) · English (B2)" }
+    ],
+    skillsDek: "A working taxonomy — what I reach for, and in which order.",
+    skills: [
+      { num: "I", title: "Languages & Frameworks", items: ["C#", ".NET 9", "ASP.NET Core", "TypeScript", "JavaScript", "React 19", "Next.js", "Node.js", "Python"] },
+      { num: "II", title: "Backend & Architecture", items: ["Layered Architecture", "RESTful APIs", "EF Core", "MySQL", "Redis (caching)", "Hangfire (jobs)", "JWT + refresh rotation", "Serilog", "Clean Code"] },
+      { num: "III", title: "Frontend & Interface", items: ["MUI v7", "Figma", "Swiss-style systems", "Responsive design", "Technical SEO"] },
+      { num: "IV", title: "Cloud, Hosting & DevOps", items: ["Docker", "AWS S3", "Azure Key Vault", "Firebase", "Cloudflare", "Vercel"] },
+      { num: "V", title: "Testing & Instruments", items: ["xUnit (integration)", "Git", "GitHub", "Postman"] }
+    ],
+    labelProblem: "The problem", labelArchitecture: "The architecture", labelMetrics: "Measured",
+    projectsDek: "Four studies, each with the problem stated before the solution.",
+    projects: [
+      { index: "Study No. 01", status: "In progress", title: "BeatPlus", dek: "A marketplace where one catalog must serve three incompatible sets of rules.", problem: "Buyers, sellers and administrators need the same catalog under different licensing and upload rules — a permissions problem disguised as a commerce problem.", architecture: "ASP.NET Core and EF Core behind JWT authentication with Serilog throughout; React and TypeScript on the client. The upload pipeline and role-based flows are complete; payment infrastructure and the admin dashboard remain in build.", metrics: [{ v: "3", k: "distinct roles over one catalog" }, { v: "JWT", k: "with refresh token rotation" }], stack: ["ASP.NET Core", "EF Core", "React", "TypeScript", "Serilog"], links: [{ label: "Repository", href: "https://github.com/Sametkrdg" }] },
+      { index: "Study No. 02", status: "Live", title: "Dekodem Yapı", dek: "A construction firm that had to call a developer to change a photograph.", problem: "Projects and news sat behind the development queue; every text or image change cost a deployment and a week of waiting.", architecture: "A multi-page corporate site with a purpose-built admin panel over Firebase authentication and data, Cloudflare for image storage and delivery, and a technical SEO pass on every route.", metrics: [{ v: "<2s", k: "page load after asset work" }, { v: "95+", k: "Lighthouse across routes" }], stack: ["React", "Next.js", "Firebase", "Cloudflare"], links: [{ label: "Live site", href: "https://dekodemyapi.com" }] },
+      { index: "Study No. 03", status: "Live", title: "Personal Portfolio", dek: "Recruiters skim. One page had thirty seconds to answer everything.", problem: "Stack, impact and availability had to be legible in half a minute, and the page had to keep answering questions after the tab was closed.", architecture: "A single-page React and TypeScript build with an integrated chat assistant and hand-written motion, revised each time a project ships.", metrics: [{ v: "1", k: "page, continuously revised" }, { v: "24h", k: "typical reply window" }], stack: ["React", "TypeScript"], links: [{ label: "Live site", href: "https://sametkaradag.com" }] },
+      { index: "Study No. 04", status: "Completed", title: "Block Simulation", dek: "Planning a construction site with no way to see it first.", problem: "Site planners had no fast method to sketch blocks, buildings and paved areas to scale before committing to a construction layout.", architecture: "A Unity-based simulation tool for placing, resizing and labeling volumes, exported to WebGL and deployed on Vercel for immediate access in the field.", metrics: [{ v: "1:1", k: "scale layout planning" }, { v: "Web", k: "no install, Vercel delivery" }], stack: ["Unity", "C#", "WebGL", "Vercel"], links: [{ label: "Live tool", href: "https://block-simulation.vercel.app/" }] }
+    ],
+    experienceDek: "Three posts, in reverse order, with the impact stated plainly.",
+    jobs: [
+      { period: "Dec 2024 — Jan 2026", duration: "One year, two months · İstanbul", role: "Full-Stack Developer", company: "Tersan Shipyard", points: ["Sole full-stack contributor on the platform: backend architecture, interface design and performance, end to end.", "Architected .NET 9 Web APIs over MySQL on a layered architecture, powering the platform's core features.", "Moved background processing onto Hangfire, reducing manual intervention and stabilizing nightly runs.", "Containerized services with Docker; integrated AWS S3 storage and Azure Key Vault for secrets.", "Designed the interface in Figma and shipped it in React 19 with MUI v7, guarding each release with xUnit integration tests."], stack: [".NET 9", "MySQL", "React 19", "MUI v7", "Hangfire", "Docker", "AWS S3", "Azure Key Vault", "xUnit"] },
+      { period: "Oct 2023 — Nov 2024", duration: "One year, two months", role: "Backend Developer", company: "Mos Otomasyon ve Yazılım", points: ["Reduced data-access time by 40% by introducing Redis caching across core API endpoints.", "Built scalable .NET 9 Web APIs with EF Core and MySQL on a layered architecture.", "Secured access with JWT authentication and refresh token rotation.", "Standardized deployment with Docker and added Serilog for structured logging and real observability."], stack: [".NET 9", "EF Core", "Redis", "JWT", "Hangfire", "Serilog", "Docker"] },
+      { period: "Jun 2023 — Sep 2023", duration: "Four months", role: "Frontend Developer", company: "Dekodem Yapı", points: ["Raised overall platform performance by roughly 50% through technical SEO and asset work, reaching 95+ Lighthouse.", "Brought page load below two seconds with Cloudinary-based asset optimization.", "Built React and Next.js components against Figma specifications under strict layout rules.", "Integrated Firebase for real-time content synchronization."], stack: ["React", "Next.js", "MUI", "Cloudinary", "Firebase"] }
+    ],
+    contactTitle: "For enquiries regarding .NET or React positions.",
+    contactBody: "Email is the shortest route; I reply within one working day. Employment history is reference-checkable and the code is public.",
+    colophon: "Set in Playfair Display and Source Sans 3. Written and built by the subject.",
+    formTitle: "Letter of enquiry", formName: "Name", formEmail: "Email", formMessage: "Position or question", formSend: "Send letter",
+    formNote: "Opens your mail client with the letter prefilled. Nothing is stored.",
+    chatTitle: "Editorial Concierge", chatStatus: "Static demonstration", chatPlaceholder: "Pose a question…",
+    chatSeed: "A static demonstration of the assistant running on sametkaradag.com. Select an enquiry below to see the form of the answer.",
+    chatCanned: "Demonstration only — the response layer is not connected in this edition.",
+    suggestions: ["The stack?", "Greatest impact?", "Availability?"],
+    chatOpenLabel: "Close the concierge", chatClosedLabel: "Consult the concierge",
+    stats: [
+      { value: "−40%", label: "Data-access latency, Redis caching on core endpoints" },
+      { value: "95+", label: "Lighthouse on every frontend shipped" },
+      { value: "<2s", label: "Page load after asset and delivery work" },
+      { value: "+50%", label: "Platform performance via technical SEO" }
+    ]
+  },
+  tr: {
+    navAbout: "Mühendis", navSkills: "Ustalık Dizini", navProjects: "Vaka Çalışmaları", navExperience: "Kayıtlar", navContact: "Yazışma",
+    secAbout: "Bölüm I", secSkills: "Bölüm II", secProjects: "Bölüm III", secExperience: "Bölüm IV", secContact: "Kolofon",
+    mastheadKicker: "Sistemler ve Arayüzler Üzerine Bir Portfolyo",
+    dateStamp: "İstanbul · MMXXVI",
+    availability: "Full-stack pozisyonlara açık",
+    heroEyebrow: "Backend mantığını yaratıcı frontend vizyonuyla birleştirmek",
+    heroTitle: "Mimari, okunabilmesi gereken bir argümandır.",
+    heroDek: "Backend ağırlıklı full-stack mühendis: bir yanda .NET 9, diğer yanda React 19; ikisinin de sorumlusu tek kişi.",
+    heroBody: "İki yıl üretim platformu — bir tersane operasyon sistemi, bir otomasyon paketi, bir inşaat grubunun kamusal yüzü. Sonuncusunda hattaki tek mühendis bendim: API mimarisi, veri erişimi, arayüz, performans bütçesi. Aşağıdaki sayfalar bu kaydın sırasıyla ve sayılarla dökümüdür.",
+    recordLabel: "Kayıt",
+    ctaPrimary: "Yazışmayı başlat", ctaPrimarySub: "Bir iş günü içinde yanıt", ctaSecondary: "CV",
+    dropCap: "F",
+    aboutLead: "rontend'de başladım, backend'e geçtim ve sonra birini seçmeyi reddettim. Bu yol bilinçliydi: bir isteği baştan sona izlemek istedim — tıklamadan sorgu planına ve geri dönüşe kadar — göremediğim yarısını tahmin etmek yerine.",
+    about: [
+      "Varsayılan duruşum, gerçekten tutan sınırlarla katmanlı mimari ve ben ayrıldıktan altı ay sonra bir yabancının okuyabileceği kod. Redis, Hangfire ve yapılandırılmış loglama tasarım anında verilen kararlardır; olaydan sonra uygulanan çareler değil. Entegrasyon testleri, sürüm günlerinin olaysız geçmesi için vardır.",
+      "Frontend'de inşa etmeden önce tasarlarım. Önce Figma, sonra JSX — grid, hiyerarşi, kendini tutma. Disiplin iyi API tasarımıyla birebir aynı: daha az şey, tam yerinde. Arayüzü devretmek yerine kendimde tutmamın sebebi bu; sağdaki sayıları savunmanın bana düşmesinin sebebi de."
+    ],
+    pullQuote: "\u201CDaha az şey, tam yerinde — aynı kural hem bir şemayı hem bir sayfa düzenini yönetir.\u201D",
+    dossierLabel: "Künye",
+    dossier: [
+      { k: "Alan", v: "Full-stack, backend ağırlıklı" },
+      { k: "Çekirdek", v: ".NET 9 · ASP.NET Core · EF Core · React 19 · TypeScript" },
+      { k: "Eğitim", v: "Bilgisayar Mühendisliği, Yalova Üniversitesi (2019—2026)" },
+      { k: "Diller", v: "Türkçe (ana dil) · İngilizce (B2)" }
+    ],
+    skillsDek: "Çalışan bir taksonomi — neye, hangi sırayla uzandığım.",
+    skills: [
+      { num: "I", title: "Diller & Framework'ler", items: ["C#", ".NET 9", "ASP.NET Core", "TypeScript", "JavaScript", "React 19", "Next.js", "Node.js", "Python"] },
+      { num: "II", title: "Backend & Mimari", items: ["Katmanlı Mimari", "RESTful API", "EF Core", "MySQL", "Redis (cache)", "Hangfire (job)", "JWT + refresh rotation", "Serilog", "Clean Code"] },
+      { num: "III", title: "Frontend & Arayüz", items: ["MUI v7", "Figma", "İsviçre tarzı sistemler", "Responsive tasarım", "Teknik SEO"] },
+      { num: "IV", title: "Cloud, Hosting & DevOps", items: ["Docker", "AWS S3", "Azure Key Vault", "Firebase", "Cloudflare", "Vercel"] },
+      { num: "V", title: "Test & Araçlar", items: ["xUnit (entegrasyon)", "Git", "GitHub", "Postman"] }
+    ],
+    labelProblem: "Problem", labelArchitecture: "Mimari", labelMetrics: "Ölçülen",
+    projectsDek: "Dört çalışma; her birinde problem, çözümden önce kurulur.",
+    projects: [
+      { index: "Çalışma No. 01", status: "Geliştirmede", title: "BeatPlus", dek: "Tek kataloğun üç bağdaşmaz kural setine hizmet etmesi gereken bir pazaryeri.", problem: "Alıcı, satıcı ve yönetici aynı kataloğu farklı lisans ve yükleme kuralları altında ister — ticaret problemi kılığına girmiş bir yetki problemi.", architecture: "JWT kimlik doğrulama ve baştan sona Serilog ile ASP.NET Core ve EF Core; istemcide React ve TypeScript. Yükleme hattı ve rol bazlı akışlar tamam; ödeme altyapısı ile admin paneli geliştirmede.", metrics: [{ v: "3", k: "tek katalog üzerinde ayrı rol" }, { v: "JWT", k: "refresh token rotation ile" }], stack: ["ASP.NET Core", "EF Core", "React", "TypeScript", "Serilog"], links: [{ label: "Depo", href: "https://github.com/Sametkrdg" }] },
+      { index: "Çalışma No. 02", status: "Yayında", title: "Dekodem Yapı", dek: "Bir fotoğrafı değiştirmek için geliştirici aramak zorunda kalan bir inşaat firması.", problem: "Projeler ve haberler geliştirme kuyruğunun arkasında kalıyordu; her metin veya görsel değişikliği bir dağıtıma ve bir hafta beklemeye mal oluyordu.", architecture: "Firebase kimlik doğrulama ve verisi üzerine özel yazılmış admin panelli çok sayfalı kurumsal site; görsel depolama ve dağıtım için Cloudflare; her route için teknik SEO çalışması.", metrics: [{ v: "<2s", k: "asset çalışması sonrası yüklenme" }, { v: "95+", k: "tüm route'larda Lighthouse" }], stack: ["React", "Next.js", "Firebase", "Cloudflare"], links: [{ label: "Canlı site", href: "https://dekodemyapi.com" }] },
+      { index: "Çalışma No. 03", status: "Yayında", title: "Kişisel Portfolyo", dek: "İşe alım tarafı hızlı tarar. Tek sayfanın her şeyi yanıtlamak için otuz saniyesi vardı.", problem: "Stack, etki ve müsaitlik yarım dakikada okunabilir olmalıydı; sayfa, sekme kapandıktan sonra da soru yanıtlamaya devam etmeliydi.", architecture: "Entegre sohbet asistanı ve elle yazılmış animasyonlarla tek sayfalık React ve TypeScript yapı; her yeni proje yayına girdiğinde revize edilir.", metrics: [{ v: "1", k: "sürekli revize edilen sayfa" }, { v: "24s", k: "tipik yanıt süresi" }], stack: ["React", "TypeScript"], links: [{ label: "Canlı site", href: "https://sametkaradag.com" }] },
+      { index: "Çalışma No. 04", status: "Tamamlandı", title: "Block Simulation", dek: "Önce göremeden bir inşaat sahası planlamak.", problem: "Saha planlamacılarının, bir yerleşime karar vermeden önce blok, bina ve kaplama alanlarını ölçekli çizecek hızlı bir yöntemi yoktu.", architecture: "Hacimleri yerleştirme, boyutlandırma ve etiketleme için Unity tabanlı simülasyon aracı; WebGL'e aktarıldı ve sahada anında erişim için Vercel'de yayına alındı.", metrics: [{ v: "1:1", k: "ölçekli yerleşim planlama" }, { v: "Web", k: "kurulum yok, Vercel dağıtımı" }], stack: ["Unity", "C#", "WebGL", "Vercel"], links: [{ label: "Canlı araç", href: "https://block-simulation.vercel.app/" }] }
+    ],
+    experienceDek: "Üç görev, tersten sıralı, etkisi açıkça belirtilmiş.",
+    jobs: [
+      { period: "Ara 2024 — Oca 2026", duration: "Bir yıl iki ay · İstanbul", role: "Full-Stack Developer", company: "Tersan Shipyard", points: ["Platformun tek full-stack geliştiricisi: backend mimarisi, arayüz tasarımı ve performans, uçtan uca.", "Platformun çekirdek özelliklerini besleyen, MySQL üzerinde katmanlı mimarili .NET 9 Web API'ler kurguladım.", "Arka plan işlerini Hangfire'a taşıdım; manuel müdahaleyi azalttım ve gece koşularını stabilize ettim.", "Servisleri Docker ile konteynerledim; AWS S3 depolama ve secret yönetimi için Azure Key Vault entegre ettim.", "Arayüzü Figma'da tasarlayıp React 19 ve MUI v7 ile yayına aldım; her sürümü xUnit entegrasyon testleriyle korudum."], stack: [".NET 9", "MySQL", "React 19", "MUI v7", "Hangfire", "Docker", "AWS S3", "Azure Key Vault", "xUnit"] },
+      { period: "Eki 2023 — Kas 2024", duration: "Bir yıl iki ay", role: "Backend Developer", company: "Mos Otomasyon ve Yazılım", points: ["Çekirdek API endpoint'lerine Redis cache getirerek veri erişim süresini %40 düşürdüm.", "EF Core ve MySQL ile katmanlı mimari üzerinde ölçeklenebilir .NET 9 Web API'ler geliştirdim.", "Erişimi JWT kimlik doğrulama ve refresh token rotation ile güvence altına aldım.", "Dağıtımı Docker ile standartlaştırdım; yapılandırılmış loglama ve gerçek gözlemlenebilirlik için Serilog ekledim."], stack: [".NET 9", "EF Core", "Redis", "JWT", "Hangfire", "Serilog", "Docker"] },
+      { period: "Haz 2023 — Eyl 2023", duration: "Dört ay", role: "Frontend Developer", company: "Dekodem Yapı", points: ["Teknik SEO ve asset çalışmasıyla platform performansını yaklaşık %50 artırdım, 95+ Lighthouse'a ulaştım.", "Cloudinary tabanlı asset optimizasyonuyla sayfa yüklenmesini iki saniyenin altına indirdim.", "Figma spec'lerine göre katı yerleşim kurallarıyla React ve Next.js bileşenleri geliştirdim.", "Gerçek zamanlı içerik senkronizasyonu için Firebase entegre ettim."], stack: ["React", "Next.js", "MUI", "Cloudinary", "Firebase"] }
+    ],
+    contactTitle: ".NET veya React pozisyonlarına dair başvurular için.",
+    contactBody: "En kısa yol e-posta; bir iş günü içinde yanıt veriyorum. İş geçmişi referans verilebilir, kod açıktır.",
+    colophon: "Playfair Display ve Source Sans 3 ile dizilmiştir. Yazan ve kuran: öznenin kendisi.",
+    formTitle: "Başvuru mektubu", formName: "Ad", formEmail: "E-posta", formMessage: "Pozisyon veya soru", formSend: "Mektubu gönder",
+    formNote: "Mektup hazır şekilde mail uygulamanızı açar. Hiçbir veri saklanmaz.",
+    chatTitle: "Editör Danışmanı", chatStatus: "Statik gösterim", chatPlaceholder: "Bir soru yönelt…",
+    chatSeed: "sametkaradag.com üzerinde çalışan asistanın statik gösterimi. Cevabın biçimini görmek için aşağıdan bir soru seçin.",
+    chatCanned: "Yalnızca gösterim — bu baskıda cevap katmanı bağlı değil.",
+    suggestions: ["Stack nedir?", "En büyük etki?", "Müsaitlik?"],
+    chatOpenLabel: "Danışmanı kapat", chatClosedLabel: "Danışmana başvur",
+    stats: [
+      { value: "−%40", label: "Çekirdek endpoint'lerde Redis cache ile veri erişim gecikmesi" },
+      { value: "95+", label: "Yayına alınan her arayüzde Lighthouse" },
+      { value: "<2s", label: "Asset ve dağıtım çalışması sonrası yüklenme" },
+      { value: "+%50", label: "Teknik SEO ile platform performansı" }
+    ]
+  }
+};
+
+const THEMES = ["retro", "brutalist", "minimal", "blueprint", "glass", "editorial"];
+const INK = "#1B2430", PAPER = "#EEF0F2", NAVY = "#1F3B57", GOLD = "#B08D42";
+
+class Component extends DCLogic {
+  state = {
+    lang: null, theme: "editorial", active: "hero",
+    chatOpen: false, chatDraft: "", msgs: [], formName: "", formEmail: "", formMessage: ""
+  };
+
+  lang() { return this.state.lang || this.props.defaultLang || "en"; }
+  copy() { return COPY[this.lang()] || COPY.en; }
+
+  componentDidMount() {
+    const ids = ["hero", "about", "skills", "projects", "experience", "contact"];
+    this.io = new IntersectionObserver((entries) => {
+      const hit = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (hit && hit.target.id !== this.state.active) this.setState({ active: hit.target.id });
+    }, { rootMargin: "-42% 0px -42% 0px", threshold: [0, 0.15, 0.5] });
+    ids.forEach(id => { const el = document.getElementById(id); if (el) this.io.observe(el); });
+  }
+  componentWillUnmount() { if (this.io) this.io.disconnect(); }
+
+  seeded() {
+    const t = this.copy();
+    return this.state.msgs.length ? this.state.msgs : [{ who: "bot", text: t.chatSeed }];
+  }
+  push(text) {
+    const t = this.copy();
+    this.setState({ chatDraft: "", msgs: [...this.seeded(), { who: "me", text }, { who: "bot", text: t.chatCanned }] });
+  }
+
+  renderVals() {
+    const t = this.copy();
+    const lang = this.lang();
+    const active = this.state.active;
+
+    const nav = [
+      { id: "about", label: t.navAbout }, { id: "skills", label: t.navSkills },
+      { id: "projects", label: t.navProjects }, { id: "experience", label: t.navExperience },
+      { id: "contact", label: t.navContact }
+    ].map(n => {
+      const on = active === n.id;
+      return {
+        ...n, href: "#" + n.id, current: on ? "true" : "false",
+        size: on ? "24px" : "15px",
+        weight: on ? 600 : 400,
+        fg: on ? INK : NAVY,
+        rule: on ? GOLD : "transparent"
+      };
+    });
+
+    const variants = THEMES.map(id => {
+      const on = this.state.theme === id;
+      return {
+        label: id,
+        bg: on ? INK : "transparent", fg: on ? PAPER : NAVY,
+        border: on ? INK : "rgba(27,36,48,0.3)",
+        onSelect: () => this.setState({ theme: id })
+      };
+    });
+    const variantNote = this.state.theme === "editorial"
+      ? (lang === "tr" ? "03 — Editoryal · yürürlükte" : "03 — Editorial · in force")
+      : (lang === "tr" ? this.state.theme + " · bu baskıda yok" : this.state.theme + " · not in this edition");
+
+    const langs = [{ id: "en", label: "EN" }, { id: "tr", label: "TR" }].map(l => {
+      const on = lang === l.id;
+      return { label: l.label, bg: on ? NAVY : "transparent", fg: on ? PAPER : NAVY, border: on ? NAVY : "rgba(27,36,48,0.3)", onSelect: () => this.setState({ lang: l.id, msgs: [] }) };
+    });
+
+    const messages = this.seeded().map(m => m.who === "me"
+      ? { who: lang === "tr" ? "Soru" : "Enquiry", text: m.text, rule: NAVY, italic: "normal" }
+      : { who: lang === "tr" ? "Danışman" : "Concierge", text: m.text, rule: GOLD, italic: "italic" });
+
+    return {
+      t, lang, navItems: nav, variants, variantNote, langs, messages,
+      sec: ["about", "skills", "projects", "experience", "contact"].reduce((acc, id) => {
+        const on = active === id;
+        acc[id] = {
+          bg: on ? "#E7EAEE" : PAPER,
+          h: on ? "clamp(38px, 5vw, 70px)" : "clamp(26px, 3.2vw, 42px)",
+          tagFg: on ? GOLD : NAVY,
+          rule: on ? GOLD : "rgba(27,36,48,0.22)"
+        };
+        return acc;
+      }, {}),
+      showChat: this.props.showChat ?? true,
+      chatOpen: this.state.chatOpen,
+      chatDraft: this.state.chatDraft,
+      chatButtonLabel: this.state.chatOpen ? t.chatOpenLabel : t.chatClosedLabel,
+      suggestions: t.suggestions.map(s => ({ label: s, onSelect: () => this.push(s) })),
+      onToggleChat: () => this.setState(s => ({ chatOpen: !s.chatOpen })),
+      onCloseChat: () => this.setState({ chatOpen: false }),
+      onChatDraft: (e) => this.setState({ chatDraft: e.target.value }),
+      onSendChat: (e) => { e.preventDefault(); const v = this.state.chatDraft.trim(); if (v) this.push(v); },
+      cvHref: (window.__resources && window.__resources.cvPdf) || "uploads/content_source-1788172964175-pxgk.pdf",
+      contactLinks: [
+        { label: "Email", href: "mailto:sametkrdg80@gmail.com", value: "sametkrdg80@gmail.com" },
+        { label: "Telephone", href: "tel:+905414747780", value: "+90 541 474 77 80" },
+        { label: "GitHub", href: "https://github.com/Sametkrdg", value: "github.com/Sametkrdg" },
+        { label: "LinkedIn", href: "https://linkedin.com/in/sametkrdg", value: "linkedin.com/in/sametkrdg" },
+        { label: "Website", href: "https://sametkaradag.com", value: "sametkaradag.com" }
+      ],
+      formName: this.state.formName, formEmail: this.state.formEmail, formMessage: this.state.formMessage,
+      onFormName: (e) => this.setState({ formName: e.target.value }),
+      onFormEmail: (e) => this.setState({ formEmail: e.target.value }),
+      onFormMessage: (e) => this.setState({ formMessage: e.target.value }),
+      onSubmitForm: (e) => {
+        e.preventDefault();
+        const s = this.state;
+        const subject = encodeURIComponent((lang === "tr" ? "Başvuru: " : "Enquiry: ") + (s.formName || ""));
+        const body = encodeURIComponent(s.formMessage + "\n\n— " + s.formName + " (" + s.formEmail + ")");
+        window.location.href = "mailto:sametkrdg80@gmail.com?subject=" + subject + "&body=" + body;
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

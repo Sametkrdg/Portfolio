@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "Samet Karadağ — Full-Stack Developer",
+    "description": "Full-stack developer building systems that stay fast under load. .NET 9, React 19 and cloud-based architectures.",
+    "ogAlt": "Samet Karadağ — Full-Stack Developer"
+  },
+  "skipToContent": "Skip to content",
+  "nav": {
+    "ariaLabel": "Sections",
+    "about": "About",
+    "skills": "Skills",
+    "experience": "Experience",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "theme": {
+    "ariaLabel": "Theme",
+    "label": "Theme",
+    "notBuilt": "not built yet"
+  },
+  "locale": {
+    "ariaLabel": "Language",
+    "tr": "TR",
+    "en": "EN"
+  },
+  "cta": {
+    "contact": "Get in touch",
+    "downloadCv": "Download CV",
+    "cvNote": "PDF · English",
+    "email": "Email",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "labels": {
+    "problem": "Problem",
+    "architecture": "Architecture",
+    "stack": "Stack",
+    "education": "Education",
+    "languages": "Languages",
+    "availability": "Availability"
+  },
+  "status": {
+    "live": "Live",
+    "in-progress": "In progress",
+    "completed": "Completed"
+  },
+  "projectLink": {
+    "live": "Live",
+    "code": "Code"
+  },
+  "chat": {
+    "open": "Ask me anything",
+    "close": "Close chat",
+    "title": "Ask about my work",
+    "status": "Gemini 2.5 Flash · 5 messages/min",
+    "placeholder": "Type a question…",
+    "send": "Send",
+    "suggestionsLabel": "Ask me anything about Samet:",
+    "errorRateLimit": "Rate limit reached — please wait about a minute before sending another message.",
+    "errorService": "The assistant is unavailable right now. Try again shortly, or email Samet directly.",
+    "errorGeneric": "Something went wrong sending your message. Try again, or reach Samet at {email}."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you are looking for does not exist or has moved.",
+    "home": "Back to home"
+  }
+}

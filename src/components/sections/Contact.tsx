@@ -12,7 +12,7 @@ const EMAIL    = "sametkrdg80@gmail.com";
 const LINKEDIN = "https://linkedin.com/in/sametkrdg";
 const GITHUB   = "https://github.com/Sametkrdg";
 
-const CV_PATH = "/001-Samet-Karadag.pdf";
+const CV_PATH = "/cv/samet-karadag.pdf";
 
 /* ── Icon: download arrow ── */
 function DownloadIcon() {
@@ -146,7 +146,7 @@ export default function Contact() {
           />
           <DownloadIcon />
           Download CV
-          <span className="text-[11px] font-normal opacity-70">PDF · 001-Samet-Karadag.pdf</span>
+          <span className="text-[11px] font-normal opacity-70">PDF · samet-karadag.pdf</span>
         </motion.a>
 
         {/* ── Contact cards ── */}

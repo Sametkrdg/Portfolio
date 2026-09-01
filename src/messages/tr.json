@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "Samet Karadağ — Full-Stack Developer",
+    "description": "Yük altında hızlı kalan sistemler kuran full-stack geliştirici. .NET 9, React 19 ve bulut tabanlı mimariler.",
+    "ogAlt": "Samet Karadağ — Full-Stack Developer"
+  },
+  "skipToContent": "İçeriğe geç",
+  "nav": {
+    "ariaLabel": "Bölümler",
+    "about": "Hakkımda",
+    "skills": "Yetkinlikler",
+    "experience": "Deneyim",
+    "projects": "Projeler",
+    "contact": "İletişim"
+  },
+  "theme": {
+    "ariaLabel": "Tema seçimi",
+    "label": "Tema",
+    "notBuilt": "henüz hazır değil"
+  },
+  "locale": {
+    "ariaLabel": "Dil seçimi",
+    "tr": "TR",
+    "en": "EN"
+  },
+  "cta": {
+    "contact": "İletişime geç",
+    "downloadCv": "CV indir",
+    "cvNote": "PDF · İngilizce",
+    "email": "E-posta",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "labels": {
+    "problem": "Problem",
+    "architecture": "Mimari",
+    "stack": "Kullanılan teknolojiler",
+    "education": "Eğitim",
+    "languages": "Diller",
+    "availability": "Durum"
+  },
+  "status": {
+    "live": "Yayında",
+    "in-progress": "Geliştiriliyor",
+    "completed": "Tamamlandı"
+  },
+  "projectLink": {
+    "live": "Canlı",
+    "code": "Kod"
+  },
+  "chat": {
+    "open": "Bana bir şey sor",
+    "close": "Sohbeti kapat",
+    "title": "İşim hakkında sor",
+    "status": "Gemini 2.5 Flash · dakikada 5 mesaj",
+    "placeholder": "Bir soru yaz…",
+    "send": "Gönder",
+    "suggestionsLabel": "Samet hakkında sorabilirsin:",
+    "errorRateLimit": "Mesaj sınırına ulaşıldı — yaklaşık bir dakika sonra tekrar dene.",
+    "errorService": "Asistan şu an yanıt veremiyor. Birazdan tekrar dene ya da doğrudan e-posta gönder.",
+    "errorGeneric": "Mesaj gönderilemedi. Tekrar dene ya da {email} adresinden ulaş."
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "body": "Aradığın sayfa yok ya da taşınmış.",
+    "home": "Ana sayfaya dön"
+  }
+}

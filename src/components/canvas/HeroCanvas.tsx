@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Html } from "@react-three/drei";
-import { Suspense, useRef, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { getAssetUrl } from "@/src/utils/getAssetUrl";
 import { useAudioStore } from "@/src/store/audioStore";
@@ -21,28 +21,26 @@ function WarpStars({ count = 1200 }: { count?: number }) {
   const pointsRef = useRef<THREE.Points>(null);
 
   /*
-   * Build BufferGeometry once. Each star gets:
-   *   - random (x, y) within a wide tube
-   *   - random z between FAR and NEAR (so the field starts populated)
-   *   - speed multiplier for parallax variety
+   * Allocate the buffers during render, but seed them with random positions
+   * on the first frame: `Math.random()` during render is impure and would
+   * produce a different field on every re-render.
    */
-  const { geometry, speeds } = useMemo(() => {
-    const positions = new Float32Array(count * 3);
-    const speedArr  = new Float32Array(count);
-    const FAR  = -160;
-    const NEAR = 6;
-    for (let i = 0; i < count; i++) {
-      const r     = 30 + Math.random() * 90;
-      const theta = Math.random() * Math.PI * 2;
-      positions[i * 3 + 0] = Math.cos(theta) * r;
-      positions[i * 3 + 1] = Math.sin(theta) * r;
-      positions[i * 3 + 2] = FAR + Math.random() * (NEAR - FAR);
-      speedArr[i]          = 0.4 + Math.random() * 1.6;
-    }
+  const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    return { geometry: geo, speeds: speedArr };
+    geo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(new Float32Array(count * 3), 3)
+    );
+    return geo;
   }, [count]);
+
+  /* Refs, not memos: these are mutated per-frame, and a memoised value must
+   * stay immutable. */
+  const speedsRef = useRef<Float32Array | null>(null);
+  const seeded = useRef(false);
+
+  /* Free the GPU buffers when the hero unmounts. */
+  useEffect(() => () => geometry.dispose(), [geometry]);
 
   const dataArray = useMemo(() => new Uint8Array(128), []);
 
@@ -51,6 +49,25 @@ function WarpStars({ count = 1200 }: { count?: number }) {
     if (!points) return;
     const posAttr = points.geometry.getAttribute("position") as THREE.BufferAttribute;
     const arr = posAttr.array as Float32Array;
+
+    /* First frame: scatter the field. Each star gets a random (x, y) in a
+     * wide tube, a random z between FAR and NEAR so the field starts full,
+     * and a speed multiplier for parallax variety. */
+    if (!seeded.current) {
+      speedsRef.current = new Float32Array(count);
+      const speeds = speedsRef.current;
+      const FAR = -160;
+      const NEAR = 6;
+      for (let i = 0; i < count; i++) {
+        const r = 30 + Math.random() * 90;
+        const theta = Math.random() * Math.PI * 2;
+        arr[i * 3 + 0] = Math.cos(theta) * r;
+        arr[i * 3 + 1] = Math.sin(theta) * r;
+        arr[i * 3 + 2] = FAR + Math.random() * (NEAR - FAR);
+        speeds[i] = 0.4 + Math.random() * 1.6;
+      }
+      seeded.current = true;
+    }
 
     /* Pull bass amplitude from the global analyser (no React subscription) */
     const analyser = useAudioStore.getState().analyser;
@@ -64,6 +81,8 @@ function WarpStars({ count = 1200 }: { count?: number }) {
 
     /* Base 18 units/sec idle drift, up to ~3.5× faster on heavy bass */
     const baseSpeed = 18 + bass * 45;
+    const speeds = speedsRef.current;
+    if (!speeds) return;
 
     for (let i = 0; i < count; i++) {
       const zIdx = i * 3 + 2;
@@ -111,21 +130,23 @@ function Meteors() {
     elapsed:  number;
   }[]>([]);
 
-  if (meteorsRef.current.length === 0) {
-    for (let i = 0; i < METEOR_COUNT; i++) {
-      meteorsRef.current.push({
-        pos:       new THREE.Vector3(0, 0, -200),
-        velocity:  new THREE.Vector3(),
-        alive:     false,
-        nextSpawn: Math.random() * 6 + 2,
-        elapsed:   0,
-      });
-    }
-  }
-
   const meshRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   useFrame((_, delta) => {
+    /* Pool is seeded on the first frame — staggering the spawn timers needs
+     * randomness, which must stay out of render. */
+    if (meteorsRef.current.length === 0) {
+      for (let i = 0; i < METEOR_COUNT; i++) {
+        meteorsRef.current.push({
+          pos:       new THREE.Vector3(0, 0, -200),
+          velocity:  new THREE.Vector3(),
+          alive:     false,
+          nextSpawn: Math.random() * 6 + 2,
+          elapsed:   0,
+        });
+      }
+    }
+
     meteorsRef.current.forEach((m, i) => {
       const mesh = meshRefs.current[i];
       if (!mesh) return;
@@ -193,8 +214,15 @@ function Meteors() {
  * less re-render workaround: use a `key`-stable ref + a small useFrame loop
  * that mutates the Euler in place. Three.js reads it on the next render.
  */
+/*
+ * Module scope, deliberately: drei needs the same object in the JSX every
+ * frame while `useFrame` mutates it in place. A ref would have to be read
+ * during render, and a memoised value may not be mutated — this is neither.
+ * Only one <RotatingEnvironment> is ever mounted.
+ */
+const ENV_EULER = new THREE.Euler(0, 0, 0);
+
 function RotatingEnvironment() {
-  const eulerRef = useRef<THREE.Euler>(new THREE.Euler(0, 0, 0));
   const dataArray = useMemo(() => new Uint8Array(128), []);
 
   useFrame((_, delta) => {
@@ -207,15 +235,15 @@ function RotatingEnvironment() {
       mid = sum / (12 * 255);
     }
     /* Idle drift 0.01 rad/s, up to ~10× when music's mid band is hot */
-    eulerRef.current.y += (0.01 + mid * 0.09) * delta;
+    ENV_EULER.y += (0.01 + mid * 0.09) * delta;
   });
 
   return (
     <Environment
       files={HDR_URL}
       background
-      backgroundRotation={eulerRef.current}
-      environmentRotation={eulerRef.current}
+      backgroundRotation={ENV_EULER}
+      environmentRotation={ENV_EULER}
     />
   );
 }
@@ -226,13 +254,17 @@ function RotatingEnvironment() {
  */
 export default function HeroCanvas() {
   /*
-   * ErrorBoundary wraps the whole Canvas: WebGL context-lost,
-   * R2-asset failures, or any R3F render exception falls back to the
-   * boundary's "Interactive experience disabled" panel without taking
-   * down the rest of the page (Navbar / About / Projects all keep working).
+   * ErrorBoundary wraps the whole Canvas: WebGL context-lost or R2 asset
+   * failures fall back silently (fallback={null}) — the Hero section is
+   * fully readable without the 3D background, the radial vignette + Deep
+   * Slate body bg do the visual work on their own. Showing an "Interactive
+   * experience disabled" panel here would overlap the headline.
+   *
+   * The Robot's mini-canvas uses a *visible* fallback because there the
+   * canvas IS the UI (the chat trigger); see RobotMiniScene.tsx.
    */
   return (
-    <ErrorBoundary>
+    <ErrorBoundary fallback={null}>
       <Canvas
         /* dpr capped at 1.5: at 2.0 mobile retina fills 4× pixels — particle
          * fields tank to ~25 fps on mid-range Androids. 1.5 keeps clarity

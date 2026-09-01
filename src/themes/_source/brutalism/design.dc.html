@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #EDEBE3; color: #0E0E0E; font-family: 'Work Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #0E0E0E; text-decoration: none; }
+  a:hover { color: #FF4B2B; }
+  ::selection { background: #FF4B2B; color: #EDEBE3; }
+  input, textarea, button { font: inherit; color: inherit; }
+  @media (max-width: 1000px) {
+    [data-bento] > * { grid-column: span 1 !important; }
+    [data-bento] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-hero-meta] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-log-row] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-navbar] { overflow-x: auto; }
+    [data-chat] { width: calc(100vw - 24px) !important; }
+    [data-pad] { padding-left: 20px !important; padding-right: 20px !important; }
+  }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; background: #EDEBE3;">
+
+  <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.32; mix-blend-mode: multiply; background-image: url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxODAnIGhlaWdodD0nMTgwJz48ZmlsdGVyIGlkPSduJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nMC45JyBudW1PY3RhdmVzPSczJy8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9JzE4MCcgaGVpZ2h0PScxODAnIGZpbHRlcj0ndXJsKCNuKScgb3BhY2l0eT0nMC41NScvPjwvc3ZnPg==&quot;);"></div>
+
+  <div style="position: fixed; top: 0; left: 0; right: 0; height: 5px; z-index: 70; background: rgba(14,14,14,0.1);">
+    <div style="height: 100%; background: #FF4B2B; width: {{ progress }}; transition: width 90ms linear;"></div>
+  </div>
+
+  <div data-pad style="position: relative; z-index: 5; border-bottom: 2px solid #0E0E0E; padding: 14px 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px;">
+    <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.16em;">THEME //</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <button type="button" onClick="{{ v.onSelect }}" style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 12px; border: 2px solid #0E0E0E; background: {{ v.bg }}; color: {{ v.fg }}; cursor: pointer; box-shadow: {{ v.shadow }}; transform: {{ v.transform }}; transition: transform 80ms, box-shadow 80ms;" style-hover="transform: translate(-2px, -2px); box-shadow: 4px 4px 0px #0E0E0E;" style-active="transform: translate(2px, 2px); box-shadow: 0px 0px 0px #0E0E0E;">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <span style="font-family: 'Space Mono', monospace; font-size: 10.5px; color: #FF4B2B; margin-left: auto;">{{ variantNote }}</span>
+  </div>
+
+  <header data-pad style="position: sticky; top: 0; z-index: 60; background: #EDEBE3; border-bottom: 2px solid #0E0E0E; padding: 0 32px;">
+    <div data-navbar style="display: flex; align-items: center; gap: 20px; min-height: 74px;">
+      <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+        <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 15px; letter-spacing: -0.02em;">SAMET&nbsp;KARADAĞ</span>
+        <span style="display: inline-flex; align-items: center; gap: 6px; border: 2px solid #0E0E0E; padding: 3px 7px; background: #FF4B2B; color: #EDEBE3; font-family: 'Space Mono', monospace; font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em;">
+          <span style="width: 6px; height: 6px; background: #EDEBE3; display: inline-block;"></span>
+          <span>{{ t.statusShort }}</span>
+        </span>
+      </div>
+      <nav aria-label="Sections" style="display: flex; align-items: flex-end; gap: 6px; margin-left: auto;">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+          <a href="{{ n.href }}" aria-current="{{ n.current }}" style="font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; border: 2px solid {{ n.border }}; background: {{ n.bg }}; color: {{ n.fg }}; padding: {{ n.pad }}; font-size: {{ n.size }}; box-shadow: {{ n.shadow }}; transition: font-size 180ms cubic-bezier(.2,.8,.2,1), padding 180ms, background 140ms, color 140ms, box-shadow 140ms;" style-hover="border-color: #0E0E0E; color: #FF4B2B;">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+      <div style="display: flex; gap: 6px; flex-shrink: 0;">
+        <sc-for list="{{ langs }}" as="l" hint-placeholder-count="2">
+          <button type="button" onClick="{{ l.onSelect }}" style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 5px 9px; border: 2px solid #0E0E0E; background: {{ l.bg }}; color: {{ l.fg }}; cursor: pointer;">{{ l.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 5;">
+
+    <section id="hero" data-pad aria-labelledby="hero-h" style="padding: 60px 32px 72px; border-bottom: 2px solid #0E0E0E;">
+      <div style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #FF4B2B; margin-bottom: 28px;">{{ t.heroEyebrow }}</div>
+      <h1 id="hero-h" style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: clamp(40px, 10.4vw, 158px); line-height: 0.9; letter-spacing: -0.055em; text-transform: uppercase; margin: 0 0 40px; max-width: 17ch;">{{ t.heroTitle }}</h1>
+      <div data-hero-meta style="display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 40px; align-items: start;">
+        <p style="margin: 0; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.5; font-weight: 500; max-width: 46ch; text-wrap: pretty;">{{ t.heroBody }}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+          <a href="#contact" style="display: inline-flex; align-items: center; gap: 10px; background: #FF4B2B; color: #EDEBE3; border: 2px solid #0E0E0E; padding: 16px 24px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13.5px; letter-spacing: 0.06em; text-transform: uppercase; box-shadow: 6px 6px 0px #0E0E0E; transition: transform 80ms, box-shadow 80ms;" style-hover="transform: translate(-2px, -2px); box-shadow: 8px 8px 0px #0E0E0E; color: #EDEBE3;" style-active="transform: translate(6px, 6px); box-shadow: 0px 0px 0px #0E0E0E;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M3 5h18v14H3z"></path><path d="m3 6 9 7 9-7"></path></svg>
+            <span>{{ t.ctaPrimary }}</span>
+          </a>
+          <a href="{{ cvHref }}" download="Samet-Karadag-CV.pdf" style="display: inline-flex; align-items: center; gap: 10px; background: #EDEBE3; color: #0E0E0E; border: 2px solid #0E0E0E; padding: 16px 24px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13.5px; letter-spacing: 0.06em; text-transform: uppercase; box-shadow: 6px 6px 0px #0E0E0E; transition: transform 80ms, box-shadow 80ms;" style-hover="transform: translate(-2px, -2px); box-shadow: 8px 8px 0px #0E0E0E; color: #FF4B2B;" style-active="transform: translate(6px, 6px); box-shadow: 0px 0px 0px #0E0E0E;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 15v5h16v-5"></path><path d="m7 11 5 5 5-5"></path><path d="M12 16V3"></path></svg>
+            <span>{{ t.ctaSecondary }}</span>
+          </a>
+        </div>
+      </div>
+      <div data-bento style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 56px;">
+        <sc-for list="{{ t.stats }}" as="s" hint-placeholder-count="4">
+          <div style="border: 2px solid #0E0E0E; background: #EDEBE3; padding: 20px 18px; box-shadow: 4px 4px 0px #0E0E0E;">
+            <div style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: clamp(30px, 3.4vw, 46px); line-height: 1; letter-spacing: -0.04em; color: #FF4B2B; margin-bottom: 12px;">{{ s.value }}</div>
+            <div style="font-size: 13px; line-height: 1.45; font-weight: 500; text-wrap: pretty;">{{ s.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="about" data-pad aria-labelledby="about-h" style="padding: 72px 32px; border-bottom: 2px solid #0E0E0E; background: {{ sec.about.bg }}; transition: background 260ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px;">
+        <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.18em; padding: 4px 6px; background: {{ sec.about.tagBg }}; color: {{ sec.about.tagFg }}; transition: background 200ms, color 200ms;">§01</span>
+        <h2 id="about-h" style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: {{ sec.about.h }}; letter-spacing: -0.04em; text-transform: uppercase; color: {{ sec.about.fg }}; transition: font-size 260ms cubic-bezier(.2,.8,.2,1), color 200ms;">{{ t.navAbout }}</h2>
+        <span style="flex: 1; height: 2px; background: #0E0E0E;"></span>
+      </div>
+      <div data-bento style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{ aboutCards }}" as="a" hint-placeholder-count="3">
+          <article style="grid-column: span {{ a.span }}; border: 2px solid #0E0E0E; background: {{ a.bg }}; color: {{ a.fg }}; padding: 24px 22px; box-shadow: 4px 4px 0px #0E0E0E; display: flex; flex-direction: column; gap: 12px;">
+            <h3 style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: {{ a.label }};">{{ a.title }}</h3>
+            <p style="margin: 0; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.5; font-weight: 500; text-wrap: pretty;">{{ a.text }}</p>
+          </article>
+        </sc-for>
+        <div style="grid-column: span 6; border: 2px solid #0E0E0E; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 8px 28px; font-family: 'Space Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em;">
+          <span>{{ t.education }}</span>
+          <span style="color: #FF4B2B;">{{ t.languages }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" data-pad aria-labelledby="skills-h" style="padding: 72px 32px; border-bottom: 2px solid #0E0E0E; background: {{ sec.skills.bg }}; transition: background 260ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px;">
+        <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.18em; padding: 4px 6px; background: {{ sec.skills.tagBg }}; color: {{ sec.skills.tagFg }}; transition: background 200ms, color 200ms;">§02</span>
+        <h2 id="skills-h" style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: {{ sec.skills.h }}; letter-spacing: -0.04em; text-transform: uppercase; color: {{ sec.skills.fg }}; transition: font-size 260ms cubic-bezier(.2,.8,.2,1), color 200ms;">{{ t.navSkills }}</h2>
+        <span style="flex: 1; height: 2px; background: #0E0E0E;"></span>
+      </div>
+      <div data-bento style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{ t.skills }}" as="g" hint-placeholder-count="5">
+          <article style="grid-column: span {{ g.span }}; border: 2px solid #0E0E0E; background: #EDEBE3; padding: 22px 20px; box-shadow: 4px 4px 0px #0E0E0E; display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-bottom: 2px solid #0E0E0E; padding-bottom: 10px;">
+              <h3 style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;">{{ g.title }}</h3>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #FF4B2B;">{{ g.count }}</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+              <sc-for list="{{ g.items }}" as="i" hint-placeholder-count="6">
+                <span style="font-family: 'Space Mono', monospace; font-size: 11.5px; font-weight: 700; padding: 5px 9px; border: 2px solid #0E0E0E; background: #EDEBE3;" style-hover="background: #FF4B2B; color: #EDEBE3;">{{ i }}</span>
+              </sc-for>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="projects" data-pad aria-labelledby="projects-h" style="padding: 72px 32px; border-bottom: 2px solid #0E0E0E; background: {{ sec.projects.bg }}; transition: background 260ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px;">
+        <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.18em; padding: 4px 6px; background: {{ sec.projects.tagBg }}; color: {{ sec.projects.tagFg }}; transition: background 200ms, color 200ms;">§03</span>
+        <h2 id="projects-h" style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: {{ sec.projects.h }}; letter-spacing: -0.04em; text-transform: uppercase; color: {{ sec.projects.fg }}; transition: font-size 260ms cubic-bezier(.2,.8,.2,1), color 200ms;">{{ t.navProjects }}</h2>
+        <span style="flex: 1; height: 2px; background: #0E0E0E;"></span>
+      </div>
+      <div data-bento style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{ t.projects }}" as="p" hint-placeholder-count="4">
+          <article style="grid-column: span {{ p.span }}; border: 2px solid #0E0E0E; background: #EDEBE3; padding: 24px 22px; box-shadow: 6px 6px 0px #0E0E0E; display: flex; flex-direction: column; gap: 18px; transition: transform 100ms, box-shadow 100ms;" style-hover="transform: translate(-3px, -3px); box-shadow: 9px 9px 0px #0E0E0E;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.14em;">{{ p.index }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; border: 2px solid #0E0E0E; padding: 3px 7px; background: {{ p.statusBg }}; color: {{ p.statusFg }};">{{ p.status }}</span>
+            </div>
+            <h3 style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: clamp(22px, 2.4vw, 34px); line-height: 1.02; letter-spacing: -0.04em; text-transform: uppercase;">{{ p.title }}</h3>
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <div style="font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #FF4B2B; margin-bottom: 6px;">{{ t.labelProblem }}</div>
+                <p style="margin: 0; font-size: 14.5px; line-height: 1.5; font-weight: 500; text-wrap: pretty;">{{ p.problem }}</p>
+              </div>
+              <div>
+                <div style="font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #FF4B2B; margin-bottom: 6px;">{{ t.labelArchitecture }}</div>
+                <p style="margin: 0; font-size: 14.5px; line-height: 1.5; font-weight: 500; text-wrap: pretty;">{{ p.architecture }}</p>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <sc-for list="{{ p.metrics }}" as="m" hint-placeholder-count="2">
+                <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; padding: 5px 10px; border: 2px solid #0E0E0E; background: #FF4B2B; color: #EDEBE3;">{{ m }}</span>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <sc-for list="{{ p.stack }}" as="s" hint-placeholder-count="4">
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 7px; border: 1px solid #0E0E0E;">{{ s }}</span>
+              </sc-for>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: auto; padding-top: 6px;">
+              <sc-for list="{{ p.links }}" as="l" hint-placeholder-count="1">
+                <a href="{{ l.href }}" target="_blank" rel="noreferrer" style="display: inline-flex; align-items: center; gap: 7px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; border: 2px solid #0E0E0E; padding: 7px 11px;" style-hover="background: #0E0E0E; color: #EDEBE3;">
+                  <span>{{ l.label }}</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg>
+                </a>
+              </sc-for>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="experience" data-pad aria-labelledby="exp-h" style="padding: 72px 32px; border-bottom: 2px solid #0E0E0E; background: {{ sec.experience.bg }}; transition: background 260ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px;">
+        <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.18em; padding: 4px 6px; background: {{ sec.experience.tagBg }}; color: {{ sec.experience.tagFg }}; transition: background 200ms, color 200ms;">§04</span>
+        <h2 id="exp-h" style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: {{ sec.experience.h }}; letter-spacing: -0.04em; text-transform: uppercase; color: {{ sec.experience.fg }}; transition: font-size 260ms cubic-bezier(.2,.8,.2,1), color 200ms;">{{ t.navExperience }}</h2>
+        <span style="flex: 1; height: 2px; background: #0E0E0E;"></span>
+      </div>
+      <div style="border: 2px solid #0E0E0E; box-shadow: 6px 6px 0px #0E0E0E;">
+        <sc-for list="{{ t.jobs }}" as="j" hint-placeholder-count="3">
+          <article data-log-row style="display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 26px; padding: 26px 22px; border-bottom: 2px solid #0E0E0E; background: #EDEBE3;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12.5px; letter-spacing: 0.02em; background: #0E0E0E; color: #EDEBE3; padding: 5px 8px; align-self: flex-start;">{{ j.period }}</div>
+              <div style="font-family: 'Space Mono', monospace; font-size: 11px; color: #FF4B2B;">{{ j.duration }}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <h3 style="margin: 0 0 4px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: clamp(18px, 1.9vw, 25px); letter-spacing: -0.03em; text-transform: uppercase;">{{ j.role }}</h3>
+                <div style="font-size: 14px; font-weight: 600;">{{ j.company }}</div>
+              </div>
+              <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px;">
+                <sc-for list="{{ j.points }}" as="pt" hint-placeholder-count="4">
+                  <li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); font-size: 14.5px; line-height: 1.5; font-weight: 500;">
+                    <span style="font-family: 'Space Mono', monospace; font-weight: 700; color: #FF4B2B;">&gt;</span>
+                    <span style="text-wrap: pretty;">{{ pt }}</span>
+                  </li>
+                </sc-for>
+              </ul>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <sc-for list="{{ j.stack }}" as="s" hint-placeholder-count="5">
+                  <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 7px; border: 1px solid #0E0E0E;">{{ s }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="contact" data-pad aria-labelledby="contact-h" style="padding: 72px 32px 110px; background: {{ sec.contact.bg }}; transition: background 260ms;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px;">
+        <span style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.18em; padding: 4px 6px; background: {{ sec.contact.tagBg }}; color: {{ sec.contact.tagFg }}; transition: background 200ms, color 200ms;">§05</span>
+        <h2 id="contact-h" style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: {{ sec.contact.h }}; letter-spacing: -0.04em; text-transform: uppercase; color: {{ sec.contact.fg }}; transition: font-size 260ms cubic-bezier(.2,.8,.2,1), color 200ms;">{{ t.navContact }}</h2>
+        <span style="flex: 1; height: 2px; background: #0E0E0E;"></span>
+      </div>
+      <div data-bento style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+
+        <div style="grid-column: span 3; border: 2px solid #0E0E0E; background: #0E0E0E; color: #EDEBE3; padding: 26px 24px; box-shadow: 6px 6px 0px #FF4B2B; display: flex; flex-direction: column; gap: 22px;">
+          <h3 style="margin: 0; font-family: 'Space Mono', monospace; font-weight: 700; font-size: clamp(22px, 2.6vw, 36px); line-height: 1.05; letter-spacing: -0.04em; text-transform: uppercase; max-width: 18ch;">{{ t.contactTitle }}</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.5; font-weight: 500; max-width: 40ch; text-wrap: pretty;">{{ t.contactBody }}</p>
+          <div style="display: flex; flex-direction: column;">
+            <sc-for list="{{ contactLinks }}" as="c" hint-placeholder-count="5">
+              <a href="{{ c.href }}" target="_blank" rel="noreferrer" style="display: grid; grid-template-columns: minmax(0, 96px) minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 2px solid rgba(237,235,227,0.28); color: #EDEBE3; overflow-wrap: anywhere;" style-hover="color: #FF4B2B;">
+                <span style="font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">{{ c.label }}</span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 13px;">{{ c.value }}</span>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+
+        <form onSubmit="{{ onSubmitForm }}" style="grid-column: span 3; border: 2px solid #0E0E0E; background: #EDEBE3; padding: 26px 24px; box-shadow: 6px 6px 0px #0E0E0E; display: flex; flex-direction: column; gap: 18px;">
+          <div style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 2px solid #0E0E0E; padding-bottom: 8px;">{{ t.formTitle }}</div>
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">{{ t.formName }}</span>
+            <input type="text" value="{{ formName }}" onChange="{{ onFormName }}" required="{{ true }}" style="border: 2px solid #0E0E0E; background: #EDEBE3; padding: 10px 12px; font-size: 15px; outline: none; font-family: 'Space Mono', monospace;" style-focus="box-shadow: 4px 4px 0px #FF4B2B;" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">{{ t.formEmail }}</span>
+            <input type="email" value="{{ formEmail }}" onChange="{{ onFormEmail }}" required="{{ true }}" style="border: 2px solid #0E0E0E; background: #EDEBE3; padding: 10px 12px; font-size: 15px; outline: none; font-family: 'Space Mono', monospace;" style-focus="box-shadow: 4px 4px 0px #FF4B2B;" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">{{ t.formMessage }}</span>
+            <textarea rows="4" value="{{ formMessage }}" onChange="{{ onFormMessage }}" required="{{ true }}" style="border: 2px solid #0E0E0E; background: #EDEBE3; padding: 10px 12px; font-size: 15px; outline: none; resize: vertical; font-family: 'Work Sans', sans-serif;" style-focus="box-shadow: 4px 4px 0px #FF4B2B;"></textarea>
+          </label>
+          <button type="submit" style="align-self: flex-start; background: #0E0E0E; color: #EDEBE3; border: 2px solid #0E0E0E; padding: 14px 22px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-shadow: 5px 5px 0px #FF4B2B; transition: transform 80ms, box-shadow 80ms;" style-hover="transform: translate(-2px, -2px); box-shadow: 7px 7px 0px #FF4B2B;" style-active="transform: translate(5px, 5px); box-shadow: 0px 0px 0px #FF4B2B;">{{ t.formSend }}</button>
+          <div style="font-family: 'Space Mono', monospace; font-size: 10.5px; line-height: 1.5;">{{ t.formNote }}</div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <sc-if value="{{ showChat }}" hint-placeholder-val="{{ true }}">
+    <div style="position: fixed; right: 20px; bottom: 20px; z-index: 80; display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+      <sc-if value="{{ chatOpen }}">
+        <div data-chat role="log" style="width: 400px; max-height: min(540px, calc(100vh - 130px)); background: #0E0E0E; color: #EDEBE3; border: 2px solid #0E0E0E; box-shadow: 8px 8px 0px #FF4B2B; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-bottom: 2px solid #FF4B2B; background: #0E0E0E;">
+            <div style="display: flex; align-items: center; gap: 9px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">
+              <span style="width: 8px; height: 8px; background: #FF4B2B; display: inline-block;"></span>
+              <span>{{ t.chatTitle }}</span>
+            </div>
+            <button type="button" onClick="{{ onCloseChat }}" aria-label="Close" style="border: 2px solid #EDEBE3; background: transparent; color: #EDEBE3; cursor: pointer; width: 24px; height: 24px; display: grid; place-items: center;" style-hover="background: #FF4B2B; border-color: #FF4B2B;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+          </div>
+          <div style="padding: 6px 14px 8px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #FF4B2B; border-bottom: 1px solid rgba(237,235,227,0.2);">{{ t.chatStatus }}</div>
+          <div style="flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; font-family: 'Space Mono', monospace; font-size: 12.5px; line-height: 1.55;">
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+              <div style="display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px;">
+                <span style="color: {{ m.who_fg }}; font-weight: 700;">{{ m.who }}</span>
+                <span style="color: #EDEBE3; text-wrap: pretty;">{{ m.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="padding: 0 14px 10px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+              <button type="button" onClick="{{ s.onSelect }}" style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 5px 8px; border: 2px solid #EDEBE3; background: transparent; color: #EDEBE3; cursor: pointer;" style-hover="background: #FF4B2B; border-color: #FF4B2B;">{{ s.label }}</button>
+            </sc-for>
+          </div>
+          <form onSubmit="{{ onSendChat }}" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px 12px; border-top: 2px solid #FF4B2B;">
+            <span style="font-family: 'Space Mono', monospace; font-weight: 700; color: #FF4B2B;">&gt;</span>
+            <input type="text" value="{{ chatDraft }}" onChange="{{ onChatDraft }}" placeholder="{{ t.chatPlaceholder }}" aria-label="Message" style="flex: 1; border: 0; background: transparent; color: #EDEBE3; font-family: 'Space Mono', monospace; font-size: 12.5px; outline: none;" />
+            <button type="submit" aria-label="Send" style="border: 2px solid #EDEBE3; background: #FF4B2B; color: #EDEBE3; width: 30px; height: 30px; display: grid; place-items: center; cursor: pointer;" style-hover="border-color: #FF4B2B;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            </button>
+          </form>
+        </div>
+      </sc-if>
+      <button type="button" onClick="{{ onToggleChat }}" style="display: inline-flex; align-items: center; gap: 10px; background: #0E0E0E; color: #EDEBE3; border: 2px solid #0E0E0E; padding: 14px 20px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-shadow: 5px 5px 0px #FF4B2B; transition: transform 80ms, box-shadow 80ms;" style-hover="transform: translate(-2px, -2px); box-shadow: 7px 7px 0px #FF4B2B;" style-active="transform: translate(5px, 5px); box-shadow: 0px 0px 0px #FF4B2B;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M3 4h18v13H8l-5 4z"></path></svg>
+        <span>{{ chatButtonLabel }}</span>
+      </button>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;tr&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en' | 'tr'&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;showChat&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+const COPY = {
+  en: {
+    navAbout: "About", navSkills: "Skills", navProjects: "Projects", navExperience: "Experience", navContact: "Contact",
+    statusShort: "OPEN TO WORK",
+    heroEyebrow: ".NET 9 / React 19 / İstanbul",
+    heroTitle: "I ship systems that don't fall over.",
+    heroBody: "Full-stack. Backend-heavy. Two years of production platforms, most of it as the only engineer on the line — API to interface, architecture to Lighthouse score. I argue about latency, not frameworks.",
+    ctaPrimary: "Hire me", ctaSecondary: "Get the CV",
+    stats: [
+      { value: "−40%", label: "Data-access latency after Redis caching on core endpoints" },
+      { value: "95+", label: "Lighthouse on every frontend I've shipped" },
+      { value: "<2s", label: "Load time after asset + delivery work" },
+      { value: "+50%", label: "Platform performance from technical SEO" }
+    ],
+    about: [
+      { span: 3, title: "STANCE", text: "I started in frontend, moved to backend, and refused to pick. Guessing at the half of the request you can't see is how systems rot.", tone: "ink" },
+      { span: 3, title: "METHOD", text: "Layered architecture. Boundaries that hold. Redis, Hangfire and structured logs go in before the incident, not after it.", tone: "paper" },
+      { span: 6, title: "UNFILTERED", text: "I design in Figma before I write a line of JSX — grid, hierarchy, restraint. Same discipline as a good API: fewer things, placed exactly. That's why I don't hand the UI off.", tone: "accent" }
+    ],
+    education: "COMPUTER ENGINEERING / YALOVA UNIVERSITY / 2019—2026",
+    languages: "TR NATIVE / EN B2",
+    skills: [
+      { span: 4, title: "Languages & Frameworks", items: ["C#", ".NET 9", "ASP.NET Core", "TypeScript", "JavaScript", "React 19", "Next.js", "Node.js", "Python"] },
+      { span: 2, title: "Testing & Tools", items: ["xUnit", "Git", "GitHub", "Postman"] },
+      { span: 3, title: "Backend & Architecture", items: ["Layered Architecture", "RESTful APIs", "EF Core", "MySQL", "Redis", "Hangfire", "JWT + Rotation", "Serilog"] },
+      { span: 3, title: "Cloud & DevOps", items: ["Docker", "AWS S3", "Azure Key Vault", "Firebase", "Cloudflare", "Vercel"] },
+      { span: 6, title: "Frontend & UI/UX", items: ["MUI v7", "Figma", "Swiss-Style Systems", "Responsive Design", "Technical SEO"] }
+    ],
+    labelProblem: "Problem", labelArchitecture: "Architecture",
+    projects: [
+      { span: 4, index: "P/01", status: "In progress", title: "BeatPlus", problem: "One catalog, three roles — buyer, seller, admin — with licensing and upload rules that change per role.", architecture: "ASP.NET Core + EF Core API, JWT auth, Serilog. React + TypeScript client. Upload pipeline and role flows done; payments and admin panel in build.", metrics: ["3 roles", "JWT + rotation"], stack: ["ASP.NET Core", "EF Core", "React", "TypeScript"], links: [{ label: "Code", href: "https://github.com/Sametkrdg" }] },
+      { span: 2, index: "P/02", status: "Live", title: "Dekodem Yapı", problem: "A construction firm waiting on a developer for every photo swap.", architecture: "Custom admin panel over Firebase auth + data. Cloudflare image delivery. Technical SEO on every route.", metrics: ["<2s load", "95+ LH"], stack: ["React", "Next.js", "Firebase", "Cloudflare"], links: [{ label: "Live", href: "https://dekodemyapi.com" }] },
+      { span: 2, index: "P/03", status: "Live", title: "Portfolio", problem: "Recruiters skim. One page had to answer stack, impact and availability in thirty seconds.", architecture: "Single-page React + TypeScript with an integrated chat assistant and hand-written motion.", metrics: ["1 page", "Chat assistant"], stack: ["React", "TypeScript"], links: [{ label: "Live", href: "https://sametkaradag.com" }] },
+      { span: 4, index: "P/04", status: "Shipped", title: "Block Simulation", problem: "Site planners had no fast way to sketch blocks, buildings and paving to scale before committing to a construction plan.", architecture: "Unity tool for placing, resizing and labeling volumes. Exported to WebGL, deployed on Vercel.", metrics: ["Unity → WebGL", "Vercel"], stack: ["Unity", "C#", "WebGL"], links: [{ label: "Live", href: "https://block-simulation.vercel.app/" }] }
+    ],
+    jobs: [
+      { period: "DEC 2024 — JAN 2026", duration: "1 yr 2 mo / İstanbul", role: "Full-Stack Developer", company: "Tersan Shipyard", points: ["Sole full-stack contributor: backend architecture, UI/UX and performance, end to end.", "Architected .NET 9 Web APIs over MySQL on a layered architecture powering core platform features.", "Moved background processing to Hangfire — fewer manual interventions, stable nightly runs.", "Dockerized services; wired AWS S3 storage and Azure Key Vault secrets.", "Designed in Figma, shipped in React 19 + MUI v7, guarded releases with xUnit integration tests."], stack: [".NET 9", "MySQL", "React 19", "MUI v7", "Hangfire", "Docker", "AWS S3", "Azure Key Vault", "xUnit"] },
+      { period: "OCT 2023 — NOV 2024", duration: "1 yr 2 mo", role: "Backend Developer", company: "Mos Otomasyon ve Yazılım", points: ["Cut data-access time 40% with Redis caching across core endpoints.", "Built scalable .NET 9 Web APIs with EF Core and MySQL.", "Locked access down with JWT auth and refresh token rotation.", "Standardized deploys with Docker; added Serilog for real observability."], stack: [".NET 9", "EF Core", "Redis", "JWT", "Hangfire", "Serilog", "Docker"] },
+      { period: "JUN 2023 — SEP 2023", duration: "4 mo", role: "Frontend Developer", company: "Dekodem Yapı", points: ["Raised platform performance ~50% via technical SEO and asset work — 95+ Lighthouse.", "Pushed page load under 2 seconds with Cloudinary asset optimization.", "Built React / Next.js components against Figma specs on strict layout rules.", "Integrated Firebase for real-time content sync."], stack: ["React", "Next.js", "MUI", "Cloudinary", "Firebase"] }
+    ],
+    contactTitle: "Hiring for .NET or React?",
+    contactBody: "Email is fastest — I answer within a day. Work history is reference-checkable, code is public.",
+    formTitle: "// Transmit", formName: "Name", formEmail: "Email", formMessage: "Role or question", formSend: "Send it",
+    formNote: "Opens your mail client with the message prefilled. Nothing stored.",
+    chatTitle: "Console", chatStatus: "Static demo — answers not wired", chatPlaceholder: "type a question…",
+    chatSeed: "Static demo of the assistant on sametkaradag.com. Pick a prompt below.",
+    chatCanned: "DEMO SHELL — response layer not connected in this build.",
+    suggestions: ["stack?", "impact?", "available?"],
+    chatOpenLabel: "Close console", chatClosedLabel: "Open console"
+  },
+  tr: {
+    navAbout: "Hakkımda", navSkills: "Yetkinlik", navProjects: "Projeler", navExperience: "Deneyim", navContact: "İletişim",
+    statusShort: "İŞE AÇIK",
+    heroEyebrow: ".NET 9 / React 19 / İstanbul",
+    heroTitle: "Yük altında çökmeyen sistem kurarım.",
+    heroBody: "Full-stack. Backend ağırlıklı. İki yıl üretim platformu; çoğunda hattaki tek mühendis — API'den arayüze, mimariden Lighthouse skoruna. Framework değil, gecikme tartışırım.",
+    ctaPrimary: "İşe al", ctaSecondary: "CV'yi al",
+    stats: [
+      { value: "−%40", label: "Çekirdek endpoint'lerde Redis cache sonrası veri erişim gecikmesi" },
+      { value: "95+", label: "Yayına aldığım her arayüzde Lighthouse" },
+      { value: "<2s", label: "Asset ve dağıtım çalışması sonrası yüklenme" },
+      { value: "+%50", label: "Teknik SEO ile platform performansı" }
+    ],
+    about: [
+      { span: 3, title: "DURUŞ", text: "Frontend'de başladım, backend'e geçtim ve birini seçmeyi reddettim. İsteğin göremediğin yarısını tahmin etmek sistemi çürütür.", tone: "ink" },
+      { span: 3, title: "YÖNTEM", text: "Katmanlı mimari. Tutan sınırlar. Redis, Hangfire ve yapılandırılmış log olaydan sonra değil, önce girer.", tone: "paper" },
+      { span: 6, title: "FİLTRESİZ", text: "Tek satır JSX yazmadan Figma'da tasarlarım — grid, hiyerarşi, kendini tutma. İyi bir API'yle aynı disiplin: daha az şey, tam yerinde. UI'ı bu yüzden devretmiyorum.", tone: "accent" }
+    ],
+    education: "BİLGİSAYAR MÜHENDİSLİĞİ / YALOVA ÜNİVERSİTESİ / 2019—2026",
+    languages: "TR ANA DİL / EN B2",
+    skills: [
+      { span: 4, title: "Diller & Framework", items: ["C#", ".NET 9", "ASP.NET Core", "TypeScript", "JavaScript", "React 19", "Next.js", "Node.js", "Python"] },
+      { span: 2, title: "Test & Araçlar", items: ["xUnit", "Git", "GitHub", "Postman"] },
+      { span: 3, title: "Backend & Mimari", items: ["Katmanlı Mimari", "RESTful API", "EF Core", "MySQL", "Redis", "Hangfire", "JWT + Rotation", "Serilog"] },
+      { span: 3, title: "Cloud & DevOps", items: ["Docker", "AWS S3", "Azure Key Vault", "Firebase", "Cloudflare", "Vercel"] },
+      { span: 6, title: "Frontend & UI/UX", items: ["MUI v7", "Figma", "İsviçre Tarzı Sistem", "Responsive Tasarım", "Teknik SEO"] }
+    ],
+    labelProblem: "Problem", labelArchitecture: "Mimari",
+    projects: [
+      { span: 4, index: "P/01", status: "Geliştirmede", title: "BeatPlus", problem: "Tek katalog, üç rol — alıcı, satıcı, admin — ve role göre değişen lisans ile yükleme kuralları.", architecture: "JWT ve Serilog'lu ASP.NET Core + EF Core API. React + TypeScript arayüz. Yükleme hattı ve rol akışları tamam; ödeme ve admin paneli geliştirmede.", metrics: ["3 rol", "JWT + rotation"], stack: ["ASP.NET Core", "EF Core", "React", "TypeScript"], links: [{ label: "Kod", href: "https://github.com/Sametkrdg" }] },
+      { span: 2, index: "P/02", status: "Yayında", title: "Dekodem Yapı", problem: "Her fotoğraf değişikliğinde geliştirici bekleyen bir inşaat firması.", architecture: "Firebase auth + veri üzerine özel admin panel. Cloudflare görsel dağıtımı. Her route'ta teknik SEO.", metrics: ["<2s yükleme", "95+ LH"], stack: ["React", "Next.js", "Firebase", "Cloudflare"], links: [{ label: "Canlı", href: "https://dekodemyapi.com" }] },
+      { span: 2, index: "P/03", status: "Yayında", title: "Portfolyo", problem: "İşe alım tarafı hızlı tarar. Tek sayfa; stack, etki ve müsaitlik otuz saniyede.", architecture: "Entegre sohbet asistanı ve elle yazılmış animasyonlu tek sayfa React + TypeScript.", metrics: ["1 sayfa", "Sohbet asistanı"], stack: ["React", "TypeScript"], links: [{ label: "Canlı", href: "https://sametkaradag.com" }] },
+      { span: 4, index: "P/04", status: "Tamamlandı", title: "Block Simulation", problem: "Saha planlamacılarının inşaat planına geçmeden blok, bina ve kaplamayı ölçekli çizecek hızlı bir aracı yoktu.", architecture: "Hacim yerleştirme, boyutlandırma ve etiketleme için Unity aracı. WebGL çıktısı, Vercel dağıtımı.", metrics: ["Unity → WebGL", "Vercel"], stack: ["Unity", "C#", "WebGL"], links: [{ label: "Canlı", href: "https://block-simulation.vercel.app/" }] }
+    ],
+    jobs: [
+      { period: "ARA 2024 — OCA 2026", duration: "1 yıl 2 ay / İstanbul", role: "Full-Stack Developer", company: "Tersan Shipyard", points: ["Tek full-stack geliştirici: backend mimarisi, UI/UX ve performans, uçtan uca.", "Çekirdek özellikleri besleyen, MySQL üzerinde katmanlı mimarili .NET 9 Web API'ler kurguladım.", "Arka plan işlerini Hangfire'a taşıdım — daha az manuel müdahale, stabil gece koşuları.", "Servisleri Docker'a aldım; AWS S3 depolama ve Azure Key Vault secret yönetimi bağladım.", "Figma'da tasarlayıp React 19 + MUI v7 ile yayına aldım, sürümleri xUnit testleriyle korudum."], stack: [".NET 9", "MySQL", "React 19", "MUI v7", "Hangfire", "Docker", "AWS S3", "Azure Key Vault", "xUnit"] },
+      { period: "EKİ 2023 — KAS 2024", duration: "1 yıl 2 ay", role: "Backend Developer", company: "Mos Otomasyon ve Yazılım", points: ["Çekirdek endpoint'lere Redis cache ekleyip veri erişim süresini %40 düşürdüm.", "EF Core ve MySQL ile ölçeklenebilir .NET 9 Web API'ler geliştirdim.", "Erişimi JWT ve refresh token rotation ile kilitledim.", "Dağıtımları Docker ile standartlaştırdım; gerçek gözlemlenebilirlik için Serilog ekledim."], stack: [".NET 9", "EF Core", "Redis", "JWT", "Hangfire", "Serilog", "Docker"] },
+      { period: "HAZ 2023 — EYL 2023", duration: "4 ay", role: "Frontend Developer", company: "Dekodem Yapı", points: ["Teknik SEO ve asset çalışmasıyla platform performansını ~%50 artırdım — 95+ Lighthouse.", "Cloudinary asset optimizasyonuyla sayfa yüklenmesini 2 saniyenin altına indirdim.", "Figma spec'lerine göre katı yerleşim kurallarıyla React / Next.js bileşenleri geliştirdim.", "Gerçek zamanlı içerik senkronu için Firebase entegre ettim."], stack: ["React", "Next.js", "MUI", "Cloudinary", "Firebase"] }
+    ],
+    contactTitle: ".NET veya React mı arıyorsunuz?",
+    contactBody: "En hızlısı e-posta — bir gün içinde dönerim. İş geçmişi referans verilebilir, kod açık.",
+    formTitle: "// İLET", formName: "Ad", formEmail: "E-posta", formMessage: "Pozisyon veya soru", formSend: "Gönder",
+    formNote: "Mesaj hazır şekilde mail uygulamanızı açar. Hiçbir veri saklanmaz.",
+    chatTitle: "Konsol", chatStatus: "Statik demo — cevaplar bağlı değil", chatPlaceholder: "bir soru yaz…",
+    chatSeed: "sametkaradag.com'daki asistanın statik demosu. Aşağıdan bir soru seç.",
+    chatCanned: "DEMO ARAYÜZ — cevap katmanı bu yapıda bağlı değil.",
+    suggestions: ["stack?", "etki?", "müsait?"],
+    chatOpenLabel: "Konsolu kapat", chatClosedLabel: "Konsolu aç"
+  }
+};
+
+const THEMES = ["retro", "brutalist", "minimal", "blueprint", "glass"];
+const INK = "#0E0E0E", PAPER = "#EDEBE3", ACCENT = "#FF4B2B";
+
+class Component extends DCLogic {
+  state = {
+    lang: null, theme: "brutalist", active: "hero", progress: 0,
+    chatOpen: false, chatDraft: "", msgs: [], formName: "", formEmail: "", formMessage: ""
+  };
+
+  lang() { return this.state.lang || this.props.defaultLang || "en"; }
+  copy() { return COPY[this.lang()] || COPY.en; }
+
+  componentDidMount() {
+    const ids = ["hero", "about", "skills", "projects", "experience", "contact"];
+    this.io = new IntersectionObserver((entries) => {
+      const hit = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (hit && hit.target.id !== this.state.active) this.setState({ active: hit.target.id });
+    }, { rootMargin: "-42% 0px -42% 0px", threshold: [0, 0.15, 0.5] });
+    ids.forEach(id => { const el = document.getElementById(id); if (el) this.io.observe(el); });
+
+    this.onScroll = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const p = max > 0 ? Math.min(1, h.scrollTop / max) : 0;
+      if (Math.abs(p - this.state.progress) > 0.004) this.setState({ progress: p });
+    };
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+    this.onScroll();
+  }
+  componentWillUnmount() {
+    if (this.io) this.io.disconnect();
+    window.removeEventListener("scroll", this.onScroll);
+  }
+
+  seeded() {
+    const t = this.copy();
+    return this.state.msgs.length ? this.state.msgs : [{ who: "bot", text: t.chatSeed }];
+  }
+  push(text) {
+    const t = this.copy();
+    this.setState({ chatDraft: "", msgs: [...this.seeded(), { who: "me", text }, { who: "bot", text: t.chatCanned }] });
+  }
+
+  renderVals() {
+    const t = this.copy();
+    const lang = this.lang();
+    const active = this.state.active;
+
+    const nav = [
+      { id: "about", label: t.navAbout }, { id: "skills", label: t.navSkills },
+      { id: "projects", label: t.navProjects }, { id: "experience", label: t.navExperience },
+      { id: "contact", label: t.navContact }
+    ].map(n => {
+      const on = active === n.id;
+      return {
+        ...n, href: "#" + n.id, current: on ? "true" : "false",
+        size: on ? "20px" : "12px",
+        pad: on ? "12px 16px" : "8px 11px",
+        bg: on ? ACCENT : "transparent",
+        fg: on ? PAPER : INK,
+        border: on ? INK : "rgba(14,14,14,0.35)",
+        shadow: on ? "4px 4px 0px " + INK : "0px 0px 0px " + INK
+      };
+    });
+
+    const variants = THEMES.map(id => {
+      const on = this.state.theme === id;
+      return {
+        label: id,
+        bg: on ? INK : PAPER, fg: on ? PAPER : INK,
+        shadow: on ? "4px 4px 0px " + ACCENT : "2px 2px 0px " + INK,
+        transform: on ? "translate(-1px, -1px)" : "none",
+        onSelect: () => this.setState({ theme: id })
+      };
+    });
+    const variantNote = this.state.theme === "brutalist"
+      ? (lang === "tr" ? "05 — HAM BETON / AKTİF" : "05 — RAW CONCRETE / ACTIVE")
+      : (lang === "tr" ? this.state.theme.toUpperCase() + " / HENÜZ KURULMADI" : this.state.theme.toUpperCase() + " / NOT BUILT YET");
+
+    const langs = [{ id: "en", label: "EN" }, { id: "tr", label: "TR" }].map(l => {
+      const on = lang === l.id;
+      return { label: l.label, bg: on ? ACCENT : PAPER, fg: on ? PAPER : INK, onSelect: () => this.setState({ lang: l.id, msgs: [] }) };
+    });
+
+    const toneMap = {
+      ink: { bg: INK, fg: PAPER, label: ACCENT },
+      paper: { bg: PAPER, fg: INK, label: ACCENT },
+      accent: { bg: ACCENT, fg: PAPER, label: INK }
+    };
+
+    const messages = this.seeded().map(m => m.who === "me"
+      ? { who: (lang === "tr" ? "SEN >" : "YOU >"), who_fg: PAPER, text: m.text }
+      : { who: "SYS >", who_fg: ACCENT, text: m.text });
+
+    return {
+      t, lang,
+      navItems: nav, variants, variantNote, langs, messages,
+      progress: Math.round(this.state.progress * 1000) / 10 + "%",
+      sec: ["about", "skills", "projects", "experience", "contact"].reduce((acc, id) => {
+        const on = active === id;
+        acc[id] = {
+          bg: on ? "#E4E1D5" : PAPER,
+          h: on ? "clamp(38px, 5.6vw, 76px)" : "clamp(26px, 3.6vw, 46px)",
+          fg: on ? ACCENT : INK,
+          tagBg: on ? ACCENT : "transparent",
+          tagFg: on ? PAPER : ACCENT
+        };
+        return acc;
+      }, {}),
+      aboutCards: t.about.map(a => ({ ...a, ...toneMap[a.tone] })),
+      showChat: this.props.showChat ?? true,
+      chatOpen: this.state.chatOpen,
+      chatDraft: this.state.chatDraft,
+      chatButtonLabel: this.state.chatOpen ? t.chatOpenLabel : t.chatClosedLabel,
+      suggestions: t.suggestions.map(s => ({ label: s, onSelect: () => this.push(s) })),
+      onToggleChat: () => this.setState(s => ({ chatOpen: !s.chatOpen })),
+      onCloseChat: () => this.setState({ chatOpen: false }),
+      onChatDraft: (e) => this.setState({ chatDraft: e.target.value }),
+      onSendChat: (e) => { e.preventDefault(); const v = this.state.chatDraft.trim(); if (v) this.push(v); },
+      cvHref: (window.__resources && window.__resources.cvPdf) || "uploads/content_source-1788172964175-pxgk.pdf",
+      contactLinks: [
+        { label: "Email", href: "mailto:sametkrdg80@gmail.com", value: "sametkrdg80@gmail.com" },
+        { label: "Phone", href: "tel:+905414747780", value: "+90 541 474 77 80" },
+        { label: "GitHub", href: "https://github.com/Sametkrdg", value: "github.com/Sametkrdg" },
+        { label: "LinkedIn", href: "https://linkedin.com/in/sametkrdg", value: "linkedin.com/in/sametkrdg" },
+        { label: "Site", href: "https://sametkaradag.com", value: "sametkaradag.com" }
+      ],
+      formName: this.state.formName, formEmail: this.state.formEmail, formMessage: this.state.formMessage,
+      onFormName: (e) => this.setState({ formName: e.target.value }),
+      onFormEmail: (e) => this.setState({ formEmail: e.target.value }),
+      onFormMessage: (e) => this.setState({ formMessage: e.target.value }),
+      onSubmitForm: (e) => {
+        e.preventDefault();
+        const s = this.state;
+        const subject = encodeURIComponent((lang === "tr" ? "Portfolyo: " : "Portfolio: ") + (s.formName || ""));
+        const body = encodeURIComponent(s.formMessage + "\n\n— " + s.formName + " (" + s.formEmail + ")");
+        window.location.href = "mailto:sametkrdg80@gmail.com?subject=" + subject + "&body=" + body;
+      },
+      _tone: toneMap
+    };
+  }
+}
+</script>
+</body>
+</html>

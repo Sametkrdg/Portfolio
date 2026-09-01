@@ -96,10 +96,19 @@ export default function Hero() {
     <section
       ref={containerRef}
       id="hero"
-      className="relative flex min-h-[calc(100dvh-4rem)] flex-col items-center justify-center overflow-hidden px-6 text-center"
+      /* overflow-x-hidden: stops the WarpStars/Meteors at the canvas edges
+       * from triggering horizontal scroll on phones (the canvas is wider
+       * than the viewport when fov=60). px-4 on mobile, sm:px-6 on larger. */
+      /* `isolate` creates a new stacking context on the section so the
+       * canvas's negative z-index is fully contained — without it,
+       * `-z-10` would escape upward and the boundary fallback could
+       * paint over the body bg rather than behind the hero content. */
+      className="relative isolate flex min-h-[calc(100dvh-4rem)] w-full flex-col items-center justify-center overflow-hidden px-4 text-center sm:px-6"
     >
-      {/* ── 3D canvas: absolute background, pointer-events off ── */}
-      <div className="pointer-events-none absolute inset-0 z-0">
+      {/* ── 3D canvas: absolute background, pointer-events off ──
+       * z-0 inside the `isolate` section guarantees the canvas (and any
+       * boundary fallback it renders) sits behind every DOM sibling. */}
+      <div className="pointer-events-none absolute inset-0 z-0 h-full w-full">
         <Suspense fallback={<CanvasSkeleton />}>
           <HeroCanvas />
         </Suspense>
@@ -114,8 +123,10 @@ export default function Hero() {
         }}
       />
 
-      {/* ── Content ── */}
-      <div className="relative z-[2] flex max-w-5xl flex-col items-center gap-6">
+      {/* ── Content ──
+       * w-full so the column always fills the section, max-w-5xl caps it
+       * on desktop. gap-5 on mobile (was 6) for tighter vertical rhythm. */}
+      <div className="relative z-[2] flex w-full max-w-5xl flex-col items-center gap-5 sm:gap-6">
 
         {/* Eyebrow */}
         <p
@@ -125,8 +136,10 @@ export default function Hero() {
           Available for opportunities
         </p>
 
-        {/* Headline */}
-        <h1 className="hero-name text-6xl font-black leading-[0.95] tracking-tight text-[var(--color-text-primary)] sm:text-7xl lg:text-8xl xl:text-9xl">
+        {/* Headline — mobile-first scale: 5xl on phones → 9xl on 4K.
+         * `break-words` guards against the long Turkish "ğ" extending past
+         * the viewport in narrow screen widths. */}
+        <h1 className="hero-name text-5xl font-black leading-[0.95] tracking-tight text-[var(--color-text-primary)] break-words sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
           Samet{" "}
           <span
             className="text-[var(--color-cyan-neon)]"
@@ -136,14 +149,16 @@ export default function Hero() {
           </span>
         </h1>
 
-        {/* Role */}
-        <p className="hero-role text-xl font-medium text-[var(--color-text-secondary)] sm:text-2xl">
+        {/* Role — scales lg → 2xl. balance keeps "Full-Stack Engineer" on
+         * its own line on phones so it doesn't wrap awkwardly. */}
+        <p className="hero-role text-lg font-medium text-balance text-[var(--color-text-secondary)] sm:text-xl md:text-2xl">
           Backend Developer &amp;{" "}
           <span className="text-[var(--color-purple-neon)]">Full-Stack Engineer</span>
         </p>
 
-        {/* Bio */}
-        <p className="hero-bio max-w-xl text-base leading-relaxed text-[var(--color-text-muted)]">
+        {/* Bio — explicit horizontal padding on phones so the line never
+         * touches the edge; max-w cap stays for desktop legibility. */}
+        <p className="hero-bio max-w-xl px-2 text-sm leading-relaxed text-[var(--color-text-muted)] sm:px-0 sm:text-base">
           Architecting high-scale systems with{" "}
           <span className="text-[var(--color-text-secondary)]">.NET 9</span>,{" "}
           <span className="text-[var(--color-text-secondary)]">Clean Architecture</span>, and{" "}
@@ -151,13 +166,15 @@ export default function Hero() {
           bridging complex backend logic with precision-driven UI.
         </p>
 
-        {/* ── CTAs ── */}
-        <div className="hero-ctas flex flex-wrap items-center justify-center gap-4 pt-2">
+        {/* ── CTAs ──
+         * Phones: stacked column, full-width buttons (w-full inside w-xs).
+         * sm+: original wrap-row layout. */}
+        <div className="hero-ctas flex w-full max-w-xs flex-col items-stretch gap-3 pt-2 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
 
           {/* Primary — cyan fill */}
           <motion.a
             href="#projects"
-            className="rounded-full bg-[var(--color-cyan-neon)] px-8 py-3 text-sm font-bold tracking-wide text-[var(--color-bg-base)]"
+            className="w-full rounded-full bg-[var(--color-cyan-neon)] px-8 py-3 text-sm font-bold tracking-wide text-[var(--color-bg-base)] sm:w-auto"
             whileHover={{ scale: 1.06, boxShadow: "0 0 30px rgba(0,217,255,0.55)" }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -167,9 +184,9 @@ export default function Hero() {
 
           {/* Secondary — electric purple ghost */}
           <motion.a
-            href="/001-Samet-Karadag.pdf"
+            href="/cv/samet-karadag.pdf"
             download
-            className="rounded-full border border-[var(--color-purple-neon)] px-8 py-3 text-sm font-bold tracking-wide text-[var(--color-purple-neon)]"
+            className="w-full rounded-full border border-[var(--color-purple-neon)] px-8 py-3 text-sm font-bold tracking-wide text-[var(--color-purple-neon)] sm:w-auto"
             whileHover={{
               scale: 1.06,
               backgroundColor: "rgba(180,77,255,0.08)",
@@ -190,7 +207,7 @@ export default function Hero() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.85 }}
               transition={{ duration: 0.18 }}
-              className="flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold tracking-wide transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold tracking-wide transition-colors sm:w-auto"
               style={{
                 borderColor: isActive ? "rgba(0,217,255,0.5)" : "rgba(255,255,255,0.12)",
                 color: isActive ? "var(--color-cyan-neon)" : "var(--color-text-muted)",

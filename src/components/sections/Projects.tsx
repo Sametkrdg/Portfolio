@@ -8,10 +8,9 @@ import {
   useMotionTemplate,
 } from "framer-motion";
 import { useRef } from "react";
-import portfolioData from "@/src/data/portfolio-context.json";
-
-/* ─── Types inferred from JSON ─── */
-type Project = (typeof portfolioData.projects)[number];
+import { useTranslations } from "next-intl";
+import { content } from "@/src/lib/content";
+import type { Locale, ProjectEntry } from "@/src/lib/types";
 
 /* ─── Entrance variants ─── */
 const containerVariants = {
@@ -32,18 +31,17 @@ const cardVariants = {
   },
 };
 
-/* ─── Status config ─── */
-const STATUS = {
-  "Completed":  { label: "Completed",  rgb: "rgba(0, 217, 255",   neon: "var(--color-cyan-neon)"   },
-  "In Progress":{ label: "In Progress",rgb: "rgba(180, 77, 255", neon: "var(--color-purple-neon)" },
+/* ─── Status colours (the label itself comes from messages/*.json) ─── */
+const STATUS_COLOR = {
+  "live":        { rgb: "rgba(0, 217, 255",  neon: "var(--color-cyan-neon)"   },
+  "in-progress": { rgb: "rgba(180, 77, 255", neon: "var(--color-purple-neon)" },
+  "completed":   { rgb: "rgba(0, 217, 255",  neon: "var(--color-cyan-neon)"   },
 } as const;
 
-function getStatus(s: string) {
-  return STATUS[s as keyof typeof STATUS] ?? STATUS["Completed"];
-}
-
 /* ─── Project card with 3D tilt + mouse-tracking spotlight ─── */
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project, locale }: { project: ProjectEntry; locale: Locale }) {
+  const tStatus = useTranslations("status");
+  const tLink = useTranslations("projectLink");
   const cardRef = useRef<HTMLDivElement>(null);
 
   /*
@@ -64,7 +62,7 @@ function ProjectCard({ project }: { project: Project }) {
   const spotX = useTransform(smoothX, [-0.5, 0.5], [0, 100]);
   const spotY = useTransform(smoothY, [-0.5, 0.5], [0, 100]);
 
-  const status = getStatus(project.status);
+  const status = STATUS_COLOR[project.status];
 
   /*
    * Reactive gradient string — recomputed by Framer Motion on every frame
@@ -84,8 +82,8 @@ function ProjectCard({ project }: { project: Project }) {
     rawY.set(0);
   }
 
-  const hasLive   = Boolean(project.links.live);
-  const hasGithub = Boolean(project.links.github);
+  const live = project.links.find((l) => l.kind === "live");
+  const code = project.links.find((l) => l.kind === "code");
 
   return (
     /*
@@ -150,29 +148,29 @@ function ProjectCard({ project }: { project: Project }) {
                 border: `1px solid ${status.rgb}, 0.22)`,
               }}
             >
-              {status.label}
+              {tStatus(project.status)}
             </span>
 
-            {(hasLive || hasGithub) && (
+            {(live || code) && (
               <div className="flex items-center gap-3">
-                {hasLive && (
+                {live && (
                   <a
-                    href={project.links.live}
+                    href={live.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs font-semibold text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-cyan-neon)]"
                   >
-                    Live ↗
+                    {tLink("live")} ↗
                   </a>
                 )}
-                {hasGithub && (
+                {code && (
                   <a
-                    href={project.links.github}
+                    href={code.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs font-semibold text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-purple-neon)]"
                   >
-                    GitHub ↗
+                    {tLink("code")} ↗
                   </a>
                 )}
               </div>
@@ -189,12 +187,12 @@ function ProjectCard({ project }: { project: Project }) {
 
           {/* Description */}
           <p className="flex-1 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-            {project.description}
+            {project.problem[locale]}
           </p>
 
           {/* Tech stack badges */}
           <div className="flex flex-wrap gap-2 pt-1">
-            {project.tech.map((t) => (
+            {project.stack.map((t) => (
               <span
                 key={t}
                 className="rounded-full px-2.5 py-0.5 text-[11px] font-medium"
@@ -216,7 +214,7 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 /* ─── Section ─── */
-export default function Projects() {
+export default function Projects({ locale }: { locale: Locale }) {
   return (
     <section
       id="projects"
@@ -252,8 +250,8 @@ export default function Projects() {
           viewport={{ once: true, margin: "-80px" }}
           className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
-          {portfolioData.projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+          {content.projects.map((project) => (
+            <ProjectCard key={project.id} project={project} locale={locale} />
           ))}
         </motion.div>
 

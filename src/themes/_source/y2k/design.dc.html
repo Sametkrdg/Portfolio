@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #12101C; color: #F1ECFF; font-family: Sora, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #00F5D4; text-decoration: none; }
+  a:hover { color: #FF3BD4; }
+  ::selection { background: #FF3BD4; color: #12101C; }
+  input, textarea, button { font: inherit; color: inherit; }
+  @keyframes sig-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @keyframes sig-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+  @keyframes sig-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
+  @media (max-width: 1040px) {
+    [data-two] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-bento] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-bento] > * { grid-column: span 1 !important; }
+    [data-log] { grid-template-columns: minmax(0, 1fr) !important; gap: 14px !important; }
+    [data-deck] { grid-template-columns: minmax(0, 1fr) !important; }
+    [data-pad] { padding-left: 20px !important; padding-right: 20px !important; }
+    [data-hud] { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+    [data-chat] { width: calc(100vw - 24px) !important; }
+  }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; background: #12101C; overflow-x: hidden;">
+
+  <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: linear-gradient(rgba(241,236,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,255,0.045) 1px, transparent 1px); background-size: 44px 44px; mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 78%);"></div>
+  <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 1px, transparent 3px); opacity: 0.5;"></div>
+  <div aria-hidden="true" style="position: fixed; top: 0; left: 0; right: 0; height: 120px; z-index: 2; pointer-events: none; background: linear-gradient(to bottom, rgba(0,245,212,0.09), transparent); animation: sig-scan 7.5s linear infinite;"></div>
+  <div aria-hidden="true" style="position: fixed; top: -18%; left: 50%; width: 1100px; height: 620px; transform: translateX(-50%); z-index: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(255,59,212,0.2), transparent 66%); filter: blur(30px);"></div>
+
+  <div style="position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 90; background: rgba(241,236,255,0.09);">
+    <div style="height: 100%; width: {{ progress }}; background: linear-gradient(90deg, #00F5D4, #FF3BD4); box-shadow: 0 0 12px #FF3BD4; transition: width 90ms linear;"></div>
+  </div>
+
+  <div data-pad style="position: relative; z-index: 10; border-bottom: 1px solid rgba(0,245,212,0.22); padding: 12px 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;">
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #00F5D4;">SKIN.SELECT</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="6">
+        <button type="button" onClick="{{ v.onSelect }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 11px; border: 1px solid {{ v.border }}; background: {{ v.bg }}; color: {{ v.fg }}; cursor: pointer; box-shadow: {{ v.glow }}; transition: box-shadow 180ms, border-color 180ms, color 180ms;" style-hover="border-color: #FF3BD4; color: #FF3BD4;">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: #FF3BD4; margin-left: auto;">{{ variantNote }}</span>
+  </div>
+
+  <header data-pad style="position: sticky; top: 0; z-index: 80; padding: 0 40px; background: rgba(18,16,28,0.86); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(241,236,255,0.14);">
+    <div data-hud style="display: flex; align-items: center; gap: 22px; min-height: 74px;">
+      <div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0;">
+        <span style="font-family: Sora, sans-serif; font-weight: 800; font-size: 17px; letter-spacing: -0.02em;">SAMET<span style="color: #FF3BD4;">.</span>KRDG</span>
+        <span style="display: inline-flex; align-items: center; gap: 7px; border: 1px solid #00F5D4; padding: 4px 9px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; color: #00F5D4; box-shadow: 0 0 14px rgba(0,245,212,0.32) inset;">
+          <span style="width: 6px; height: 6px; background: #00F5D4; display: inline-block; box-shadow: 0 0 8px #00F5D4; animation: sig-pulse 1.6s ease-in-out infinite;"></span>
+          <span>{{ t.statusBadge }}</span>
+        </span>
+      </div>
+      <nav aria-label="Sections" style="display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-left: auto;">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+          <a href="{{ n.href }}" aria-current="{{ n.current }}" style="font-family: 'IBM Plex Mono', monospace; font-size: {{ n.size }}; font-weight: {{ n.weight }}; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; padding: {{ n.pad }}; border: 1px solid {{ n.border }}; background: {{ n.bg }}; color: {{ n.fg }}; box-shadow: {{ n.glow }}; transition: font-size 200ms cubic-bezier(.2,.8,.2,1), padding 200ms, box-shadow 180ms, color 180ms, border-color 180ms;" style-hover="border-color: #FF3BD4; color: #FF3BD4;">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(241,236,255,0.55);">{{ clock }}</span>
+        <div style="display: flex; gap: 5px;">
+          <sc-for list="{{ langs }}" as="l" hint-placeholder-count="2">
+            <button type="button" onClick="{{ l.onSelect }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; padding: 4px 8px; border: 1px solid {{ l.border }}; background: {{ l.bg }}; color: {{ l.fg }}; cursor: pointer;">{{ l.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 10;">
+
+    <section id="hero" data-pad aria-labelledby="hero-h" style="padding: 68px 40px 76px; border-bottom: 1px solid rgba(241,236,255,0.12);">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.28em; text-transform: uppercase; color: #00F5D4; margin-bottom: 26px;">{{ t.heroEyebrow }}</div>
+      <h1 id="hero-h" style="margin: 0 0 30px; font-family: Sora, sans-serif; font-weight: 800; font-size: clamp(42px, 8.6vw, 128px); line-height: 0.93; letter-spacing: -0.045em; max-width: 20ch; text-wrap: balance;">{{ heroA }}<span style="background: linear-gradient(96deg, #FF3BD4 12%, #00F5D4 88%); -webkit-background-clip: text; background-clip: text; color: transparent;">{{ heroB }}</span></h1>
+      <div data-two style="display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 44px; align-items: start;">
+        <div>
+          <p style="margin: 0 0 30px; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.62; color: rgba(241,236,255,0.82); max-width: 52ch; text-wrap: pretty;">{{ t.heroBody }}</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+            <a href="#contact" style="display: inline-flex; align-items: center; gap: 11px; padding: 16px 26px; border: 1px solid #FF3BD4; background: rgba(255,59,212,0.13); color: #F1ECFF; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase; box-shadow: 0 0 22px rgba(255,59,212,0.28); transition: box-shadow 200ms, transform 140ms, background 200ms;" style-hover="box-shadow: 0 0 42px rgba(255,59,212,0.6); background: rgba(255,59,212,0.24); transform: translateY(-2px); color: #F1ECFF;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M3 5h18v14H3z"></path><path d="m3 6 9 7 9-7"></path></svg>
+              <span>{{ t.ctaPrimary }}</span>
+            </a>
+            <a href="{{ cvHref }}" download="Samet-Karadag-CV.pdf" style="display: inline-flex; align-items: center; gap: 11px; padding: 16px 26px; border: 1px solid #00F5D4; background: rgba(0,245,212,0.08); color: #F1ECFF; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase; box-shadow: 0 0 18px rgba(0,245,212,0.22); transition: box-shadow 200ms, transform 140ms;" style-hover="box-shadow: 0 0 40px rgba(0,245,212,0.5); transform: translateY(-2px); color: #F1ECFF;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 15v5h16v-5"></path><path d="m7 11 5 5 5-5"></path><path d="M12 16V3"></path></svg>
+              <span>{{ t.ctaSecondary }}</span>
+            </a>
+          </div>
+        </div>
+        <div style="border: 1px solid rgba(0,245,212,0.3); background: rgba(0,245,212,0.04); padding: 20px 18px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #00F5D4;">
+            <span>{{ t.telemetryLabel }}</span>
+            <span style="color: rgba(241,236,255,0.45);">v2.6</span>
+          </div>
+          <sc-for list="{{ t.stats }}" as="s" hint-placeholder-count="4">
+            <div style="display: flex; align-items: baseline; gap: 14px; padding-bottom: 11px; border-bottom: 1px solid rgba(241,236,255,0.12);">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 25px; letter-spacing: -0.02em; color: {{ s.color }}; min-width: 88px; text-shadow: 0 0 16px {{ s.color }};">{{ s.value }}</span>
+              <span style="font-size: 12.5px; line-height: 1.45; color: rgba(241,236,255,0.72); text-wrap: pretty;">{{ s.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" data-pad aria-labelledby="about-h" style="padding: 62px 40px; border-bottom: 1px solid rgba(241,236,255,0.12); background: {{ sec.about.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 30px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.2em; padding: 4px 8px; border: 1px solid {{ sec.about.tag }}; color: {{ sec.about.tag }}; box-shadow: {{ sec.about.glow }};">{{ t.secAbout }}</span>
+        <h2 id="about-h" style="margin: 0; font-family: Sora, sans-serif; font-weight: 700; font-size: {{ sec.about.h }}; letter-spacing: -0.035em; color: {{ sec.about.fg }}; text-shadow: {{ sec.about.textGlow }}; transition: font-size 280ms cubic-bezier(.2,.8,.2,1), color 220ms, text-shadow 220ms;">{{ t.navAbout }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.about.rule }}; transition: background 240ms;"></span>
+      </div>
+      <div data-bento style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{ aboutCards }}" as="a" hint-placeholder-count="3">
+          <article style="grid-column: span {{ a.span }}; border: 1px solid {{ a.border }}; background: {{ a.bg }}; padding: 22px 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: {{ a.glow }};">
+            <h3 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: {{ a.label }};">{{ a.title }}</h3>
+            <p style="margin: 0; font-size: 15.5px; line-height: 1.62; color: rgba(241,236,255,0.86); text-wrap: pretty;">{{ a.text }}</p>
+          </article>
+        </sc-for>
+        <div style="grid-column: span 6; border: 1px solid rgba(241,236,255,0.16); padding: 16px 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px 26px;">
+          <sc-for list="{{ t.dossier }}" as="d" hint-placeholder-count="4">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #00F5D4;">{{ d.k }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: rgba(241,236,255,0.8);">{{ d.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" data-pad aria-labelledby="skills-h" style="padding: 62px 40px; border-bottom: 1px solid rgba(241,236,255,0.12); background: {{ sec.skills.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.2em; padding: 4px 8px; border: 1px solid {{ sec.skills.tag }}; color: {{ sec.skills.tag }}; box-shadow: {{ sec.skills.glow }};">{{ t.secSkills }}</span>
+        <h2 id="skills-h" style="margin: 0; font-family: Sora, sans-serif; font-weight: 700; font-size: {{ sec.skills.h }}; letter-spacing: -0.035em; color: {{ sec.skills.fg }}; text-shadow: {{ sec.skills.textGlow }}; transition: font-size 280ms cubic-bezier(.2,.8,.2,1), color 220ms, text-shadow 220ms;">{{ t.navSkills }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.skills.rule }}; transition: background 240ms;"></span>
+      </div>
+      <p style="margin: 0 0 26px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: rgba(241,236,255,0.6);">{{ t.skillsDek }}</p>
+      <div data-deck style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{ t.skills }}" as="g" hint-placeholder-count="5">
+          <article style="border: 1px solid rgba(0,245,212,0.3); background: rgba(0,245,212,0.035); padding: 20px 18px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 0 20px rgba(0,245,212,0.09) inset;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(0,245,212,0.25);">
+              <h3 style="margin: 0; font-family: Sora, sans-serif; font-weight: 600; font-size: 15.5px; letter-spacing: -0.01em;">{{ g.title }}</h3>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; color: #FF3BD4;">{{ g.slot }}</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+              <sc-for list="{{ g.items }}" as="i" hint-placeholder-count="6">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.04em; padding: 4px 9px; border: 1px solid rgba(241,236,255,0.2); color: rgba(241,236,255,0.86); transition: border-color 160ms, color 160ms, box-shadow 160ms;" style-hover="border-color: #00F5D4; color: #00F5D4; box-shadow: 0 0 14px rgba(0,245,212,0.35);">{{ i }}</span>
+              </sc-for>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="projects" data-pad aria-labelledby="projects-h" style="padding: 62px 40px; border-bottom: 1px solid rgba(241,236,255,0.12); background: {{ sec.projects.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.2em; padding: 4px 8px; border: 1px solid {{ sec.projects.tag }}; color: {{ sec.projects.tag }}; box-shadow: {{ sec.projects.glow }};">{{ t.secProjects }}</span>
+        <h2 id="projects-h" style="margin: 0; font-family: Sora, sans-serif; font-weight: 700; font-size: {{ sec.projects.h }}; letter-spacing: -0.035em; color: {{ sec.projects.fg }}; text-shadow: {{ sec.projects.textGlow }}; transition: font-size 280ms cubic-bezier(.2,.8,.2,1), color 220ms, text-shadow 220ms;">{{ t.navProjects }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.projects.rule }}; transition: background 240ms;"></span>
+      </div>
+      <p style="margin: 0 0 26px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: rgba(241,236,255,0.6);">{{ t.projectsDek }}</p>
+      <div data-bento style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{ t.projects }}" as="p" hint-placeholder-count="4">
+          <article style="grid-column: span {{ p.span }}; border: 1px solid rgba(241,236,255,0.16); background: rgba(241,236,255,0.028); padding: 24px 22px; display: flex; flex-direction: column; gap: 16px; transition: border-color 200ms, box-shadow 200ms, transform 160ms;" style-hover="border-color: #FF3BD4; box-shadow: 0 0 34px rgba(255,59,212,0.22); transform: translateY(-3px);">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.16em; color: rgba(241,236,255,0.5);">{{ p.index }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; padding: 3px 8px; border: 1px solid {{ p.statusColor }}; color: {{ p.statusColor }};">{{ p.status }}</span>
+            </div>
+            <h3 style="margin: 0; font-family: Sora, sans-serif; font-weight: 700; font-size: clamp(23px, 2.6vw, 36px); line-height: 1.04; letter-spacing: -0.035em;">{{ p.title }}</h3>
+            <div style="display: flex; flex-direction: column; gap: 13px;">
+              <div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #FF3BD4; margin-bottom: 5px;">{{ t.labelProblem }}</div>
+                <p style="margin: 0; font-size: 14.5px; line-height: 1.58; color: rgba(241,236,255,0.82); text-wrap: pretty;">{{ p.problem }}</p>
+              </div>
+              <div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #00F5D4; margin-bottom: 5px;">{{ t.labelArchitecture }}</div>
+                <p style="margin: 0; font-size: 14.5px; line-height: 1.58; color: rgba(241,236,255,0.82); text-wrap: pretty;">{{ p.architecture }}</p>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <sc-for list="{{ p.metrics }}" as="m" hint-placeholder-count="2">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11.5px; letter-spacing: 0.06em; padding: 5px 10px; border: 1px solid #FF3BD4; color: #FF3BD4; box-shadow: 0 0 16px rgba(255,59,212,0.25);">{{ m }}</span>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <sc-for list="{{ p.stack }}" as="s" hint-placeholder-count="4">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(241,236,255,0.5);">{{ s }}</span>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 6px;">
+              <sc-for list="{{ p.links }}" as="l" hint-placeholder-count="1">
+                <a href="{{ l.href }}" target="_blank" rel="noreferrer" style="display: inline-flex; align-items: center; gap: 7px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; border: 1px solid rgba(0,245,212,0.45); padding: 7px 11px; transition: box-shadow 180ms, border-color 180ms;" style-hover="border-color: #00F5D4; box-shadow: 0 0 20px rgba(0,245,212,0.4);">
+                  <span>{{ l.label }}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg>
+                </a>
+              </sc-for>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="experience" data-pad aria-labelledby="exp-h" style="padding: 62px 40px; border-bottom: 1px solid rgba(241,236,255,0.12); background: {{ sec.experience.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.2em; padding: 4px 8px; border: 1px solid {{ sec.experience.tag }}; color: {{ sec.experience.tag }}; box-shadow: {{ sec.experience.glow }};">{{ t.secExperience }}</span>
+        <h2 id="exp-h" style="margin: 0; font-family: Sora, sans-serif; font-weight: 700; font-size: {{ sec.experience.h }}; letter-spacing: -0.035em; color: {{ sec.experience.fg }}; text-shadow: {{ sec.experience.textGlow }}; transition: font-size 280ms cubic-bezier(.2,.8,.2,1), color 220ms, text-shadow 220ms;">{{ t.navExperience }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.experience.rule }}; transition: background 240ms;"></span>
+      </div>
+      <p style="margin: 0 0 26px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: rgba(241,236,255,0.6);">{{ t.experienceDek }}</p>
+      <div style="border-top: 1px solid rgba(241,236,255,0.16);">
+        <sc-for list="{{ t.jobs }}" as="j" hint-placeholder-count="3">
+          <article data-log style="display: grid; grid-template-columns: minmax(0, 236px) minmax(0, 1fr); gap: 30px; padding: 26px 0; border-bottom: 1px solid rgba(241,236,255,0.14);">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #00F5D4;">{{ j.period }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: rgba(241,236,255,0.5);">{{ j.duration }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; color: #FF3BD4;">{{ j.logId }}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <h3 style="margin: 0 0 4px; font-family: Sora, sans-serif; font-weight: 600; font-size: clamp(19px, 2vw, 27px); letter-spacing: -0.025em;">{{ j.role }}</h3>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: rgba(241,236,255,0.66);">{{ j.company }}</div>
+              </div>
+              <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px;">
+                <sc-for list="{{ j.points }}" as="pt" hint-placeholder-count="4">
+                  <li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); font-size: 14.5px; line-height: 1.58; color: rgba(241,236,255,0.84);">
+                    <span style="font-family: 'IBM Plex Mono', monospace; color: #00F5D4;">&gt;</span>
+                    <span style="text-wrap: pretty;">{{ pt }}</span>
+                  </li>
+                </sc-for>
+              </ul>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <sc-for list="{{ j.stack }}" as="s" hint-placeholder-count="5">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(241,236,255,0.18); color: rgba(241,236,255,0.6);">{{ s }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="contact" data-pad aria-labelledby="contact-h" style="padding: 62px 40px 40px; background: {{ sec.contact.bg }}; transition: background 300ms;">
+      <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 30px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.2em; padding: 4px 8px; border: 1px solid {{ sec.contact.tag }}; color: {{ sec.contact.tag }}; box-shadow: {{ sec.contact.glow }};">{{ t.secContact }}</span>
+        <h2 id="contact-h" style="margin: 0; font-family: Sora, sans-serif; font-weight: 700; font-size: {{ sec.contact.h }}; letter-spacing: -0.035em; color: {{ sec.contact.fg }}; text-shadow: {{ sec.contact.textGlow }}; transition: font-size 280ms cubic-bezier(.2,.8,.2,1), color 220ms, text-shadow 220ms;">{{ t.navContact }}</h2>
+        <span style="flex: 1; height: 1px; background: {{ sec.contact.rule }}; transition: background 240ms;"></span>
+      </div>
+      <div data-two style="display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 22px;">
+          <h3 style="margin: 0; font-family: Sora, sans-serif; font-weight: 700; font-size: clamp(25px, 3vw, 40px); line-height: 1.08; letter-spacing: -0.035em; max-width: 22ch; text-wrap: balance;">{{ t.contactTitle }}</h3>
+          <p style="margin: 0; font-size: 15.5px; line-height: 1.6; color: rgba(241,236,255,0.74); max-width: 44ch; text-wrap: pretty;">{{ t.contactBody }}</p>
+          <div style="border-top: 1px solid rgba(0,245,212,0.35);">
+            <sc-for list="{{ contactLinks }}" as="c" hint-placeholder-count="5">
+              <a href="{{ c.href }}" target="_blank" rel="noreferrer" style="display: grid; grid-template-columns: minmax(0, 108px) minmax(0, 1fr); gap: 14px; padding: 13px 0; border-bottom: 1px solid rgba(241,236,255,0.12); overflow-wrap: anywhere; color: #F1ECFF;" style-hover="color: #00F5D4;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(241,236,255,0.45);">{{ c.label }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">{{ c.value }}</span>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+
+        <form onSubmit="{{ onSubmitForm }}" style="border: 1px solid rgba(255,59,212,0.4); background: rgba(255,59,212,0.05); padding: 26px 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 0 34px rgba(255,59,212,0.12) inset;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #FF3BD4;">{{ t.formTitle }}</div>
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(241,236,255,0.55);">{{ t.formName }}</span>
+            <input type="text" value="{{ formName }}" onChange="{{ onFormName }}" required="{{ true }}" style="border: 1px solid rgba(241,236,255,0.22); background: rgba(18,16,28,0.6); color: #F1ECFF; padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; outline: none; transition: box-shadow 180ms, border-color 180ms;" style-focus="border-color: #00F5D4; box-shadow: 0 0 0 3px rgba(0,245,212,0.22);" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(241,236,255,0.55);">{{ t.formEmail }}</span>
+            <input type="email" value="{{ formEmail }}" onChange="{{ onFormEmail }}" required="{{ true }}" style="border: 1px solid rgba(241,236,255,0.22); background: rgba(18,16,28,0.6); color: #F1ECFF; padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; outline: none; transition: box-shadow 180ms, border-color 180ms;" style-focus="border-color: #00F5D4; box-shadow: 0 0 0 3px rgba(0,245,212,0.22);" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(241,236,255,0.55);">{{ t.formMessage }}</span>
+            <textarea rows="4" value="{{ formMessage }}" onChange="{{ onFormMessage }}" required="{{ true }}" style="border: 1px solid rgba(241,236,255,0.22); background: rgba(18,16,28,0.6); color: #F1ECFF; padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; outline: none; resize: vertical; transition: box-shadow 180ms, border-color 180ms;" style-focus="border-color: #00F5D4; box-shadow: 0 0 0 3px rgba(0,245,212,0.22);"></textarea>
+          </label>
+          <button type="submit" style="align-self: flex-start; border: 1px solid #FF3BD4; background: rgba(255,59,212,0.16); color: #F1ECFF; padding: 13px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px rgba(255,59,212,0.3); transition: box-shadow 200ms, transform 140ms;" style-hover="box-shadow: 0 0 40px rgba(255,59,212,0.62); transform: translateY(-2px);">{{ t.formSend }}</button>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; line-height: 1.55; color: rgba(241,236,255,0.5);">{{ t.formNote }}</div>
+        </form>
+      </div>
+    </section>
+
+    <footer data-pad style="padding: 22px 40px 40px; border-top: 1px solid rgba(241,236,255,0.12); display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: rgba(241,236,255,0.4);">{{ t.footerNote }}</span>
+      <button type="button" onClick="{{ onToggleEgg }}" aria-pressed="{{ eggPressed }}" style="margin-left: auto; display: inline-flex; align-items: center; gap: 10px; border: 1px solid {{ eggBorder }}; background: {{ eggBg }}; color: {{ eggFg }}; padding: 8px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; box-shadow: {{ eggGlow }}; transition: box-shadow 200ms, border-color 200ms, color 200ms;">
+        <span style="width: 22px; height: 12px; border: 1px solid currentColor; display: inline-flex; align-items: center; padding: 1px; justify-content: {{ eggKnob }};">
+          <span style="width: 8px; height: 8px; background: currentColor; display: inline-block;"></span>
+        </span>
+        <span>{{ eggLabel }}</span>
+      </button>
+      <sc-if value="{{ eggOn }}">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #00F5D4; text-shadow: 0 0 14px #00F5D4;">{{ t.eggMessage }}</span>
+      </sc-if>
+    </footer>
+  </main>
+
+  <sc-if value="{{ showChat }}" hint-placeholder-val="{{ true }}">
+    <div style="position: fixed; right: 22px; bottom: 22px; z-index: 95; display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+      <sc-if value="{{ chatOpen }}">
+        <div data-chat role="log" style="width: 396px; max-height: min(540px, calc(100vh - 130px)); background: rgba(18,16,28,0.97); border: 1px solid #00F5D4; box-shadow: 0 0 44px rgba(0,245,212,0.24); display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 15px; border-bottom: 1px solid rgba(0,245,212,0.35);">
+            <div style="display: flex; align-items: center; gap: 9px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #00F5D4;">
+              <span style="width: 7px; height: 7px; background: #00F5D4; display: inline-block; box-shadow: 0 0 8px #00F5D4; animation: sig-pulse 1.6s ease-in-out infinite;"></span>
+              <span>{{ t.chatTitle }}</span>
+            </div>
+            <button type="button" onClick="{{ onCloseChat }}" aria-label="Close" style="border: 1px solid rgba(241,236,255,0.3); background: transparent; color: rgba(241,236,255,0.7); cursor: pointer; width: 24px; height: 24px; display: grid; place-items: center;" style-hover="border-color: #FF3BD4; color: #FF3BD4;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+          </div>
+          <div style="padding: 7px 15px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #FF3BD4; border-bottom: 1px solid rgba(241,236,255,0.1);">{{ t.chatStatus }}</div>
+          <div style="flex: 1; overflow-y: auto; padding: 14px 15px; display: flex; flex-direction: column; gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.55;">
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+              <div style="display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 8px;">
+                <span style="color: {{ m.whoFg }};">{{ m.who }}</span>
+                <span style="color: {{ m.fg }}; text-wrap: pretty;">{{ m.text }}</span>
+              </div>
+            </sc-for>
+            <div style="display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 8px;">
+              <span style="color: #00F5D4;">&gt;_</span>
+              <span style="width: 8px; height: 15px; background: #00F5D4; display: inline-block; animation: sig-blink 1.05s step-end infinite;"></span>
+            </div>
+          </div>
+          <div style="padding: 0 15px 11px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+              <button type="button" onClick="{{ s.onSelect }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 5px 9px; border: 1px solid rgba(0,245,212,0.4); background: transparent; color: rgba(241,236,255,0.85); cursor: pointer; transition: box-shadow 160ms, border-color 160ms;" style-hover="border-color: #00F5D4; box-shadow: 0 0 16px rgba(0,245,212,0.35);">{{ s.label }}</button>
+            </sc-for>
+          </div>
+          <form onSubmit="{{ onSendChat }}" style="display: flex; align-items: center; gap: 9px; padding: 11px 15px 13px; border-top: 1px solid rgba(0,245,212,0.35);">
+            <span style="font-family: 'IBM Plex Mono', monospace; color: #FF3BD4;">$</span>
+            <input type="text" value="{{ chatDraft }}" onChange="{{ onChatDraft }}" placeholder="{{ t.chatPlaceholder }}" aria-label="Message" style="flex: 1; border: 0; background: transparent; color: #F1ECFF; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; outline: none;" />
+            <button type="submit" aria-label="Send" style="border: 1px solid #00F5D4; background: rgba(0,245,212,0.12); color: #00F5D4; width: 30px; height: 30px; display: grid; place-items: center; cursor: pointer;" style-hover="box-shadow: 0 0 18px rgba(0,245,212,0.5);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            </button>
+          </form>
+        </div>
+      </sc-if>
+      <button type="button" onClick="{{ onToggleChat }}" style="display: inline-flex; align-items: center; gap: 10px; border: 1px solid #00F5D4; background: rgba(18,16,28,0.9); color: #F1ECFF; padding: 13px 19px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 24px rgba(0,245,212,0.3); transition: box-shadow 200ms, transform 140ms;" style-hover="box-shadow: 0 0 44px rgba(0,245,212,0.6); transform: translateY(-2px);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M3 4h18v13H8l-5 4z"></path></svg>
+        <span>{{ chatButtonLabel }}</span>
+      </button>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;tr&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en' | 'tr'&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;showChat&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+const COPY = {
+  en: {
+    navAbout: "BIO_CORE", navSkills: "CYBER_DECK", navProjects: "BUILDS", navExperience: "MISSION_LOG", navContact: "TRANSMIT",
+    secAbout: "SEC.01", secSkills: "SEC.02", secProjects: "SEC.03", secExperience: "SEC.04", secContact: "SEC.05",
+    statusBadge: "SYSTEM: ONLINE / OPEN TO WORK",
+    heroEyebrow: "SIGNAL 2000 // .NET 9 · REACT 19 · İSTANBUL",
+    heroTitleA: "Systems that hold ",
+    heroTitleB: "signal under load.",
+    heroBody: "Full-stack engineer, backend-weighted. Two years of production platforms — most recently as the only engineer on the line: API architecture, data access, interface, performance budget. I argue about latency numbers, not frameworks.",
+    ctaPrimary: "Open channel", ctaSecondary: "Pull CV",
+    telemetryLabel: "TELEMETRY",
+    stats: [
+      { value: "−40%", label: "Data-access latency after Redis caching on core endpoints" },
+      { value: "95+", label: "Lighthouse on every frontend shipped" },
+      { value: "<2s", label: "Page load after asset and delivery work" },
+      { value: "+50%", label: "Platform performance via technical SEO" }
+    ],
+    about: [
+      { span: 3, title: "// ORIGIN", text: "Started in frontend, moved to backend, then refused to choose. Guessing at the half of a request you can't see is how systems rot from the inside." },
+      { span: 3, title: "// DOCTRINE", text: "Layered architecture with boundaries that hold. Redis, Hangfire and structured logging are design-time decisions, not post-incident remedies. Integration tests exist so release days are uneventful." },
+      { span: 6, title: "// SIGNAL", text: "I design before I build — Figma first, then JSX. Grid, hierarchy, restraint. Identical discipline to good API design: fewer things, placed exactly. That's why I keep the interface instead of handing it off, and why the telemetry above is mine to defend." }
+    ],
+    dossier: [
+      { k: "CLASS", v: "Full-stack / backend-weighted" },
+      { k: "CORE", v: ".NET 9 · React 19 · TypeScript" },
+      { k: "TRAINING", v: "Computer Eng., Yalova Univ. 2019—2026" },
+      { k: "LANGS", v: "TR native · EN B2" }
+    ],
+    skillsDek: "$ lsmod --sort=priority",
+    skills: [
+      { slot: "SLOT.01", title: "Languages & Frameworks", items: ["C#", ".NET 9", "ASP.NET Core", "TypeScript", "JavaScript", "React 19", "Next.js", "Node.js", "Python"] },
+      { slot: "SLOT.02", title: "Backend & Architecture", items: ["Layered Architecture", "RESTful APIs", "EF Core", "MySQL", "Redis", "Hangfire", "JWT + rotation", "Serilog", "Clean Code"] },
+      { slot: "SLOT.03", title: "Frontend & Interface", items: ["MUI v7", "Figma", "Swiss-style systems", "Responsive design", "Technical SEO"] },
+      { slot: "SLOT.04", title: "Cloud & DevOps", items: ["Docker", "AWS S3", "Azure Key Vault", "Firebase", "Cloudflare", "Vercel"] },
+      { slot: "SLOT.05", title: "Testing & Instruments", items: ["xUnit", "Git", "GitHub", "Postman"] }
+    ],
+    labelProblem: "PROBLEM", labelArchitecture: "ARCHITECTURE",
+    projectsDek: "$ cat builds/*.log --verbose",
+    projects: [
+      { span: 4, index: "BUILD/01", status: "In progress", title: "BeatPlus", problem: "One catalog serving buyers, sellers and admins under licensing and upload rules that change per role — a permissions problem wearing a commerce costume.", architecture: "ASP.NET Core + EF Core behind JWT auth with Serilog throughout; React + TypeScript client. Upload pipeline and role flows complete; payments and admin dashboard in build.", metrics: ["3 ROLES", "JWT+ROTATION"], stack: ["ASP.NET Core", "EF Core", "React", "TypeScript"], links: [{ label: "Repo", href: "https://github.com/Sametkrdg" }] },
+      { span: 2, index: "BUILD/02", status: "Live", title: "Dekodem Yapı", problem: "A construction firm calling a developer to swap a photograph.", architecture: "Custom admin panel over Firebase auth and data, Cloudflare image delivery, technical SEO on every route.", metrics: ["<2s LOAD", "95+ LH"], stack: ["React", "Next.js", "Firebase", "Cloudflare"], links: [{ label: "Live", href: "https://dekodemyapi.com" }] },
+      { span: 2, index: "BUILD/03", status: "Live", title: "Portfolio", problem: "Recruiters skim. One page had thirty seconds to answer stack, impact and availability.", architecture: "Single-page React + TypeScript with an integrated chat assistant and hand-written motion.", metrics: ["1 PAGE", "24H REPLY"], stack: ["React", "TypeScript"], links: [{ label: "Live", href: "https://sametkaradag.com" }] },
+      { span: 4, index: "BUILD/04", status: "Shipped", title: "Block Simulation", problem: "Site planners had no fast way to sketch blocks, buildings and paved areas to scale before committing to a construction layout.", architecture: "Unity simulation tool for placing, resizing and labeling volumes, exported to WebGL and deployed on Vercel for immediate field access.", metrics: ["1:1 SCALE", "UNITY→WEBGL"], stack: ["Unity", "C#", "WebGL", "Vercel"], links: [{ label: "Live", href: "https://block-simulation.vercel.app/" }] }
+    ],
+    experienceDek: "$ tail -f career.log",
+    jobs: [
+      { logId: "LOG.003", period: "DEC 2024 — JAN 2026", duration: "1 yr 2 mo · İstanbul", role: "Full-Stack Developer", company: "Tersan Shipyard", points: ["Sole full-stack contributor: backend architecture, interface and performance, end to end.", "Architected .NET 9 Web APIs over MySQL on a layered architecture powering core platform features.", "Moved background processing onto Hangfire — less manual intervention, stable nightly runs.", "Containerized services with Docker; integrated AWS S3 storage and Azure Key Vault secrets.", "Designed in Figma, shipped in React 19 + MUI v7, guarded each release with xUnit integration tests."], stack: [".NET 9", "MySQL", "React 19", "MUI v7", "Hangfire", "Docker", "AWS S3", "Azure Key Vault", "xUnit"] },
+      { logId: "LOG.002", period: "OCT 2023 — NOV 2024", duration: "1 yr 2 mo", role: "Backend Developer", company: "Mos Otomasyon ve Yazılım", points: ["Cut data-access time 40% by introducing Redis caching across core API endpoints.", "Built scalable .NET 9 Web APIs with EF Core and MySQL on a layered architecture.", "Secured access with JWT authentication and refresh token rotation.", "Standardized deployment with Docker; added Serilog for structured logging and real observability."], stack: [".NET 9", "EF Core", "Redis", "JWT", "Hangfire", "Serilog", "Docker"] },
+      { logId: "LOG.001", period: "JUN 2023 — SEP 2023", duration: "4 mo", role: "Frontend Developer", company: "Dekodem Yapı", points: ["Raised platform performance ~50% through technical SEO and asset work, reaching 95+ Lighthouse.", "Brought page load under two seconds with Cloudinary-based asset optimization.", "Built React and Next.js components against Figma specs under strict layout rules.", "Integrated Firebase for real-time content synchronization."], stack: ["React", "Next.js", "MUI", "Cloudinary", "Firebase"] }
+    ],
+    contactTitle: "Hiring for .NET or React? Open a channel.",
+    contactBody: "Email is the shortest path — reply inside one working day. Employment history is reference-checkable and the code is public.",
+    formTitle: "// TRANSMISSION", formName: "Handle", formEmail: "Return frequency", formMessage: "Payload", formSend: "Transmit",
+    formNote: "Opens your mail client with the message prefilled. Nothing stored, nothing tracked.",
+    footerNote: "© 2026 SAMET KARADAĞ // SKIN 06 — SIGNAL 2000",
+    eggOnLabel: "CRT: ON", eggOffLabel: "CRT: OFF",
+    eggMessage: "// GLOW BOOST ENGAGED — HELLO FROM 1999",
+    chatTitle: "AI COMPANION", chatStatus: "Static demo — response layer offline", chatPlaceholder: "ask something…",
+    chatSeed: "Static demo of the assistant running on sametkaradag.com. Select a prompt to see the answer shape.",
+    chatCanned: "DEMO SHELL — response layer not connected in this build.",
+    suggestions: ["stack?", "impact?", "available?"],
+    chatOpenLabel: "Close terminal", chatClosedLabel: "Boot terminal"
+  },
+  tr: {
+    navAbout: "BIO_CORE", navSkills: "CYBER_DECK", navProjects: "YAPILAR", navExperience: "GOREV_KAYDI", navContact: "ILET",
+    secAbout: "BLM.01", secSkills: "BLM.02", secProjects: "BLM.03", secExperience: "BLM.04", secContact: "BLM.05",
+    statusBadge: "SİSTEM: ÇEVRİMİÇİ / İŞE AÇIK",
+    heroEyebrow: "SİNYAL 2000 // .NET 9 · REACT 19 · İSTANBUL",
+    heroTitleA: "Yük altında ",
+    heroTitleB: "sinyali kaybetmeyen sistemler.",
+    heroBody: "Backend ağırlıklı full-stack mühendis. İki yıl üretim platformu — son olarak hattaki tek mühendis olarak: API mimarisi, veri erişimi, arayüz, performans bütçesi. Framework değil, gecikme sayıları tartışırım.",
+    ctaPrimary: "Kanalı aç", ctaSecondary: "CV'yi çek",
+    telemetryLabel: "TELEMETRİ",
+    stats: [
+      { value: "−%40", label: "Çekirdek endpoint'lerde Redis cache sonrası veri erişim gecikmesi" },
+      { value: "95+", label: "Yayına alınan her arayüzde Lighthouse" },
+      { value: "<2s", label: "Asset ve dağıtım çalışması sonrası yüklenme" },
+      { value: "+%50", label: "Teknik SEO ile platform performansı" }
+    ],
+    about: [
+      { span: 3, title: "// KÖKEN", text: "Frontend'de başladım, backend'e geçtim, sonra birini seçmeyi reddettim. Bir isteğin göremediğin yarısını tahmin etmek, sistemleri içten çürütür." },
+      { span: 3, title: "// DOKTRİN", text: "Tutan sınırlarla katmanlı mimari. Redis, Hangfire ve yapılandırılmış loglama tasarım anı kararlarıdır; olay sonrası çare değil. Entegrasyon testleri, sürüm günleri olaysız geçsin diye vardır." },
+      { span: 6, title: "// SİNYAL", text: "İnşa etmeden önce tasarlarım — önce Figma, sonra JSX. Grid, hiyerarşi, kendini tutma. İyi API tasarımıyla birebir aynı disiplin: daha az şey, tam yerinde. Arayüzü devretmek yerine kendimde tutmamın sebebi bu; yukarıdaki telemetriyi savunmanın bana düşmesinin sebebi de." }
+    ],
+    dossier: [
+      { k: "SINIF", v: "Full-stack / backend ağırlıklı" },
+      { k: "ÇEKİRDEK", v: ".NET 9 · React 19 · TypeScript" },
+      { k: "EĞİTİM", v: "Bilgisayar Müh., Yalova Ünv. 2019—2026" },
+      { k: "DİLLER", v: "TR ana dil · EN B2" }
+    ],
+    skillsDek: "$ lsmod --sirala=oncelik",
+    skills: [
+      { slot: "YUVA.01", title: "Diller & Framework'ler", items: ["C#", ".NET 9", "ASP.NET Core", "TypeScript", "JavaScript", "React 19", "Next.js", "Node.js", "Python"] },
+      { slot: "YUVA.02", title: "Backend & Mimari", items: ["Katmanlı Mimari", "RESTful API", "EF Core", "MySQL", "Redis", "Hangfire", "JWT + rotation", "Serilog", "Clean Code"] },
+      { slot: "YUVA.03", title: "Frontend & Arayüz", items: ["MUI v7", "Figma", "İsviçre tarzı sistemler", "Responsive tasarım", "Teknik SEO"] },
+      { slot: "YUVA.04", title: "Cloud & DevOps", items: ["Docker", "AWS S3", "Azure Key Vault", "Firebase", "Cloudflare", "Vercel"] },
+      { slot: "YUVA.05", title: "Test & Araçlar", items: ["xUnit", "Git", "GitHub", "Postman"] }
+    ],
+    labelProblem: "PROBLEM", labelArchitecture: "MİMARİ",
+    projectsDek: "$ cat yapilar/*.log --ayrintili",
+    projects: [
+      { span: 4, index: "YAPI/01", status: "Geliştirmede", title: "BeatPlus", problem: "Tek kataloğun alıcı, satıcı ve yöneticiye role göre değişen lisans ve yükleme kurallarıyla hizmet etmesi — ticaret kostümü giymiş bir yetki problemi.", architecture: "JWT kimlik doğrulama ve baştan sona Serilog ile ASP.NET Core + EF Core; React + TypeScript istemci. Yükleme hattı ve rol akışları tamam; ödeme ve admin paneli geliştirmede.", metrics: ["3 ROL", "JWT+ROTATION"], stack: ["ASP.NET Core", "EF Core", "React", "TypeScript"], links: [{ label: "Depo", href: "https://github.com/Sametkrdg" }] },
+      { span: 2, index: "YAPI/02", status: "Yayında", title: "Dekodem Yapı", problem: "Bir fotoğrafı değiştirmek için geliştirici arayan inşaat firması.", architecture: "Firebase auth ve verisi üzerine özel admin panel, Cloudflare görsel dağıtımı, her route'ta teknik SEO.", metrics: ["<2s YÜKLEME", "95+ LH"], stack: ["React", "Next.js", "Firebase", "Cloudflare"], links: [{ label: "Canlı", href: "https://dekodemyapi.com" }] },
+      { span: 2, index: "YAPI/03", status: "Yayında", title: "Portfolyo", problem: "İşe alım tarafı hızlı tarar. Tek sayfanın stack, etki ve müsaitliği yanıtlamak için otuz saniyesi vardı.", architecture: "Entegre sohbet asistanı ve elle yazılmış animasyonlarla tek sayfa React + TypeScript.", metrics: ["1 SAYFA", "24S YANIT"], stack: ["React", "TypeScript"], links: [{ label: "Canlı", href: "https://sametkaradag.com" }] },
+      { span: 4, index: "YAPI/04", status: "Tamamlandı", title: "Block Simulation", problem: "Saha planlamacılarının bir yerleşime karar vermeden önce blok, bina ve kaplama alanlarını ölçekli çizecek hızlı bir yöntemi yoktu.", architecture: "Hacimleri yerleştirme, boyutlandırma ve etiketleme için Unity simülasyon aracı; WebGL'e aktarıldı, sahada anında erişim için Vercel'de yayında.", metrics: ["1:1 ÖLÇEK", "UNITY→WEBGL"], stack: ["Unity", "C#", "WebGL", "Vercel"], links: [{ label: "Canlı", href: "https://block-simulation.vercel.app/" }] }
+    ],
+    experienceDek: "$ tail -f kariyer.log",
+    jobs: [
+      { logId: "KYT.003", period: "ARA 2024 — OCA 2026", duration: "1 yıl 2 ay · İstanbul", role: "Full-Stack Developer", company: "Tersan Shipyard", points: ["Tek full-stack geliştirici: backend mimarisi, arayüz ve performans, uçtan uca.", "Çekirdek platform özelliklerini besleyen, MySQL üzerinde katmanlı mimarili .NET 9 Web API'ler kurguladım.", "Arka plan işlerini Hangfire'a taşıdım — daha az manuel müdahale, stabil gece koşuları.", "Servisleri Docker ile konteynerledim; AWS S3 depolama ve Azure Key Vault secret yönetimi entegre ettim.", "Figma'da tasarlayıp React 19 + MUI v7 ile yayına aldım; her sürümü xUnit entegrasyon testleriyle korudum."], stack: [".NET 9", "MySQL", "React 19", "MUI v7", "Hangfire", "Docker", "AWS S3", "Azure Key Vault", "xUnit"] },
+      { logId: "KYT.002", period: "EKİ 2023 — KAS 2024", duration: "1 yıl 2 ay", role: "Backend Developer", company: "Mos Otomasyon ve Yazılım", points: ["Çekirdek API endpoint'lerine Redis cache getirerek veri erişim süresini %40 düşürdüm.", "EF Core ve MySQL ile katmanlı mimari üzerinde ölçeklenebilir .NET 9 Web API'ler geliştirdim.", "Erişimi JWT kimlik doğrulama ve refresh token rotation ile güvence altına aldım.", "Dağıtımı Docker ile standartlaştırdım; yapılandırılmış loglama ve gerçek gözlemlenebilirlik için Serilog ekledim."], stack: [".NET 9", "EF Core", "Redis", "JWT", "Hangfire", "Serilog", "Docker"] },
+      { logId: "KYT.001", period: "HAZ 2023 — EYL 2023", duration: "4 ay", role: "Frontend Developer", company: "Dekodem Yapı", points: ["Teknik SEO ve asset çalışmasıyla platform performansını ~%50 artırdım, 95+ Lighthouse'a ulaştım.", "Cloudinary tabanlı asset optimizasyonuyla sayfa yüklenmesini iki saniyenin altına indirdim.", "Figma spec'lerine göre katı yerleşim kurallarıyla React ve Next.js bileşenleri geliştirdim.", "Gerçek zamanlı içerik senkronizasyonu için Firebase entegre ettim."], stack: ["React", "Next.js", "MUI", "Cloudinary", "Firebase"] }
+    ],
+    contactTitle: ".NET veya React mı arıyorsunuz? Kanalı açın.",
+    contactBody: "En kısa yol e-posta — bir iş günü içinde yanıt. İş geçmişi referans verilebilir, kod açıktır.",
+    formTitle: "// İLETİM", formName: "Ad", formEmail: "Dönüş frekansı", formMessage: "Mesaj", formSend: "İlet",
+    formNote: "Mesaj hazır şekilde mail uygulamanızı açar. Saklanmaz, izlenmez.",
+    footerNote: "© 2026 SAMET KARADAĞ // SKIN 06 — SİNYAL 2000",
+    eggOnLabel: "CRT: AÇIK", eggOffLabel: "CRT: KAPALI",
+    eggMessage: "// PARLAMA ARTIRILDI — 1999'DAN SELAMLAR",
+    chatTitle: "YAPAY YOLDAŞ", chatStatus: "Statik demo — cevap katmanı kapalı", chatPlaceholder: "bir şey sor…",
+    chatSeed: "sametkaradag.com üzerinde çalışan asistanın statik demosu. Cevabın biçimini görmek için bir soru seç.",
+    chatCanned: "DEMO ARAYÜZ — bu yapıda cevap katmanı bağlı değil.",
+    suggestions: ["stack?", "etki?", "müsait?"],
+    chatOpenLabel: "Terminali kapat", chatClosedLabel: "Terminali başlat"
+  }
+};
+
+const THEMES = ["retro", "brutalist", "minimal", "blueprint", "glass", "editorial"];
+const VOID = "#12101C", STAR = "#F1ECFF", MAGENTA = "#FF3BD4", TEAL = "#00F5D4";
+
+class Component extends DCLogic {
+  state = {
+    lang: null, theme: "retro", active: "hero", progress: 0, clock: "--:--:--", egg: false,
+    chatOpen: false, chatDraft: "", msgs: [], formName: "", formEmail: "", formMessage: ""
+  };
+
+  lang() { return this.state.lang || this.props.defaultLang || "en"; }
+  copy() { return COPY[this.lang()] || COPY.en; }
+
+  componentDidMount() {
+    const ids = ["hero", "about", "skills", "projects", "experience", "contact"];
+    this.io = new IntersectionObserver((entries) => {
+      const hit = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (hit && hit.target.id !== this.state.active) this.setState({ active: hit.target.id });
+    }, { rootMargin: "-42% 0px -42% 0px", threshold: [0, 0.15, 0.5] });
+    ids.forEach(id => { const el = document.getElementById(id); if (el) this.io.observe(el); });
+
+    this.onScroll = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const p = max > 0 ? Math.min(1, h.scrollTop / max) : 0;
+      if (Math.abs(p - this.state.progress) > 0.004) this.setState({ progress: p });
+    };
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+    this.onScroll();
+
+    const tick = () => {
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, "0");
+      this.setState({ clock: "41.02N 28.98E · " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds()) });
+    };
+    tick();
+    this.timer = setInterval(tick, 1000);
+  }
+  componentWillUnmount() {
+    if (this.io) this.io.disconnect();
+    window.removeEventListener("scroll", this.onScroll);
+    clearInterval(this.timer);
+  }
+
+  seeded() {
+    const t = this.copy();
+    return this.state.msgs.length ? this.state.msgs : [{ who: "bot", text: t.chatSeed }];
+  }
+  push(text) {
+    const t = this.copy();
+    this.setState({ chatDraft: "", msgs: [...this.seeded(), { who: "me", text }, { who: "bot", text: t.chatCanned }] });
+  }
+
+  renderVals() {
+    const t = this.copy();
+    const lang = this.lang();
+    const active = this.state.active;
+    const egg = this.state.egg;
+    const boost = egg ? 1.9 : 1;
+    const g = (rgba, px) => "0 0 " + Math.round(px * boost) + "px " + rgba;
+
+    const nav = [
+      { id: "about", label: t.navAbout }, { id: "skills", label: t.navSkills },
+      { id: "projects", label: t.navProjects }, { id: "experience", label: t.navExperience },
+      { id: "contact", label: t.navContact }
+    ].map(n => {
+      const on = active === n.id;
+      return {
+        ...n, href: "#" + n.id, current: on ? "true" : "false",
+        size: on ? "15px" : "10.5px",
+        weight: on ? 600 : 400,
+        pad: on ? "10px 15px" : "7px 10px",
+        bg: on ? "rgba(255,59,212,0.16)" : "transparent",
+        fg: on ? STAR : "rgba(241,236,255,0.6)",
+        border: on ? MAGENTA : "rgba(241,236,255,0.16)",
+        glow: on ? g("rgba(255,59,212,0.5)", 22) : "none"
+      };
+    });
+
+    const variants = THEMES.map(id => {
+      const on = this.state.theme === id;
+      return {
+        label: id,
+        bg: on ? "rgba(255,59,212,0.16)" : "transparent",
+        fg: on ? STAR : "rgba(241,236,255,0.6)",
+        border: on ? MAGENTA : "rgba(241,236,255,0.18)",
+        glow: on ? g("rgba(255,59,212,0.45)", 18) : "none",
+        onSelect: () => this.setState({ theme: id })
+      };
+    });
+    const variantNote = this.state.theme === "retro"
+      ? (lang === "tr" ? "06 — SİNYAL 2000 / AKTİF" : "06 — SIGNAL 2000 / ACTIVE")
+      : (lang === "tr" ? this.state.theme.toUpperCase() + " / BU SKIN'DE YOK" : this.state.theme.toUpperCase() + " / NOT IN THIS SKIN");
+
+    const langs = [{ id: "en", label: "EN" }, { id: "tr", label: "TR" }].map(l => {
+      const on = lang === l.id;
+      return {
+        label: l.label,
+        bg: on ? "rgba(0,245,212,0.14)" : "transparent",
+        fg: on ? TEAL : "rgba(241,236,255,0.55)",
+        border: on ? TEAL : "rgba(241,236,255,0.18)",
+        onSelect: () => this.setState({ lang: l.id, msgs: [] })
+      };
+    });
+
+    const cardTones = [
+      { border: "rgba(0,245,212,0.32)", bg: "rgba(0,245,212,0.04)", label: TEAL, glow: g("rgba(0,245,212,0.1)", 22) },
+      { border: "rgba(255,59,212,0.32)", bg: "rgba(255,59,212,0.05)", label: MAGENTA, glow: g("rgba(255,59,212,0.1)", 22) },
+      { border: "rgba(241,236,255,0.18)", bg: "rgba(241,236,255,0.03)", label: STAR, glow: "none" }
+    ];
+
+    const messages = this.seeded().map(m => m.who === "me"
+      ? { who: (lang === "tr" ? "sen>" : "you>"), whoFg: MAGENTA, fg: STAR, text: m.text }
+      : { who: "sys>", whoFg: TEAL, fg: "rgba(241,236,255,0.82)", text: m.text });
+
+    return {
+      t, lang, navItems: nav, variants, variantNote, langs, messages,
+      heroA: t.heroTitleA, heroB: t.heroTitleB,
+      clock: this.state.clock,
+      progress: Math.round(this.state.progress * 1000) / 10 + "%",
+      sec: ["about", "skills", "projects", "experience", "contact"].reduce((acc, id) => {
+        const on = active === id;
+        acc[id] = {
+          bg: on ? "rgba(255,59,212,0.045)" : "transparent",
+          h: on ? "clamp(36px, 5.2vw, 74px)" : "clamp(24px, 3.2vw, 42px)",
+          fg: on ? STAR : "rgba(241,236,255,0.7)",
+          textGlow: on ? "0 0 " + Math.round(28 * boost) + "px rgba(255,59,212,0.55)" : "none",
+          tag: on ? MAGENTA : "rgba(241,236,255,0.35)",
+          glow: on ? g("rgba(255,59,212,0.4)", 18) : "none",
+          rule: on ? "linear-gradient(90deg, " + MAGENTA + ", transparent)" : "rgba(241,236,255,0.14)"
+        };
+        return acc;
+      }, {}),
+      aboutCards: t.about.map((a, i) => ({ ...a, ...cardTones[i % cardTones.length] })),
+      eggOn: egg,
+      eggPressed: egg ? "true" : "false",
+      eggLabel: egg ? t.eggOnLabel : t.eggOffLabel,
+      eggFg: egg ? TEAL : "rgba(241,236,255,0.55)",
+      eggBorder: egg ? TEAL : "rgba(241,236,255,0.22)",
+      eggBg: egg ? "rgba(0,245,212,0.12)" : "transparent",
+      eggGlow: egg ? "0 0 26px rgba(0,245,212,0.5)" : "none",
+      eggKnob: egg ? "flex-end" : "flex-start",
+      onToggleEgg: () => this.setState(s => ({ egg: !s.egg })),
+      showChat: this.props.showChat ?? true,
+      chatOpen: this.state.chatOpen,
+      chatDraft: this.state.chatDraft,
+      chatButtonLabel: this.state.chatOpen ? t.chatOpenLabel : t.chatClosedLabel,
+      suggestions: t.suggestions.map(s => ({ label: s, onSelect: () => this.push(s) })),
+      onToggleChat: () => this.setState(s => ({ chatOpen: !s.chatOpen })),
+      onCloseChat: () => this.setState({ chatOpen: false }),
+      onChatDraft: (e) => this.setState({ chatDraft: e.target.value }),
+      onSendChat: (e) => { e.preventDefault(); const v = this.state.chatDraft.trim(); if (v) this.push(v); },
+      cvHref: (window.__resources && window.__resources.cvPdf) || "uploads/content_source-1788172964175-pxgk.pdf",
+      contactLinks: [
+        { label: "Email", href: "mailto:sametkrdg80@gmail.com", value: "sametkrdg80@gmail.com" },
+        { label: "Phone", href: "tel:+905414747780", value: "+90 541 474 77 80" },
+        { label: "GitHub", href: "https://github.com/Sametkrdg", value: "github.com/Sametkrdg" },
+        { label: "LinkedIn", href: "https://linkedin.com/in/sametkrdg", value: "linkedin.com/in/sametkrdg" },
+        { label: "Site", href: "https://sametkaradag.com", value: "sametkaradag.com" }
+      ],
+      formName: this.state.formName, formEmail: this.state.formEmail, formMessage: this.state.formMessage,
+      onFormName: (e) => this.setState({ formName: e.target.value }),
+      onFormEmail: (e) => this.setState({ formEmail: e.target.value }),
+      onFormMessage: (e) => this.setState({ formMessage: e.target.value }),
+      onSubmitForm: (e) => {
+        e.preventDefault();
+        const s = this.state;
+        const subject = encodeURIComponent((lang === "tr" ? "Portfolyo: " : "Portfolio: ") + (s.formName || ""));
+        const body = encodeURIComponent(s.formMessage + "\n\n— " + s.formName + " (" + s.formEmail + ")");
+        window.location.href = "mailto:sametkrdg80@gmail.com?subject=" + subject + "&body=" + body;
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

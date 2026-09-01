@@ -1,107 +1,555 @@
 @import "tailwindcss";
 
-/* ─── Dark-mode: always force dark class on <html> ─── */
-@variant dark (&:where(.dark, .dark *));
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHARED THEME TOKEN CONTRACT
+
+   Every theme MUST define all of these under `[data-theme="<slug>"]` in its
+   own `src/themes/<slug>/theme.css`. A partially defined theme is a bug.
+   The values on `:root` below are the neutral fallback that keeps the shell
+   readable before a theme's stylesheet lands.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Surfaces */
+  --surface-page: #0d1117;
+  --surface-raised: #111827;
+  --surface-sunken: #05080f;
+
+  /* Lines */
+  --border-hair: rgba(240, 246, 255, 0.12);
+  --border-strong: rgba(240, 246, 255, 0.28);
+
+  /* Text */
+  --text-primary: #f0f6ff;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Accent */
+  --accent: #00d9ff;
+  --accent-contrast: #05080f;
+  --accent-soft: rgba(0, 217, 255, 0.12);
+
+  /* Type */
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Shell metrics — the fixed sidebar width is what stops the active-item
+     emphasis from ever shifting the layout. */
+  --shell-side-width: 232px;
+  --shell-top-height: 48px;
+  --nav-gap: 2px;
+  --radius: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SPACE THEME PALETTE (Tailwind design tokens)
+   Still consumed by the section components until Phase 2 moves them into
+   `src/themes/space/`.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 @theme inline {
-  /* Typography — var(--font-inter) is injected by Next.js font loader */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-  /* Background scale – Deep Slate / Black */
-  --color-bg-base:    #05080f;
+  --color-bg-base: #05080f;
   --color-bg-surface: #0d1117;
-  --color-bg-card:    #111827;
-  --color-bg-muted:   #1a2236;
+  --color-bg-card: #111827;
+  --color-bg-muted: #1a2236;
 
-  /* Neon Cyan accent */
-  --color-cyan-50:  #e0faff;
+  --color-cyan-50: #e0faff;
   --color-cyan-100: #b3f3ff;
   --color-cyan-200: #66e8ff;
   --color-cyan-300: #19d8ff;
   --color-cyan-400: #00c8f0;
   --color-cyan-500: #00b4d8;
-  --color-cyan-neon: #00d9ff;   /* primary neon accent */
+  --color-cyan-neon: #00d9ff;
 
-  /* Electric Purple accent */
   --color-purple-400: #a78bfa;
   --color-purple-500: #8b5cf6;
   --color-purple-600: #7c3aed;
-  --color-purple-neon: #b44dff;  /* primary electric purple */
+  --color-purple-neon: #b44dff;
 
-  /* Neutral text */
-  --color-text-primary:   #f0f6ff;
+  --color-text-primary: #f0f6ff;
   --color-text-secondary: #94a3b8;
-  --color-text-muted:     #475569;
+  --color-text-muted: #475569;
 
-  /* Semantic aliases */
   --color-background: var(--color-bg-base);
   --color-foreground: var(--color-text-primary);
-  --color-accent:     var(--color-cyan-neon);
+  --color-accent: var(--color-cyan-neon);
   --color-accent-alt: var(--color-purple-neon);
 
-  /* Glow utilities */
-  --shadow-neon-cyan:   0 0 20px rgba(0, 217, 255, 0.4), 0 0 60px rgba(0, 217, 255, 0.15);
+  --shadow-neon-cyan: 0 0 20px rgba(0, 217, 255, 0.4), 0 0 60px rgba(0, 217, 255, 0.15);
   --shadow-neon-purple: 0 0 20px rgba(180, 77, 255, 0.4), 0 0 60px rgba(180, 77, 255, 0.15);
 }
 
-/* ─── Base reset & defaults ─── */
-*, *::before, *::after {
+/* ── Base ───────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--surface-page);
 }
 
 /*
- * Smooth scroll only for in-page anchor navigation (Navbar links).
- * Applying it to <html> globally hijacks the load-time scrollTo({behavior:"instant"})
- * we run in <ScrollToTop>, animating the page back down to its hydration position.
- * `:focus-within` keeps anchor-jumps smooth without affecting programmatic resets.
+ * Smooth scroll is the only motion on the site, and it yields to
+ * `prefers-reduced-motion`. Sidebar clicks call scrollIntoView directly, which
+ * honours the same preference in JS.
  */
 @media (prefers-reduced-motion: no-preference) {
-  html:focus-within {
+  html {
     scroll-behavior: smooth;
   }
 }
 
 body {
-  background-color: var(--color-bg-base);
-  color: var(--color-text-primary);
-  font-family: var(--font-sans);
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-body);
   min-height: 100dvh;
 }
 
-/* ─── Neon glow helpers (apply as utility classes) ─── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ── Shell layout ───────────────────────────────────────────────────────── */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 13px;
+  font-weight: 600;
+}
+.skip-link:focus {
+  left: 8px;
+  top: 8px;
+}
+
+.shell-top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: var(--shell-top-height);
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border-hair);
+  background: var(--surface-page);
+}
+
+.shell-body {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.shell-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Theme bar ──────────────────────────────────────────────────────────── */
+
+.theme-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.theme-bar-label {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.theme-bar-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.theme-bar-list::-webkit-scrollbar {
+  display: none;
+}
+
+.theme-bar-item {
+  display: block;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.theme-bar-item:hover {
+  color: var(--text-primary);
+  border-color: var(--border-hair);
+}
+.theme-bar-item[data-active] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+.theme-bar-item[data-unbuilt]:not([data-active]) {
+  opacity: 0.45;
+}
+
+/* ── Locale switch ──────────────────────────────────────────────────────── */
+
+.locale-switch {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.locale-switch-item {
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.locale-switch-item:hover {
+  color: var(--text-primary);
+}
+.locale-switch-item[data-active] {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+/* ── Side nav ───────────────────────────────────────────────────────────── */
+
+.side-nav {
+  position: sticky;
+  top: var(--shell-top-height);
+  /* Fixed width: whatever emphasis a theme gives the active item, the main
+     column never moves. */
+  width: var(--shell-side-width);
+  flex-shrink: 0;
+  height: calc(100dvh - var(--shell-top-height));
+  padding: 32px 20px;
+  border-right: 1px solid var(--border-hair);
+  overflow-y: auto;
+}
+
+.side-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.nav-item:hover {
+  color: var(--text-primary);
+}
+.nav-item[data-active] {
+  color: var(--accent);
+}
+
+.nav-item-index {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+.nav-item[data-active] .nav-item-label {
+  font-weight: 700;
+}
+
+/* ── Chat widget ────────────────────────────────────────────────────────── */
+
+.chat-launcher {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.chat-launcher:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.chat-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 78px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  width: min(360px, calc(100vw - 40px));
+  max-height: min(520px, calc(100dvh - 140px));
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-hair);
+}
+
+.chat-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chat-status {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.chat-close {
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+.chat-close:hover {
+  color: var(--text-primary);
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.chat-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chat-suggestions-label {
+  margin: 0 0 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.chat-suggestion {
+  padding: 7px 10px;
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius);
+  background: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.chat-suggestion:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.chat-suggestion:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.chat-message {
+  max-width: 85%;
+  padding: 8px 11px;
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius);
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.chat-message[data-role="user"] {
+  align-self: flex-end;
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+.chat-message[data-role="assistant"] {
+  align-self: flex-start;
+  color: var(--text-secondary);
+}
+
+.chat-pending {
+  margin: 0;
+  padding: 4px 2px;
+  color: var(--text-muted);
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+.chat-error {
+  margin: 4px 0 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: var(--radius);
+  color: #fca5a5;
+  font-size: 11px;
+}
+
+.chat-form {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border-hair);
+}
+
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+.chat-input::placeholder {
+  color: var(--text-muted);
+}
+
+.chat-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  cursor: pointer;
+}
+.chat-send:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ── Mobile: sidebar hidden, theme bar pinned to the bottom ─────────────── */
+
+@media (max-width: 767px) {
+  .shell-top {
+    justify-content: flex-end;
+    padding: 8px 16px;
+  }
+
+  .theme-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 55;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-hair);
+    background: var(--surface-page);
+  }
+
+  .theme-bar-label {
+    display: none;
+  }
+
+  .shell-main {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+
+  .chat-launcher {
+    bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+
+  .chat-panel {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    bottom: calc(122px + env(safe-area-inset-bottom));
+    max-height: min(60dvh, calc(100dvh - 220px));
+  }
+}
+
+/* ── Space-theme helpers (used by the current section components) ───────── */
+
 .glow-cyan {
   box-shadow: var(--shadow-neon-cyan);
 }
-
 .glow-purple {
   box-shadow: var(--shadow-neon-purple);
 }
-
 .text-glow-cyan {
   text-shadow: 0 0 12px rgba(0, 217, 255, 0.7);
 }
-
 .text-glow-purple {
   text-shadow: 0 0 12px rgba(180, 77, 255, 0.7);
 }
 
-/* ─── Scrollbar styling ─── */
+/* ── Scrollbar ──────────────────────────────────────────────────────────── */
+
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-surface);
+  background: var(--surface-sunken);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-bg-muted);
+  background: var(--border-hair);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-cyan-neon);
+  background: var(--accent);
 }
