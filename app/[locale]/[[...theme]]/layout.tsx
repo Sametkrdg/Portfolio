@@ -109,7 +109,7 @@ const THEME_FONTS: Record<ThemeSlug, string> = {
   space: `${inter.variable} ${geistMono.variable}`,
   editorial: `${playfair.variable} ${sourceSans.variable}`,
   brutalism: `${spaceMono.variable} ${workSans.variable}`,
-  maximalism: `${inter.variable} ${jetbrainsMono.variable}`,
+  maximalism: `${plexMono.variable}`,
   y2k: `${sora.variable} ${plexMono.variable}`,
 };
 

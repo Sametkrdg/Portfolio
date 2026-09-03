@@ -318,7 +318,7 @@ Her tema için aynı döngü (sırayla, teker teker):
 5. `registry.ts`'e kaydedilir.
 6. İki dilde ve mobilde kontrol edilir; `build` + `lint`.
 
-Kalan sıra: `blueprint` → `editorial` → `brutalism` → `y2k` → `maximalism` → **`space`**.
+Durum: ✅ `blueprint` · ✅ `editorial` · ✅ `brutalism` · ✅ `y2k` · ✅ `maximalism` · ⏭ **`space`** (kalan tek tema).
 
 `space` en sona bırakıldı: mevcut 3D siteyi yeni sözleşmeye taşımak (bölümleri `SectionProps`'a uydurmak, 3D hero'yu ve ses düğmesini korurken GSAP/framer-motion'ı çıkarmak) diğerlerinden farklı bir iş. Mevcut bileşenler o güne kadar `src/components/sections/` altında duruyor — **artık hiçbir yerden çağrılmıyorlar**, yalnızca `space` için referans.
 

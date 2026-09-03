@@ -1,0 +1,665 @@
+/*
+ * maximalism — a terminal that will not shut up.
+ *
+ * The source design (Terminal) shares blueprint's palette and fonts almost
+ * exactly — two of seven themes would have been twins. The terminal bones are
+ * kept (prompt markers, ledger rows, commit shas, monospace throughout) and
+ * the colour is pushed to match the theme's name: five accents instead of one,
+ * a different one per section, everything competing for attention.
+ *
+ * Contrast against #0A0710, measured: text 17.5:1, lime 16.5:1, amber 12.4:1,
+ * cyan 12.7:1, violet 6.6:1, pink 6.5:1 — all clear of WCAG AA, and every
+ * filled accent carries the near-black text colour.
+ */
+
+:root[data-theme="maximalism"] {
+  /* Surfaces */
+  --surface-page: #0a0710;
+  --surface-raised: #130e1c;
+  --surface-sunken: #06040a;
+
+  /* Lines */
+  --border-hair: rgba(242, 238, 248, 0.14);
+  --border-strong: rgba(242, 238, 248, 0.32);
+
+  /* Text */
+  --text-primary: #f2eef8;
+  --text-secondary: rgba(242, 238, 248, 0.82);
+  --text-muted: rgba(242, 238, 248, 0.55);
+
+  /* Accent — the default; each section overrides it */
+  --accent: #b6ff3b;
+  --accent-contrast: #0a0710;
+  --accent-soft: rgba(182, 255, 59, 0.12);
+
+  /* Type — monospace all the way down */
+  --font-display: var(--font-plex-mono), ui-monospace, monospace;
+  --font-body: var(--font-plex-mono), ui-monospace, monospace;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Shell metrics */
+  --shell-side-width: 258px;
+  --shell-top-height: 46px;
+  --nav-gap: 2px;
+  --radius: 0px;
+
+  /* The five */
+  --mx-lime: #b6ff3b;
+  --mx-cyan: #40e0ff;
+  --mx-amber: #ffc24b;
+  --mx-violet: #a97bff;
+  --mx-pink: #ff4f9a;
+}
+
+/* Each section claims a colour. */
+[data-theme="maximalism"] [data-accent="lime"] {
+  --mx-accent: var(--mx-lime);
+}
+[data-theme="maximalism"] [data-accent="cyan"] {
+  --mx-accent: var(--mx-cyan);
+}
+[data-theme="maximalism"] [data-accent="amber"] {
+  --mx-accent: var(--mx-amber);
+}
+[data-theme="maximalism"] [data-accent="violet"] {
+  --mx-accent: var(--mx-violet);
+}
+[data-theme="maximalism"] [data-accent="pink"] {
+  --mx-accent: var(--mx-pink);
+}
+
+/* Scanline texture — static, no sweep. */
+:root[data-theme="maximalism"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(242, 238, 248, 0.035) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+:root[data-theme="maximalism"] .shell-top,
+:root[data-theme="maximalism"] .shell-body,
+:root[data-theme="maximalism"] .chat-launcher,
+:root[data-theme="maximalism"] .chat-panel {
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Shell ──────────────────────────────────────────────────────────────── */
+
+[data-theme="maximalism"] .shell-top {
+  border-bottom: 1px solid var(--border-hair);
+  background: rgba(10, 7, 16, 0.94);
+}
+[data-theme="maximalism"] .theme-bar-label,
+[data-theme="maximalism"] .theme-bar-item,
+[data-theme="maximalism"] .locale-switch-item {
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+[data-theme="maximalism"] .theme-bar-item {
+  border-color: var(--border-hair);
+}
+[data-theme="maximalism"] .theme-bar-item[data-active] {
+  background: var(--mx-lime);
+  border-color: var(--mx-lime);
+  color: var(--accent-contrast);
+}
+
+[data-theme="maximalism"] .side-nav {
+  border-right: 1px solid var(--border-hair);
+}
+[data-theme="maximalism"] .side-name {
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+[data-theme="maximalism"] .side-role {
+  color: var(--mx-lime);
+}
+[data-theme="maximalism"] .side-location {
+  color: var(--mx-cyan);
+}
+[data-theme="maximalism"] .side-role,
+[data-theme="maximalism"] .side-location,
+[data-theme="maximalism"] .side-availability {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+[data-theme="maximalism"] .side-availability-dot {
+  border-radius: 0;
+  background: var(--mx-pink);
+}
+
+/* Active item: a filled prompt line in that section's own colour. */
+[data-theme="maximalism"] .mx-nav-item {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+  padding: 7px 10px;
+  border-left: 3px solid transparent;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+[data-theme="maximalism"] .mx-nav-item:hover {
+  color: var(--text-primary);
+}
+[data-theme="maximalism"] .mx-nav-item[data-active] {
+  border-left-color: var(--mx-accent, var(--mx-lime));
+  background: var(--mx-accent, var(--mx-lime));
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+[data-theme="maximalism"] .mx-nav-caret {
+  color: var(--mx-accent, var(--mx-lime));
+}
+[data-theme="maximalism"] .mx-nav-item[data-active] .mx-nav-caret {
+  color: var(--accent-contrast);
+}
+
+/* ── Section scaffold ───────────────────────────────────────────────────── */
+
+[data-theme="maximalism"] .mx-section {
+  padding: 60px 40px;
+  border-bottom: 1px solid var(--border-hair);
+}
+[data-theme="maximalism"] .mx-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+[data-theme="maximalism"] .mx-tag {
+  padding: 3px 9px;
+  background: var(--mx-accent);
+  color: var(--accent-contrast);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+[data-theme="maximalism"] .mx-h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(22px, 3.2vw, 38px);
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+  color: var(--mx-accent);
+  text-transform: uppercase;
+}
+[data-theme="maximalism"] .mx-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--mx-accent);
+  opacity: 0.4;
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+[data-theme="maximalism"] .mx-hero {
+  padding: 66px 40px 72px;
+  border-bottom: 1px solid var(--border-hair);
+}
+[data-theme="maximalism"] .mx-hero-eyebrow {
+  margin: 0 0 26px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--mx-cyan);
+}
+[data-theme="maximalism"] .mx-hero-title {
+  margin: 0 0 30px;
+  max-width: 26ch;
+  font-weight: 600;
+  font-size: clamp(30px, 5.4vw, 76px);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+[data-theme="maximalism"] .mx-caret {
+  color: var(--mx-lime);
+}
+[data-theme="maximalism"] .mx-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+[data-theme="maximalism"] .mx-cols {
+  column-count: 2;
+  column-gap: 34px;
+  column-rule: 1px solid var(--border-hair);
+  max-width: 76ch;
+  margin-bottom: 32px;
+}
+[data-theme="maximalism"] .mx-hero-body {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="maximalism"] .mx-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+[data-theme="maximalism"] .mx-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 24px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+[data-theme="maximalism"] .mx-cta[data-variant="primary"] {
+  background: var(--mx-lime);
+  color: var(--accent-contrast);
+}
+[data-theme="maximalism"] .mx-cta[data-variant="primary"]:hover {
+  box-shadow: 0 0 32px rgba(182, 255, 59, 0.4);
+}
+[data-theme="maximalism"] .mx-cta[data-variant="secondary"] {
+  border: 1px solid var(--mx-cyan);
+  color: var(--mx-cyan);
+}
+[data-theme="maximalism"] .mx-cta[data-variant="secondary"]:hover {
+  box-shadow: 0 0 26px rgba(64, 224, 255, 0.28);
+}
+
+[data-theme="maximalism"] .mx-panel {
+  border: 1px solid var(--border-hair);
+  background: var(--surface-raised);
+}
+[data-theme="maximalism"] .mx-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--border-hair);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+[data-theme="maximalism"] .mx-panel-head::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--mx-pink);
+}
+[data-theme="maximalism"] .mx-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 15px;
+}
+[data-theme="maximalism"] .mx-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 13px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid rgba(242, 238, 248, 0.09);
+}
+[data-theme="maximalism"] .mx-stat:nth-child(1) .mx-stat-value {
+  color: var(--mx-lime);
+}
+[data-theme="maximalism"] .mx-stat:nth-child(2) .mx-stat-value {
+  color: var(--mx-cyan);
+}
+[data-theme="maximalism"] .mx-stat:nth-child(3) .mx-stat-value {
+  color: var(--mx-amber);
+}
+[data-theme="maximalism"] .mx-stat:nth-child(4) .mx-stat-value {
+  color: var(--mx-pink);
+}
+[data-theme="maximalism"] .mx-stat-value {
+  min-width: 84px;
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+[data-theme="maximalism"] .mx-stat-label {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+/* ── Ledger rows, shared by About / Skills / Experience ─────────────────── */
+
+[data-theme="maximalism"] .mx-ledger {
+  border: 1px solid var(--border-hair);
+}
+[data-theme="maximalism"] .mx-ledger-row {
+  display: grid;
+  grid-template-columns: minmax(0, 44px) minmax(0, 240px) minmax(0, 1fr);
+  gap: 22px;
+  padding: 17px 18px;
+  border-bottom: 1px solid rgba(242, 238, 248, 0.1);
+}
+[data-theme="maximalism"] .mx-ledger-row:last-child {
+  border-bottom: 0;
+}
+[data-theme="maximalism"] .mx-ledger-line {
+  font-size: 12px;
+  color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-ledger-title {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+[data-theme="maximalism"] .mx-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 7px;
+  align-content: flex-start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="maximalism"] .mx-chips li {
+  padding: 4px 9px;
+  border: 1px solid var(--mx-accent);
+  color: var(--mx-accent);
+  font-size: 11.5px;
+}
+
+/* ── About ──────────────────────────────────────────────────────────────── */
+
+[data-theme="maximalism"] .mx-about-row .mx-ledger-title {
+  color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-about-row p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.68;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="maximalism"] .mx-notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  gap: 12px 24px;
+  margin-top: 16px;
+  padding: 15px 18px;
+  border: 1px solid var(--border-hair);
+}
+[data-theme="maximalism"] .mx-note-key {
+  display: block;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-note-value {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+/* ── Experience ─────────────────────────────────────────────────────────── */
+
+[data-theme="maximalism"] .mx-jobs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border-hair);
+}
+[data-theme="maximalism"] .mx-job {
+  display: grid;
+  grid-template-columns: minmax(0, 230px) minmax(0, 1fr);
+  gap: 32px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--border-hair);
+}
+[data-theme="maximalism"] .mx-job-when {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+[data-theme="maximalism"] .mx-job-period {
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-job-duration {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+[data-theme="maximalism"] .mx-job-sha {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+[data-theme="maximalism"] .mx-job-body {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+[data-theme="maximalism"] .mx-job-role {
+  margin: 0 0 4px;
+  font-weight: 600;
+  font-size: clamp(19px, 2vw, 27px);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+[data-theme="maximalism"] .mx-job-company {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+[data-theme="maximalism"] .mx-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="maximalism"] .mx-bullets li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--text-secondary);
+}
+[data-theme="maximalism"] .mx-bullets li::before {
+  content: "$";
+  font-weight: 600;
+  color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+[data-theme="maximalism"] .mx-stack span {
+  padding: 3px 8px;
+  border: 1px solid var(--border-hair);
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+/* ── Projects ───────────────────────────────────────────────────────────── */
+
+[data-theme="maximalism"] .mx-projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+[data-theme="maximalism"] .mx-project {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 22px 20px;
+  border: 1px solid var(--border-hair);
+  background: var(--surface-raised);
+}
+[data-theme="maximalism"] .mx-project:hover {
+  border-color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-project-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+[data-theme="maximalism"] .mx-project-status {
+  padding: 3px 8px;
+  background: var(--mx-accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+[data-theme="maximalism"] .mx-project-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(20px, 2.4vw, 30px);
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+}
+[data-theme="maximalism"] .mx-field-label {
+  margin: 0 0 5px;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-project p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="maximalism"] .mx-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+[data-theme="maximalism"] .mx-metrics span {
+  padding: 4px 10px;
+  border: 1px solid var(--mx-accent);
+  color: var(--mx-accent);
+  font-weight: 500;
+  font-size: 11.5px;
+}
+[data-theme="maximalism"] .mx-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+[data-theme="maximalism"] .mx-project-links a {
+  padding: 6px 11px;
+  border: 1px solid var(--border-strong);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+[data-theme="maximalism"] .mx-project-links a:hover {
+  border-color: var(--mx-accent);
+  color: var(--mx-accent);
+}
+
+/* ── Contact ────────────────────────────────────────────────────────────── */
+
+[data-theme="maximalism"] .mx-contact {
+  padding-bottom: 100px;
+  border-bottom: 0;
+}
+[data-theme="maximalism"] .mx-contact-title {
+  margin: 0 0 18px;
+  max-width: 24ch;
+  font-weight: 600;
+  font-size: clamp(22px, 3.4vw, 40px);
+  line-height: 1.16;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+[data-theme="maximalism"] .mx-contact-note {
+  margin: 0 0 28px;
+  max-width: 56ch;
+  font-size: 14.5px;
+  line-height: 1.66;
+  color: var(--text-secondary);
+}
+[data-theme="maximalism"] .mx-contact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 12px;
+  max-width: 900px;
+}
+[data-theme="maximalism"] .mx-contact-list a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-hair);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+[data-theme="maximalism"] .mx-contact-list a:hover {
+  border-color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-contact-key {
+  flex-shrink: 0;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mx-accent);
+}
+[data-theme="maximalism"] .mx-contact-value {
+  font-size: 12.5px;
+}
+
+/* ── Narrow screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+  [data-theme="maximalism"] .mx-hero-grid,
+  [data-theme="maximalism"] .mx-job,
+  [data-theme="maximalism"] .mx-projects {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  [data-theme="maximalism"] .mx-cols {
+    column-count: 1;
+  }
+  [data-theme="maximalism"] .mx-ledger-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-theme="maximalism"] .mx-section,
+  [data-theme="maximalism"] .mx-hero {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

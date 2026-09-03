@@ -49,7 +49,8 @@ export const THEME_LOADERS: Partial<
   editorial: () => import("./editorial"),
   brutalism: () => import("./brutalism"),
   y2k: () => import("./y2k"),
-  // maximalism and space are still to come
+  maximalism: () => import("./maximalism"),
+  // space is still to come
 };
 
 /**
