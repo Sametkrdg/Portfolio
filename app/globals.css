@@ -44,7 +44,12 @@
   --shell-side-width: 232px;
   --shell-top-height: 48px;
   --nav-gap: 2px;
+  /* Two radii, because they do different jobs: `--radius` is for small
+     controls a theme may want as pills, `--radius-panel` is for surfaces that
+     hold flowing text. A theme setting --radius: 999px for its pills would
+     otherwise turn the chat panel into a lozenge and clip the conversation. */
   --radius: 10px;
+  --radius-panel: 10px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -351,7 +356,7 @@ body {
   width: min(360px, calc(100vw - 40px));
   max-height: min(520px, calc(100dvh - 140px));
   border: 1px solid var(--border-hair);
-  border-radius: var(--radius);
+  border-radius: var(--radius-panel);
   background: var(--surface-raised);
   overflow: hidden;
 }
@@ -412,7 +417,7 @@ body {
 .chat-suggestion {
   padding: 7px 10px;
   border: 1px solid var(--border-hair);
-  border-radius: var(--radius);
+  border-radius: var(--radius-panel);
   background: none;
   color: var(--text-secondary);
   font-size: 12px;
@@ -432,7 +437,7 @@ body {
   max-width: 85%;
   padding: 8px 11px;
   border: 1px solid var(--border-hair);
-  border-radius: var(--radius);
+  border-radius: var(--radius-panel);
   font-size: 13px;
   line-height: 1.55;
   white-space: pre-wrap;
@@ -460,7 +465,7 @@ body {
   margin: 4px 0 0;
   padding: 8px 10px;
   border: 1px solid rgba(248, 113, 113, 0.4);
-  border-radius: var(--radius);
+  border-radius: var(--radius-panel);
   color: #fca5a5;
   font-size: 11px;
 }
@@ -477,7 +482,7 @@ body {
   min-width: 0;
   padding: 8px 10px;
   border: 1px solid var(--border-hair);
-  border-radius: var(--radius);
+  border-radius: var(--radius-panel);
   background: var(--surface-sunken);
   color: var(--text-primary);
   font-size: 13px;

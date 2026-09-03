@@ -38,6 +38,7 @@
   --shell-top-height: 50px;
   --nav-gap: 8px;
   --radius: 0px;
+  --radius-panel: 0px;
 
   /* Theme-local */
   --br-shadow: 4px 4px 0 #0e0e0e;
@@ -56,10 +57,11 @@
   background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxODAnIGhlaWdodD0nMTgwJz48ZmlsdGVyIGlkPSduJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nMC45JyBudW1PY3RhdmVzPSczJy8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9JzE4MCcgaGVpZ2h0PScxODAnIGZpbHRlcj0ndXJsKCNuKScgb3BhY2l0eT0nMC41NScvPjwvc3ZnPg==");
 }
 
+/* Lifts the page above the decorative overlay. The chat widget is left
+   out on purpose: it is already `position: fixed` at z-index 60, and
+   overriding that drops it into the document flow. */
 :root[data-theme="brutalism"] .shell-top,
-:root[data-theme="brutalism"] .shell-body,
-:root[data-theme="brutalism"] .chat-launcher,
-:root[data-theme="brutalism"] .chat-panel {
+:root[data-theme="brutalism"] .shell-body {
   position: relative;
   z-index: 2;
 }

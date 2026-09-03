@@ -42,6 +42,7 @@
   --shell-top-height: 48px;
   --nav-gap: 4px;
   --radius: 0px;
+  --radius-panel: 0px;
 
   /* Theme-local */
   --y2k-magenta: #ff3bd4;
@@ -65,10 +66,11 @@
   );
 }
 
+/* Lifts the page above the decorative overlay. The chat widget is left
+   out on purpose: it is already `position: fixed` at z-index 60, and
+   overriding that drops it into the document flow. */
 :root[data-theme="y2k"] .shell-top,
-:root[data-theme="y2k"] .shell-body,
-:root[data-theme="y2k"] .chat-launcher,
-:root[data-theme="y2k"] .chat-panel {
+:root[data-theme="y2k"] .shell-body {
   position: relative;
   z-index: 10;
 }

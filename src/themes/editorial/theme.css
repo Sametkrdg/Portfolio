@@ -38,6 +38,7 @@
   --shell-top-height: 48px;
   --nav-gap: 0px;
   --radius: 999px; /* the theme bar's pills */
+  --radius-panel: 2px;
 
   /* Theme-local */
   --ed-gold: #b08d42;

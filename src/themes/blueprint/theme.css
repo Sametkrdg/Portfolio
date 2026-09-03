@@ -38,6 +38,7 @@
   --shell-top-height: 46px;
   --nav-gap: 4px;
   --radius: 0px;
+  --radius-panel: 0px;
 
   /* Theme-local */
   --bp-lime: #b6ff3b;
@@ -59,10 +60,11 @@
   background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
 }
 
+/* Lifts the page above the decorative overlay. The chat widget is left
+   out on purpose: it is already `position: fixed` at z-index 60, and
+   overriding that drops it into the document flow. */
 :root[data-theme="blueprint"] .shell-top,
-:root[data-theme="blueprint"] .shell-body,
-:root[data-theme="blueprint"] .chat-launcher,
-:root[data-theme="blueprint"] .chat-panel {
+:root[data-theme="blueprint"] .shell-body {
   position: relative;
   z-index: 10;
 }

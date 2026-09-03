@@ -42,6 +42,7 @@
   --shell-top-height: 46px;
   --nav-gap: 1px;
   --radius: 0px; /* Swiss: no rounded corners anywhere */
+  --radius-panel: 0px;
 }
 
 /* ── Shell overrides ────────────────────────────────────────────────────── */
