@@ -1,0 +1,758 @@
+/*
+ * blueprint — a technical drawing sheet.
+ *
+ * Dashed hairlines, reference codes down the left of everything, corner ticks
+ * on the hero, cyan for structure and lime for callouts. Values are taken from
+ * `_source/blueprint/design.dc.html`; the design's blinking cursor, pulsing
+ * status dot and scroll-driven heading resize are dropped — motion stays at
+ * smooth scroll only.
+ */
+
+:root[data-theme="blueprint"] {
+  /* Surfaces */
+  --surface-page: #0b0d10;
+  --surface-raised: #0e1116;
+  --surface-sunken: #08090c;
+
+  /* Lines */
+  --border-hair: rgba(64, 224, 255, 0.26);
+  --border-strong: rgba(64, 224, 255, 0.5);
+
+  /* Text */
+  --text-primary: #e9eef5;
+  --text-secondary: rgba(233, 238, 245, 0.84);
+  --text-muted: rgba(233, 238, 245, 0.45);
+
+  /* Accent */
+  --accent: #40e0ff;
+  --accent-contrast: #0b0d10;
+  --accent-soft: rgba(64, 224, 255, 0.12);
+
+  /* Type */
+  --font-display: var(--font-plex-mono), ui-monospace, monospace;
+  --font-body: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Shell metrics */
+  --shell-side-width: 250px;
+  --shell-top-height: 46px;
+  --nav-gap: 4px;
+  --radius: 0px;
+
+  /* Theme-local */
+  --bp-lime: #b6ff3b;
+  --bp-dim: rgba(233, 238, 245, 0.3);
+}
+
+/* The drawing grid, fixed behind everything. */
+:root[data-theme="blueprint"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(64, 224, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(64, 224, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(rgba(64, 224, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(64, 224, 255, 0.12) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+}
+
+:root[data-theme="blueprint"] .shell-top,
+:root[data-theme="blueprint"] .shell-body,
+:root[data-theme="blueprint"] .chat-launcher,
+:root[data-theme="blueprint"] .chat-panel {
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Shell ──────────────────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .shell-top {
+  border-bottom: 1px solid var(--border-strong);
+  background: rgba(11, 13, 16, 0.92);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="blueprint"] .theme-bar-label,
+[data-theme="blueprint"] .theme-bar-item,
+[data-theme="blueprint"] .locale-switch-item {
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+[data-theme="blueprint"] .side-nav {
+  border-right: 1px solid var(--border-strong);
+  background: rgba(11, 13, 16, 0.72);
+}
+
+[data-theme="blueprint"] .side-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+[data-theme="blueprint"] .side-role,
+[data-theme="blueprint"] .side-location,
+[data-theme="blueprint"] .side-availability {
+  letter-spacing: 0.08em;
+}
+[data-theme="blueprint"] .side-availability-dot {
+  border-radius: 0;
+  background: var(--bp-lime);
+}
+
+/* Active nav item: the box gets drawn around it, the way a callout is
+   circled on a drawing. The border is always there, transparent when idle,
+   so nothing reflows. */
+[data-theme="blueprint"] .bp-nav-item {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+  padding: 6px 8px;
+  border: 1px dashed transparent;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+[data-theme="blueprint"] .bp-nav-item:hover {
+  color: var(--text-primary);
+}
+[data-theme="blueprint"] .bp-nav-item[data-active] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+[data-theme="blueprint"] .bp-nav-ref {
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--bp-dim);
+}
+[data-theme="blueprint"] .bp-nav-item[data-active] .bp-nav-ref {
+  color: var(--bp-lime);
+}
+
+/* ── Section scaffold ───────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .bp-section {
+  padding: 58px 40px;
+  border-bottom: 1px solid rgba(64, 224, 255, 0.3);
+}
+
+[data-theme="blueprint"] .bp-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+[data-theme="blueprint"] .bp-tag {
+  padding: 3px 8px;
+  border: 1px dashed var(--accent);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+[data-theme="blueprint"] .bp-h2 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: -0.04em;
+}
+[data-theme="blueprint"] .bp-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border-hair);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .bp-hero {
+  padding: 44px 40px 58px;
+  border-bottom: 1px solid rgba(64, 224, 255, 0.3);
+}
+
+[data-theme="blueprint"] .bp-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+}
+[data-theme="blueprint"] .bp-hero-eyebrow {
+  color: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-hero-scale {
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+[data-theme="blueprint"] .bp-dashed-rule {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(64, 224, 255, 0.5) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+/* Corner ticks, the way a drawing frames its title block. */
+[data-theme="blueprint"] .bp-frame {
+  position: relative;
+  padding: 34px 30px;
+  margin-bottom: 34px;
+  border: 1px solid rgba(64, 224, 255, 0.3);
+}
+[data-theme="blueprint"] .bp-frame::before,
+[data-theme="blueprint"] .bp-frame::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 0 solid var(--accent);
+}
+[data-theme="blueprint"] .bp-frame::before {
+  top: -5px;
+  left: -5px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+[data-theme="blueprint"] .bp-frame::after {
+  bottom: -5px;
+  right: -5px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+[data-theme="blueprint"] .bp-hero-title {
+  margin: 0;
+  max-width: 26ch;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(30px, 5vw, 66px);
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+[data-theme="blueprint"] .bp-caret {
+  color: var(--bp-lime);
+}
+
+[data-theme="blueprint"] .bp-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+
+[data-theme="blueprint"] .bp-bracket {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 14px;
+  max-width: 68ch;
+  margin-bottom: 30px;
+}
+[data-theme="blueprint"] .bp-bracket::before {
+  content: "";
+  border-left: 1px solid rgba(64, 224, 255, 0.5);
+  border-top: 1px solid rgba(64, 224, 255, 0.5);
+  border-bottom: 1px solid rgba(64, 224, 255, 0.5);
+}
+[data-theme="blueprint"] .bp-bracket p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.68;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+[data-theme="blueprint"] .bp-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+[data-theme="blueprint"] .bp-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 24px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+[data-theme="blueprint"] .bp-cta[data-variant="primary"] {
+  border: 1px solid var(--bp-lime);
+  background: rgba(182, 255, 59, 0.1);
+  color: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-cta[data-variant="primary"]:hover {
+  background: rgba(182, 255, 59, 0.18);
+}
+[data-theme="blueprint"] .bp-cta[data-variant="secondary"] {
+  border: 1px dashed rgba(64, 224, 255, 0.6);
+  color: var(--text-primary);
+}
+[data-theme="blueprint"] .bp-cta[data-variant="secondary"]:hover {
+  border-color: var(--accent);
+}
+
+/* Telemetry panel */
+[data-theme="blueprint"] .bp-panel {
+  border: 1px solid rgba(64, 224, 255, 0.35);
+}
+[data-theme="blueprint"] .bp-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 13px;
+  border-bottom: 1px dashed rgba(64, 224, 255, 0.35);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+[data-theme="blueprint"] .bp-panel-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-panel-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-stat {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 92px) minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 12px 13px;
+  border-bottom: 1px dashed rgba(233, 238, 245, 0.1);
+}
+[data-theme="blueprint"] .bp-stat-ref {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--bp-dim);
+}
+[data-theme="blueprint"] .bp-stat-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 23px;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+[data-theme="blueprint"] .bp-stat-label {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+/* ── About ──────────────────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .bp-cards {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+[data-theme="blueprint"] .bp-card {
+  grid-column: span 2;
+  padding: 18px 17px;
+  border: 1px solid rgba(64, 224, 255, 0.28);
+}
+[data-theme="blueprint"] .bp-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+[data-theme="blueprint"] .bp-card-head span:last-child {
+  color: var(--bp-dim);
+}
+[data-theme="blueprint"] .bp-card p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.64;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="blueprint"] .bp-notes {
+  grid-column: span 6;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  gap: 12px 24px;
+  padding: 15px 17px;
+  border: 1px dashed rgba(233, 238, 245, 0.16);
+}
+[data-theme="blueprint"] .bp-note-key {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+[data-theme="blueprint"] .bp-note-value {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+/* ── Skills ─────────────────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .bp-table {
+  border: 1px solid rgba(64, 224, 255, 0.32);
+}
+[data-theme="blueprint"] .bp-table-row {
+  display: grid;
+  grid-template-columns: minmax(0, 72px) minmax(0, 232px) minmax(0, 1fr);
+  gap: 20px;
+  padding: 17px 18px;
+  border-bottom: 1px dashed rgba(64, 224, 255, 0.26);
+}
+[data-theme="blueprint"] .bp-table-row:last-child {
+  border-bottom: 0;
+}
+[data-theme="blueprint"] .bp-table-ref {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--bp-dim);
+}
+[data-theme="blueprint"] .bp-table-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+}
+[data-theme="blueprint"] .bp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 7px;
+  align-content: flex-start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="blueprint"] .bp-chips li {
+  padding: 4px 9px;
+  border: 1px solid rgba(64, 224, 255, 0.35);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+/* ── Experience ─────────────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .bp-jobs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(64, 224, 255, 0.32);
+}
+[data-theme="blueprint"] .bp-job {
+  display: grid;
+  grid-template-columns: minmax(0, 228px) minmax(0, 1fr);
+  gap: 32px;
+  padding: 26px 0;
+  border-bottom: 1px dashed rgba(64, 224, 255, 0.26);
+}
+[data-theme="blueprint"] .bp-job-when {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-family: var(--font-mono);
+}
+[data-theme="blueprint"] .bp-job-rev {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--bp-dim);
+}
+[data-theme="blueprint"] .bp-job-period {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+[data-theme="blueprint"] .bp-job-duration {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+[data-theme="blueprint"] .bp-job-body {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+[data-theme="blueprint"] .bp-job-role {
+  margin: 0 0 4px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(18px, 2vw, 26px);
+  letter-spacing: -0.035em;
+}
+[data-theme="blueprint"] .bp-job-company {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+[data-theme="blueprint"] .bp-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="blueprint"] .bp-bullets li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+[data-theme="blueprint"] .bp-bullets li::before {
+  content: "├─";
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+[data-theme="blueprint"] .bp-stack span {
+  padding: 3px 8px;
+  border: 1px dashed rgba(233, 238, 245, 0.16);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Projects ───────────────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .bp-projects {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+[data-theme="blueprint"] .bp-project {
+  grid-column: span 3;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(64, 224, 255, 0.3);
+  background: rgba(233, 238, 245, 0.016);
+}
+[data-theme="blueprint"] .bp-project:hover {
+  border-color: var(--accent);
+}
+[data-theme="blueprint"] .bp-project-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px dashed rgba(64, 224, 255, 0.3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+[data-theme="blueprint"] .bp-project-status {
+  padding: 2px 7px;
+  border: 1px solid var(--bp-lime);
+  font-size: 9.5px;
+  color: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-project-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  padding: 20px 18px;
+}
+[data-theme="blueprint"] .bp-project-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+}
+[data-theme="blueprint"] .bp-field {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 10px;
+}
+[data-theme="blueprint"] .bp-field::before {
+  content: "";
+  border-left: 1px solid rgba(64, 224, 255, 0.45);
+  border-top: 1px solid rgba(64, 224, 255, 0.45);
+  border-bottom: 1px solid rgba(64, 224, 255, 0.45);
+}
+[data-theme="blueprint"] .bp-field[data-kind="architecture"]::before {
+  border-color: rgba(182, 255, 59, 0.45);
+}
+[data-theme="blueprint"] .bp-field-label {
+  margin: 0 0 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+[data-theme="blueprint"] .bp-field[data-kind="architecture"] .bp-field-label {
+  color: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-field p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="blueprint"] .bp-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+[data-theme="blueprint"] .bp-metrics span {
+  padding: 5px 10px;
+  border: 1px solid var(--bp-lime);
+  background: rgba(182, 255, 59, 0.08);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--bp-lime);
+}
+[data-theme="blueprint"] .bp-project-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+[data-theme="blueprint"] .bp-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+[data-theme="blueprint"] .bp-project-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  border: 1px dashed rgba(64, 224, 255, 0.5);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-decoration: none;
+}
+[data-theme="blueprint"] .bp-project-links a:hover {
+  border-color: var(--accent);
+}
+
+/* ── Contact ────────────────────────────────────────────────────────────── */
+
+[data-theme="blueprint"] .bp-contact {
+  padding-bottom: 100px;
+  border-bottom: 0;
+}
+[data-theme="blueprint"] .bp-contact-title {
+  margin: 0 0 18px;
+  max-width: 22ch;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(22px, 3.4vw, 38px);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+[data-theme="blueprint"] .bp-contact-note {
+  margin: 0 0 28px;
+  max-width: 52ch;
+  font-size: 15.5px;
+  line-height: 1.62;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="blueprint"] .bp-contact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: 12px;
+  max-width: 900px;
+}
+[data-theme="blueprint"] .bp-contact-list a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 15px;
+  border: 1px dashed rgba(64, 224, 255, 0.4);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+[data-theme="blueprint"] .bp-contact-list a:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+[data-theme="blueprint"] .bp-contact-key {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+[data-theme="blueprint"] .bp-contact-value {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+
+/* ── Narrow screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+  [data-theme="blueprint"] .bp-hero-grid,
+  [data-theme="blueprint"] .bp-job {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  [data-theme="blueprint"] .bp-table-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  [data-theme="blueprint"] .bp-cards,
+  [data-theme="blueprint"] .bp-projects {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [data-theme="blueprint"] .bp-card,
+  [data-theme="blueprint"] .bp-notes,
+  [data-theme="blueprint"] .bp-project {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-theme="blueprint"] .bp-section,
+  [data-theme="blueprint"] .bp-hero {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

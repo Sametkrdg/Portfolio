@@ -45,7 +45,8 @@ export const THEME_LOADERS: Partial<
   Record<ThemeSlug, () => Promise<{ default: ThemeDefinition }>>
 > = {
   minimal: () => import("./minimal"),
-  // space, editorial, blueprint, brutalism, maximalism and y2k land in phase 3
+  blueprint: () => import("./blueprint"),
+  // editorial, brutalism, maximalism, y2k and space are still to come
 };
 
 /**

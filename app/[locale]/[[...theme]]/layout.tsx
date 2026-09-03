@@ -3,7 +3,13 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Inter, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import {
+  Inter,
+  Geist_Mono,
+  JetBrains_Mono,
+  IBM_Plex_Sans,
+  IBM_Plex_Mono,
+} from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
 import { routing } from "@/src/i18n/routing";
@@ -39,6 +45,35 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
 });
+
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+/*
+ * Fonts are loaded per theme, not all at once: a visitor on `minimal` should
+ * never download IBM Plex. TypeScript keeps this exhaustive, so a new theme
+ * cannot be added without deciding what it reads in.
+ */
+const THEME_FONTS: Record<ThemeSlug, string> = {
+  minimal: `${inter.variable} ${jetbrainsMono.variable}`,
+  blueprint: `${plexSans.variable} ${plexMono.variable}`,
+  space: `${inter.variable} ${geistMono.variable}`,
+  editorial: `${inter.variable} ${jetbrainsMono.variable}`,
+  brutalism: `${inter.variable} ${jetbrainsMono.variable}`,
+  maximalism: `${inter.variable} ${jetbrainsMono.variable}`,
+  y2k: `${inter.variable} ${jetbrainsMono.variable}`,
+};
 
 const SITE_URL = "https://sametkaradag.com";
 
@@ -142,7 +177,7 @@ export default async function LocaleThemeLayout({
     <html
       lang={locale}
       data-theme={styledAs}
-      className={`${inter.variable} ${geistMono.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${THEME_FONTS[styledAs]} h-full antialiased`}
     >
       <body className="app-shell">
         <NextIntlClientProvider>
