@@ -42,10 +42,26 @@ export const THEME_LABELS: Record<ThemeSlug, Record<Locale, string>> = {
  * when visited. `isThemeImplemented` is how the UI knows the difference.
  */
 export const THEME_LOADERS: Partial<
-  Record<ThemeSlug, () => Promise<ThemeDefinition>>
+  Record<ThemeSlug, () => Promise<{ default: ThemeDefinition }>>
 > = {
-  // filled in as each theme is built
+  minimal: () => import("./minimal"),
+  // space, editorial, blueprint, brutalism, maximalism and y2k land in phase 3
 };
+
+/**
+ * Loads a theme's component set. A slug that is listed but not built yet
+ * falls back to the default theme, so every URL in the theme bar renders
+ * something real instead of an empty page.
+ */
+export async function loadTheme(slug: ThemeSlug): Promise<ThemeDefinition> {
+  const loader = THEME_LOADERS[slug] ?? THEME_LOADERS[DEFAULT_THEME];
+  if (!loader) {
+    throw new Error(
+      `No theme loader for "${slug}" and the default theme "${DEFAULT_THEME}" is not built.`
+    );
+  }
+  return (await loader()).default;
+}
 
 export function isThemeSlug(value: string): value is ThemeSlug {
   return (THEME_ORDER as readonly string[]).includes(value);

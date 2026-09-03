@@ -3,18 +3,23 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
 import { routing } from "@/src/i18n/routing";
 import type { Locale, ThemeSlug } from "@/src/lib/types";
-import { DEFAULT_THEME, THEME_ORDER, isThemeSlug } from "@/src/themes/registry";
+import {
+  DEFAULT_THEME,
+  THEME_ORDER,
+  isThemeImplemented,
+  isThemeSlug,
+  loadTheme,
+} from "@/src/themes/registry";
 import { themeMemoryScript } from "@/src/lib/themeScript";
 import SideNav from "@/src/components/shell/SideNav";
 import ThemeBar from "@/src/components/shell/ThemeBar";
 import LocaleSwitch from "@/src/components/shell/LocaleSwitch";
 import ChatWidget from "@/src/components/shell/ChatWidget";
-import MotionProvider from "@/src/components/utils/MotionProvider";
 import { content } from "@/src/lib/content";
 import "../../globals.css";
 
@@ -26,6 +31,12 @@ const inter = Inter({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -117,12 +128,22 @@ export default async function LocaleThemeLayout({
   setRequestLocale(locale);
 
   const t = await getTranslations({ locale });
+  const themeDef = await loadTheme(slug);
+
+  /*
+   * `data-theme` names the theme whose CSS is actually loaded. Until a slug is
+   * built it renders the default theme's components, so it must carry the
+   * default theme's tokens too — otherwise the page would show one theme's
+   * layout with another theme's colours. The theme bar still marks the slug
+   * from the URL as selected.
+   */
+  const styledAs = isThemeImplemented(slug) ? slug : DEFAULT_THEME;
 
   return (
     <html
       lang={locale}
-      data-theme={slug}
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      data-theme={styledAs}
+      className={`${inter.variable} ${geistMono.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
         <script
@@ -148,8 +169,12 @@ export default async function LocaleThemeLayout({
           </header>
 
           <div className="shell-body">
-            <SideNav />
-            <MotionProvider>{children}</MotionProvider>
+            <SideNav
+              NavItem={themeDef.shell.NavItem}
+              content={content}
+              locale={locale}
+            />
+            {children}
           </div>
 
           <ChatWidget locale={locale} />

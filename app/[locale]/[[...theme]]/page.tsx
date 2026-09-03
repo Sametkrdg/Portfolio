@@ -3,37 +3,40 @@ import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
 import { routing } from "@/src/i18n/routing";
-import type { Locale } from "@/src/lib/types";
+import type { Locale, ThemeSlug } from "@/src/lib/types";
+import { SECTION_IDS } from "@/src/lib/types";
 import { content } from "@/src/lib/content";
-
-import Hero from "@/src/components/sections/Hero";
-import About from "@/src/components/sections/About";
-import Skills from "@/src/components/sections/Skills";
-import Experience from "@/src/components/sections/Experience";
-import Projects from "@/src/components/sections/Projects";
-import Contact from "@/src/components/sections/Contact";
+import { DEFAULT_THEME, isThemeSlug, loadTheme } from "@/src/themes/registry";
 
 type Params = { locale: string; theme?: string[] };
 
+function resolveTheme(segments: string[] | undefined): ThemeSlug {
+  if (!segments || segments.length === 0) return DEFAULT_THEME;
+  if (segments.length > 1) notFound();
+  const [slug] = segments;
+  if (!isThemeSlug(slug) || slug === DEFAULT_THEME) notFound();
+  return slug;
+}
+
 export default async function Page({ params }: { params: Promise<Params> }) {
-  const { locale: rawLocale } = await params;
+  const { locale: rawLocale, theme } = await params;
   if (!hasLocale(routing.locales, rawLocale)) notFound();
   const locale = rawLocale as Locale;
   setRequestLocale(locale);
 
+  const { sections } = await loadTheme(resolveTheme(theme));
+
   /*
-   * Phase 1 renders the existing section components under the new shell.
-   * Phase 2 moves them into `src/themes/space/sections/` behind the
-   * `SectionProps` contract, and each theme then supplies its own set.
+   * Section order is fixed for every theme; only the components change.
+   * Rendering from SECTION_IDS means a theme cannot quietly drop or reorder
+   * a section.
    */
   return (
     <main id="content" className="shell-main">
-      <Hero />
-      <About />
-      <Skills />
-      <Experience content={content} locale={locale} />
-      <Projects locale={locale} />
-      <Contact />
+      {SECTION_IDS.map((id) => {
+        const Section = sections[id];
+        return <Section key={id} content={content} locale={locale} />;
+      })}
     </main>
   );
 }

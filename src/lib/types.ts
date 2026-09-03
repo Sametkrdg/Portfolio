@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 /* ── Primitives ─────────────────────────────────────────────────────────── */
 
@@ -141,6 +141,8 @@ export interface NavItemProps {
   id: SectionId;
   label: string;
   href: string;
+  /** 0-based position in the sidebar; themes that number their nav use it. */
+  index: number;
   isActive: boolean;
   onSelect: (id: SectionId) => void;
 }
@@ -152,9 +154,17 @@ export interface ThemeBarItemProps {
   isActive: boolean;
 }
 
+/**
+ * Sections are server components by default — several are `async`, which a
+ * plain `ComponentType` cannot express.
+ */
+export type SectionComponent = (
+  props: SectionProps
+) => ReactNode | Promise<ReactNode>;
+
 export interface ThemeDefinition {
   slug: ThemeSlug;
-  sections: Record<SectionId, ComponentType<SectionProps>>;
+  sections: Record<SectionId, SectionComponent>;
   shell: {
     NavItem: ComponentType<NavItemProps>;
     ThemeBarItem?: ComponentType<ThemeBarItemProps>;

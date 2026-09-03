@@ -295,14 +295,17 @@ Tüm içerik `portfolio-context.json` içinde, her metin alanı `{ "tr": "...", 
 
 **Faz 1'de ayrıca:** `Algorithms` kaldırıldı · `Navbar`, 3D robot chatbot (`RobotChatbot`/`RobotMiniScene`/`Robot`) ve `ScrollToTop` silindi · `Experience` bölümü CV'den yazıldı · CV `public/cv/` altına taşındı · canonical + `hreflang` + OG kuruldu.
 
-### ⏭ Faz 2 — Pilot tema (sıradaki)
+### ✅ Faz 2 — Pilot tema: `minimal` — TAMAMLANDI (2026-09-03)
 
-1. Mevcut bölüm bileşenleri `themes/space/sections/` altına taşınır, `SectionProps` sözleşmesine uydurulur.
-2. Tüm sabit metinler `portfolio-context.json`'a taşınır (TR + EN).
-3. `themes/space/theme.css` token'ları tanımlanır; `themes/space/shell/NavItem.tsx` yazılır.
-4. Görsel çıktı mevcut siteyle eşleşmeli — tasarım değişmiyor, yalnızca mimari değişiyor.
+Pilot tema `space` yerine **`minimal`** oldu: varsayılan tema o, ve sol sidebar'ı zaten olan tek tasarım o. `space` Faz 3'e alındı.
 
-**Kabul kriterleri:** `space` teması içerik JSON'undan besleniyor; iki dilde de doğru; mevcut tasarımdan görsel sapma yok; `build` + `lint` temiz. **Mimari burada doğrulanır** — sorun varsa Faz 3'e geçmeden düzelt.
+1. `src/themes/minimal/` kuruldu: `theme.css` (tam token seti), `sections/*` (6 bölüm), `shell/NavItem.tsx`, `index.ts`.
+2. Tüm metin ve veri `portfolio-context.json`'dan geliyor; bölümlerde tek satır sabit metin yok.
+3. `registry.ts` → `THEME_LOADERS.minimal` + `loadTheme()`. Sayfa `SECTION_IDS` üzerinden render ediyor, yani bir tema bölüm atlayamaz veya sırasını değiştiremez.
+4. Kabuk temanın `NavItem`'ını prop olarak alıyor; aktif vurgu temaya ait. Sidebar'a kimlik bloğu (ad / rol / konum) ve müsaitlik satırı eklendi.
+5. Henüz yazılmamış temalar (`/tr/y2k` vb.) varsayılan temanın bileşenleriyle ve **onun token'larıyla** render ediliyor; tema şeridinde "henüz hazır değil" olarak işaretleniyorlar.
+
+**Kabul kriterleri — durum:** İki dilde de altı bölüm doğru sırada ve JSON'dan besleniyor · scroll-spy çalışıyor · `build` + `lint` temiz. **Görsel doğrulama Samet'te.**
 
 ### Faz 3 — Kalan 6 tema
 
@@ -315,7 +318,9 @@ Her tema için aynı döngü (sırayla, teker teker):
 5. `registry.ts`'e kaydedilir.
 6. İki dilde ve mobilde kontrol edilir; `build` + `lint`.
 
-Önerilen sıra (basitten karmaşığa): `minimal` → `blueprint` → `editorial` → `brutalism` → `y2k` → `maximalism`.
+Kalan sıra: `blueprint` → `editorial` → `brutalism` → `y2k` → `maximalism` → **`space`**.
+
+`space` en sona bırakıldı: mevcut 3D siteyi yeni sözleşmeye taşımak (bölümleri `SectionProps`'a uydurmak, 3D hero'yu ve ses düğmesini korurken GSAP/framer-motion'ı çıkarmak) diğerlerinden farklı bir iş. Mevcut bileşenler o güne kadar `src/components/sections/` altında duruyor — **artık hiçbir yerden çağrılmıyorlar**, yalnızca `space` için referans.
 
 **Her temada geçerli kurallar:** kabuk yapısı değişmez; ortak token setinin tamamı doldurulur; animasyon minimumda kalır; metin/arka plan kontrastı okunabilir olmalı — `y2k`, `brutalism`, `maximalism` temalarında bu risk yüksek, kontrastı düşük kalan yerleri Samet'e bildir.
 
