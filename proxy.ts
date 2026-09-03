@@ -16,11 +16,19 @@ const BARE_LOCALE = new RegExp(`^/(${routing.locales.join("|")})/?$`);
  * A visitor who last chose a non-default theme and then opens the bare `/tr`
  * is redirected to `/tr/<theme>` before any HTML is sent — no inline script,
  * no second document load, and nothing to flash.
+ *
+ * It only fires on a cold arrival. A request that carries a same-origin
+ * referer came from a click inside the site, and clicking "minimal" in the
+ * theme bar means the visitor wants the default theme *now* — redirecting
+ * them back to their remembered theme would make that entry unreachable.
  */
 export default function proxy(request: NextRequest) {
   const match = BARE_LOCALE.exec(request.nextUrl.pathname);
+  const referer = request.headers.get("referer");
+  const fromInsideTheSite =
+    referer !== null && referer.startsWith(request.nextUrl.origin);
 
-  if (match) {
+  if (match && !fromInsideTheSite) {
     const remembered = request.cookies.get(THEME_COOKIE)?.value;
     const isKnown =
       remembered !== undefined &&

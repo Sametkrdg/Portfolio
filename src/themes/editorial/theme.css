@@ -199,7 +199,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(38px, 5.4vw, 82px);
-  line-height: 0.98;
+  line-height: 1.08;
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
@@ -497,7 +497,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(26px, 3.2vw, 42px);
-  line-height: 1.04;
+  line-height: 1.16;
   letter-spacing: -0.03em;
 }
 [data-theme="editorial"] .ed-field-label {
@@ -562,7 +562,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(28px, 4vw, 46px);
-  line-height: 1.08;
+  line-height: 1.16;
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
