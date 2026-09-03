@@ -1,0 +1,631 @@
+/*
+ * editorial — a broadsheet.
+ *
+ * Playfair for the type that carries meaning, Source Sans for the labels that
+ * organise it. Two-column body text with a rule between, a drop cap opening
+ * About, § for bullets, and gold used sparingly against navy. Values are taken
+ * from `_source/editorial/design.dc.html`; the scroll-driven heading resize is
+ * dropped.
+ */
+
+:root[data-theme="editorial"] {
+  /* Surfaces */
+  --surface-page: #eef0f2;
+  --surface-raised: #f7f8f9;
+  --surface-sunken: #e4e7ea;
+
+  /* Lines */
+  --border-hair: rgba(27, 36, 48, 0.2);
+  --border-strong: rgba(27, 36, 48, 0.45);
+
+  /* Text */
+  --text-primary: #1b2430;
+  --text-secondary: #1b2430;
+  --text-muted: #5a6675;
+
+  /* Accent */
+  --accent: #1f3b57;
+  --accent-contrast: #eef0f2;
+  --accent-soft: rgba(31, 59, 87, 0.08);
+
+  /* Type */
+  --font-display: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-body: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Shell metrics */
+  --shell-side-width: 244px;
+  --shell-top-height: 48px;
+  --nav-gap: 0px;
+  --radius: 999px; /* the theme bar's pills */
+
+  /* Theme-local */
+  --ed-gold: #b08d42;
+}
+
+/* ── Shell ──────────────────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .shell-top {
+  border-bottom: 1px solid var(--border-hair);
+}
+[data-theme="editorial"] .theme-bar-label,
+[data-theme="editorial"] .locale-switch-item {
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+[data-theme="editorial"] .theme-bar-item {
+  padding: 5px 12px;
+  border-color: var(--border-hair);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+[data-theme="editorial"] .theme-bar-item:hover {
+  border-color: var(--ed-gold);
+  color: var(--ed-gold);
+}
+
+[data-theme="editorial"] .side-nav {
+  border-right: 1px solid var(--border-hair);
+}
+[data-theme="editorial"] .side-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+[data-theme="editorial"] .side-role {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--accent);
+}
+[data-theme="editorial"] .side-location,
+[data-theme="editorial"] .side-availability {
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+[data-theme="editorial"] .side-availability-dot {
+  border-radius: 0;
+  background: var(--ed-gold);
+}
+
+/* The active item is set in the display serif and gains a gold rule; the
+   column is fixed-width, so growing the type cannot move anything. */
+[data-theme="editorial"] .ed-nav-item {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-hair);
+  border-left: 3px solid transparent;
+  padding-left: 10px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+[data-theme="editorial"] .ed-nav-item:hover {
+  color: var(--text-primary);
+}
+[data-theme="editorial"] .ed-nav-num {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-nav-label {
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+[data-theme="editorial"] .ed-nav-item[data-active] {
+  border-left-color: var(--ed-gold);
+  color: var(--text-primary);
+}
+[data-theme="editorial"] .ed-nav-item[data-active] .ed-nav-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* ── Section scaffold ───────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .ed-section {
+  padding: 58px 44px;
+  border-bottom: 1px solid var(--border-hair);
+}
+
+[data-theme="editorial"] .ed-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+[data-theme="editorial"] .ed-kicker {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ed-gold);
+  white-space: nowrap;
+}
+[data-theme="editorial"] .ed-h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(26px, 3.4vw, 40px);
+  letter-spacing: -0.025em;
+}
+[data-theme="editorial"] .ed-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border-hair);
+}
+[data-theme="editorial"] .ed-dek {
+  margin: 0 0 26px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+[data-theme="editorial"] .ed-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr);
+  gap: 44px;
+}
+
+[data-theme="editorial"] .ed-cols {
+  column-count: 2;
+  column-gap: 36px;
+  column-rule: 1px solid rgba(27, 36, 48, 0.18);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .ed-hero {
+  padding: 54px 44px 60px;
+  border-bottom: 3px double var(--text-primary);
+}
+[data-theme="editorial"] .ed-hero-eyebrow {
+  margin: 0 0 22px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-hero-title {
+  margin: 0 0 26px;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(38px, 5.4vw, 82px);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+[data-theme="editorial"] .ed-hero-body {
+  margin: 0;
+  max-width: 74ch;
+  font-size: 16px;
+  line-height: 1.62;
+  text-wrap: pretty;
+}
+
+[data-theme="editorial"] .ed-record {
+  border-top: 3px solid var(--ed-gold);
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+[data-theme="editorial"] .ed-record-label {
+  margin: 0;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="editorial"] .ed-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(27, 36, 48, 0.16);
+}
+[data-theme="editorial"] .ed-stat-value {
+  min-width: 92px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-stat-label {
+  font-size: 13.5px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+[data-theme="editorial"] .ed-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-top: 3px solid var(--ed-gold);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  text-decoration: none;
+}
+[data-theme="editorial"] .ed-cta:hover {
+  background: var(--text-primary);
+}
+[data-theme="editorial"] .ed-cta-main {
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+[data-theme="editorial"] .ed-cta-sub {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ed-gold);
+}
+
+/* ── About ──────────────────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .ed-prose p {
+  margin: 0 0 16px;
+  font-size: 16.5px;
+  line-height: 1.66;
+  text-wrap: pretty;
+}
+[data-theme="editorial"] .ed-prose p:first-child::first-letter {
+  float: left;
+  margin: 4px 10px 0 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 74px;
+  line-height: 0.78;
+  color: var(--ed-gold);
+}
+
+[data-theme="editorial"] .ed-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+[data-theme="editorial"] .ed-quote {
+  margin: 0;
+  padding: 4px 0 4px 18px;
+  border-left: 3px solid var(--ed-gold);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(19px, 1.9vw, 25px);
+  line-height: 1.36;
+  color: var(--accent);
+}
+[data-theme="editorial"] .ed-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 20px;
+  background: var(--text-primary);
+  color: var(--surface-page);
+}
+[data-theme="editorial"] .ed-dossier-label {
+  margin: 0;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-dossier-row {
+  display: grid;
+  grid-template-columns: minmax(0, 96px) minmax(0, 1fr);
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(238, 240, 242, 0.18);
+}
+[data-theme="editorial"] .ed-dossier-key {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+[data-theme="editorial"] .ed-dossier-value {
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+/* ── Skills ─────────────────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .ed-ledger {
+  border-top: 1px solid var(--text-primary);
+}
+[data-theme="editorial"] .ed-ledger-row {
+  display: grid;
+  grid-template-columns: minmax(0, 44px) minmax(0, 230px) minmax(0, 1fr);
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-hair);
+}
+[data-theme="editorial"] .ed-ledger-num {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-ledger-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+[data-theme="editorial"] .ed-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  align-content: flex-start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="editorial"] .ed-chips li {
+  padding: 4px 10px;
+  border: 1px solid rgba(27, 36, 48, 0.28);
+  background: rgba(255, 255, 255, 0.4);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+}
+
+/* ── Experience ─────────────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .ed-jobs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--text-primary);
+}
+[data-theme="editorial"] .ed-job {
+  display: grid;
+  grid-template-columns: minmax(0, 218px) minmax(0, 1fr);
+  gap: 34px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border-hair);
+}
+[data-theme="editorial"] .ed-job-when {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+[data-theme="editorial"] .ed-job-period {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="editorial"] .ed-job-duration {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-job-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+[data-theme="editorial"] .ed-job-role {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(21px, 2.2vw, 29px);
+  letter-spacing: -0.02em;
+}
+[data-theme="editorial"] .ed-job-company {
+  margin: 0;
+  font-size: 14.5px;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+[data-theme="editorial"] .ed-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="editorial"] .ed-bullets li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  font-size: 15.5px;
+  line-height: 1.58;
+}
+[data-theme="editorial"] .ed-bullets li::before {
+  content: "§";
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Projects ───────────────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .ed-projects {
+  display: flex;
+  flex-direction: column;
+}
+[data-theme="editorial"] .ed-project {
+  display: grid;
+  grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr);
+  gap: 44px;
+  padding: 32px 0;
+  border-top: 1px solid var(--border-hair);
+}
+[data-theme="editorial"] .ed-project-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+[data-theme="editorial"] .ed-project-index {
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-project-status {
+  padding: 3px 9px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+[data-theme="editorial"] .ed-project-title {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(26px, 3.2vw, 42px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+[data-theme="editorial"] .ed-field-label {
+  margin: 0 0 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-project p {
+  margin: 0 0 16px;
+  font-size: 15.5px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+[data-theme="editorial"] .ed-project-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+[data-theme="editorial"] .ed-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 3px solid var(--ed-gold);
+}
+[data-theme="editorial"] .ed-metrics span {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+[data-theme="editorial"] .ed-project-links a {
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ed-gold);
+  padding-bottom: 2px;
+}
+[data-theme="editorial"] .ed-project-links a:hover {
+  color: var(--ed-gold);
+}
+
+/* ── Contact ────────────────────────────────────────────────────────────── */
+
+[data-theme="editorial"] .ed-contact {
+  padding-bottom: 96px;
+  border-bottom: 0;
+}
+[data-theme="editorial"] .ed-contact-title {
+  margin: 0 0 18px;
+  max-width: 20ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+[data-theme="editorial"] .ed-contact-note {
+  margin: 0 0 28px;
+  max-width: 46ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--accent);
+}
+[data-theme="editorial"] .ed-contact-list {
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+  border-top: 1px solid var(--text-primary);
+}
+[data-theme="editorial"] .ed-contact-list a {
+  display: grid;
+  grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border-hair);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+[data-theme="editorial"] .ed-contact-list a:hover {
+  color: var(--ed-gold);
+}
+[data-theme="editorial"] .ed-contact-key {
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="editorial"] .ed-contact-value {
+  font-size: 15px;
+}
+
+/* ── Narrow screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+  [data-theme="editorial"] .ed-feature,
+  [data-theme="editorial"] .ed-project,
+  [data-theme="editorial"] .ed-job {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+  [data-theme="editorial"] .ed-cols {
+    column-count: 1;
+  }
+  [data-theme="editorial"] .ed-ledger-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-theme="editorial"] .ed-section,
+  [data-theme="editorial"] .ed-hero {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

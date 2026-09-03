@@ -9,6 +9,8 @@ import {
   JetBrains_Mono,
   IBM_Plex_Sans,
   IBM_Plex_Mono,
+  Playfair_Display,
+  Source_Sans_3,
 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -60,6 +62,20 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const sourceSans = Source_Sans_3({
+  variable: "--font-source-sans",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 /*
  * Fonts are loaded per theme, not all at once: a visitor on `minimal` should
  * never download IBM Plex. TypeScript keeps this exhaustive, so a new theme
@@ -69,7 +85,7 @@ const THEME_FONTS: Record<ThemeSlug, string> = {
   minimal: `${inter.variable} ${jetbrainsMono.variable}`,
   blueprint: `${plexSans.variable} ${plexMono.variable}`,
   space: `${inter.variable} ${geistMono.variable}`,
-  editorial: `${inter.variable} ${jetbrainsMono.variable}`,
+  editorial: `${playfair.variable} ${sourceSans.variable}`,
   brutalism: `${inter.variable} ${jetbrainsMono.variable}`,
   maximalism: `${inter.variable} ${jetbrainsMono.variable}`,
   y2k: `${inter.variable} ${jetbrainsMono.variable}`,
