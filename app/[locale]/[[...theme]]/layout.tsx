@@ -13,6 +13,7 @@ import {
   Source_Sans_3,
   Space_Mono,
   Work_Sans,
+  Sora,
 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -91,6 +92,12 @@ const workSans = Work_Sans({
   display: "swap",
 });
 
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 /*
  * Fonts are loaded per theme, not all at once: a visitor on `minimal` should
  * never download IBM Plex. TypeScript keeps this exhaustive, so a new theme
@@ -103,7 +110,7 @@ const THEME_FONTS: Record<ThemeSlug, string> = {
   editorial: `${playfair.variable} ${sourceSans.variable}`,
   brutalism: `${spaceMono.variable} ${workSans.variable}`,
   maximalism: `${inter.variable} ${jetbrainsMono.variable}`,
-  y2k: `${inter.variable} ${jetbrainsMono.variable}`,
+  y2k: `${sora.variable} ${plexMono.variable}`,
 };
 
 const SITE_URL = "https://sametkaradag.com";

@@ -48,7 +48,8 @@ export const THEME_LOADERS: Partial<
   blueprint: () => import("./blueprint"),
   editorial: () => import("./editorial"),
   brutalism: () => import("./brutalism"),
-  // maximalism, y2k and space are still to come
+  y2k: () => import("./y2k"),
+  // maximalism and space are still to come
 };
 
 /**
