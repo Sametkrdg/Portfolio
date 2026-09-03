@@ -1,0 +1,660 @@
+/*
+ * brutalism — everything is a box with a hard shadow.
+ *
+ * 2px black borders, offset shadows with no blur, Space Mono set bold and
+ * uppercase for anything structural, §-numbered sections, and one orange that
+ * does all the shouting. Values are taken from
+ * `_source/brutalism/design.dc.html`; hover still shifts the shadow, but with
+ * no transition — a state change, not an animation.
+ */
+
+:root[data-theme="brutalism"] {
+  /* Surfaces */
+  --surface-page: #edebe3;
+  --surface-raised: #edebe3;
+  --surface-sunken: #e2dfd4;
+
+  /* Lines */
+  --border-hair: #0e0e0e;
+  --border-strong: #0e0e0e;
+
+  /* Text */
+  --text-primary: #0e0e0e;
+  --text-secondary: #0e0e0e;
+  --text-muted: #5b584f;
+
+  /* Accent */
+  --accent: #ff4b2b;
+  --accent-contrast: #edebe3;
+  --accent-soft: rgba(255, 75, 43, 0.14);
+
+  /* Type */
+  --font-display: var(--font-space-mono), ui-monospace, monospace;
+  --font-body: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+
+  /* Shell metrics */
+  --shell-side-width: 254px;
+  --shell-top-height: 50px;
+  --nav-gap: 8px;
+  --radius: 0px;
+
+  /* Theme-local */
+  --br-shadow: 4px 4px 0 #0e0e0e;
+  --br-shadow-lg: 6px 6px 0 #0e0e0e;
+}
+
+/* Paper grain, static — no animation, just texture. */
+:root[data-theme="brutalism"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxODAnIGhlaWdodD0nMTgwJz48ZmlsdGVyIGlkPSduJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nMC45JyBudW1PY3RhdmVzPSczJy8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9JzE4MCcgaGVpZ2h0PScxODAnIGZpbHRlcj0ndXJsKCNuKScgb3BhY2l0eT0nMC41NScvPjwvc3ZnPg==");
+}
+
+:root[data-theme="brutalism"] .shell-top,
+:root[data-theme="brutalism"] .shell-body,
+:root[data-theme="brutalism"] .chat-launcher,
+:root[data-theme="brutalism"] .chat-panel {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Shell ──────────────────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .shell-top {
+  border-bottom: 2px solid var(--text-primary);
+}
+[data-theme="brutalism"] .theme-bar-label,
+[data-theme="brutalism"] .theme-bar-item,
+[data-theme="brutalism"] .locale-switch-item {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .theme-bar-item {
+  border: 2px solid var(--text-primary);
+  font-size: 11px;
+}
+[data-theme="brutalism"] .theme-bar-item:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+[data-theme="brutalism"] .theme-bar-item[data-active] {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--surface-page);
+}
+[data-theme="brutalism"] .locale-switch-item[data-active] {
+  border: 2px solid var(--text-primary);
+}
+
+[data-theme="brutalism"] .side-nav {
+  border-right: 2px solid var(--text-primary);
+}
+[data-theme="brutalism"] .side-name {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 17px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+[data-theme="brutalism"] .side-role,
+[data-theme="brutalism"] .side-location,
+[data-theme="brutalism"] .side-availability {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .side-role {
+  color: var(--accent);
+}
+[data-theme="brutalism"] .side-availability-dot {
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--text-primary);
+  border-radius: 0;
+  background: var(--accent);
+}
+
+/* The active item becomes a filled block with a hard shadow. Border and
+   shadow are on every item — transparent when idle — so the box never
+   changes size and the column never shifts. */
+[data-theme="brutalism"] .br-nav-item {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 2px solid transparent;
+  box-shadow: 0 0 0 transparent;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+[data-theme="brutalism"] .br-nav-item:hover {
+  border-color: var(--text-primary);
+}
+[data-theme="brutalism"] .br-nav-item[data-active] {
+  border-color: var(--text-primary);
+  box-shadow: var(--br-shadow);
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+[data-theme="brutalism"] .br-nav-num {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* ── Section scaffold ───────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .br-section {
+  padding: 72px 32px;
+  border-bottom: 2px solid var(--text-primary);
+}
+
+[data-theme="brutalism"] .br-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+[data-theme="brutalism"] .br-tag {
+  padding: 4px 6px;
+  background: var(--text-primary);
+  color: var(--surface-page);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+}
+[data-theme="brutalism"] .br-h2 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(24px, 3.6vw, 42px);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-rule {
+  flex: 1;
+  height: 2px;
+  background: var(--text-primary);
+}
+
+[data-theme="brutalism"] .br-bento {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+
+[data-theme="brutalism"] .br-box {
+  border: 2px solid var(--text-primary);
+  background: var(--surface-page);
+  box-shadow: var(--br-shadow);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .br-hero {
+  padding: 60px 32px 72px;
+  border-bottom: 2px solid var(--text-primary);
+}
+[data-theme="brutalism"] .br-hero-eyebrow {
+  margin: 0 0 28px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="brutalism"] .br-hero-title {
+  margin: 0 0 40px;
+  max-width: 17ch;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(36px, 8vw, 120px);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-hero-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+[data-theme="brutalism"] .br-hero-body {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.5;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+[data-theme="brutalism"] .br-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+[data-theme="brutalism"] .br-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  border: 2px solid var(--text-primary);
+  box-shadow: var(--br-shadow-lg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+[data-theme="brutalism"] .br-cta[data-variant="primary"] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+[data-theme="brutalism"] .br-cta[data-variant="secondary"] {
+  background: var(--surface-page);
+  color: var(--text-primary);
+}
+[data-theme="brutalism"] .br-cta:hover {
+  box-shadow: 8px 8px 0 var(--text-primary);
+}
+
+[data-theme="brutalism"] .br-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 56px;
+}
+[data-theme="brutalism"] .br-stat {
+  padding: 20px 18px;
+}
+[data-theme="brutalism"] .br-stat-value {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(28px, 3.2vw, 44px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+}
+[data-theme="brutalism"] .br-stat-label {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+
+/* ── About ──────────────────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .br-card {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 22px;
+}
+[data-theme="brutalism"] .br-card:first-child {
+  background: var(--text-primary);
+  color: var(--surface-page);
+}
+[data-theme="brutalism"] .br-card-label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="brutalism"] .br-card p {
+  margin: 0;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.5;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+[data-theme="brutalism"] .br-meta-strip {
+  grid-column: span 6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  padding: 14px 18px;
+  border: 2px solid var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+[data-theme="brutalism"] .br-meta-strip span:last-child {
+  color: var(--accent);
+}
+
+/* ── Skills ─────────────────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .br-skill-card {
+  grid-column: span 3;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 20px;
+}
+[data-theme="brutalism"] .br-skill-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--text-primary);
+}
+[data-theme="brutalism"] .br-skill-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-skill-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+[data-theme="brutalism"] .br-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="brutalism"] .br-chips li {
+  padding: 5px 9px;
+  border: 2px solid var(--text-primary);
+  background: var(--surface-page);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11.5px;
+}
+
+/* ── Experience ─────────────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .br-jobs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 2px solid var(--text-primary);
+  box-shadow: var(--br-shadow-lg);
+}
+[data-theme="brutalism"] .br-job {
+  display: grid;
+  grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
+  gap: 26px;
+  padding: 26px 22px;
+  border-bottom: 2px solid var(--text-primary);
+  background: var(--surface-page);
+}
+[data-theme="brutalism"] .br-job:last-child {
+  border-bottom: 0;
+}
+[data-theme="brutalism"] .br-job-when {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+[data-theme="brutalism"] .br-job-period {
+  padding: 5px 8px;
+  background: var(--text-primary);
+  color: var(--surface-page);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12.5px;
+}
+[data-theme="brutalism"] .br-job-duration {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+[data-theme="brutalism"] .br-job-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+[data-theme="brutalism"] .br-job-role {
+  margin: 0 0 4px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(18px, 1.9vw, 25px);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-job-company {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+[data-theme="brutalism"] .br-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="brutalism"] .br-bullets li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  font-size: 14.5px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+[data-theme="brutalism"] .br-bullets li::before {
+  content: ">";
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent);
+}
+[data-theme="brutalism"] .br-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+[data-theme="brutalism"] .br-stack span {
+  padding: 3px 8px;
+  border: 2px solid var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10.5px;
+}
+
+/* ── Projects ───────────────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .br-project {
+  grid-column: span 3;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px 22px;
+  box-shadow: var(--br-shadow-lg);
+}
+[data-theme="brutalism"] .br-project:hover {
+  box-shadow: 9px 9px 0 var(--text-primary);
+}
+[data-theme="brutalism"] .br-project-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+[data-theme="brutalism"] .br-project-status {
+  padding: 3px 7px;
+  border: 2px solid var(--text-primary);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-project-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(22px, 2.8vw, 34px);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-field-label {
+  margin: 0 0 5px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="brutalism"] .br-project p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+[data-theme="brutalism"] .br-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+[data-theme="brutalism"] .br-metrics span {
+  padding: 5px 10px;
+  border: 2px solid var(--text-primary);
+  background: var(--text-primary);
+  color: var(--surface-page);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11.5px;
+}
+[data-theme="brutalism"] .br-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+}
+[data-theme="brutalism"] .br-project-links a {
+  padding: 8px 12px;
+  border: 2px solid var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+[data-theme="brutalism"] .br-project-links a:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* ── Contact ────────────────────────────────────────────────────────────── */
+
+[data-theme="brutalism"] .br-contact {
+  padding-bottom: 96px;
+  border-bottom: 0;
+}
+[data-theme="brutalism"] .br-contact-title {
+  margin: 0 0 18px;
+  max-width: 18ch;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(26px, 4.4vw, 54px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-contact-note {
+  margin: 0 0 30px;
+  max-width: 44ch;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+[data-theme="brutalism"] .br-contact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 16px;
+  max-width: 900px;
+}
+[data-theme="brutalism"] .br-contact-list a {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 18px;
+  border: 2px solid var(--text-primary);
+  box-shadow: var(--br-shadow);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+[data-theme="brutalism"] .br-contact-list a:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+[data-theme="brutalism"] .br-contact-key {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+[data-theme="brutalism"] .br-contact-value {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ── Narrow screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 1000px) {
+  [data-theme="brutalism"] .br-bento,
+  [data-theme="brutalism"] .br-stats,
+  [data-theme="brutalism"] .br-hero-meta,
+  [data-theme="brutalism"] .br-job {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [data-theme="brutalism"] .br-card,
+  [data-theme="brutalism"] .br-skill-card,
+  [data-theme="brutalism"] .br-project,
+  [data-theme="brutalism"] .br-meta-strip {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-theme="brutalism"] .br-section,
+  [data-theme="brutalism"] .br-hero {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

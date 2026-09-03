@@ -11,6 +11,8 @@ import {
   IBM_Plex_Mono,
   Playfair_Display,
   Source_Sans_3,
+  Space_Mono,
+  Work_Sans,
 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -76,6 +78,19 @@ const sourceSans = Source_Sans_3({
   display: "swap",
 });
 
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+});
+
+const workSans = Work_Sans({
+  variable: "--font-work-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 /*
  * Fonts are loaded per theme, not all at once: a visitor on `minimal` should
  * never download IBM Plex. TypeScript keeps this exhaustive, so a new theme
@@ -86,7 +101,7 @@ const THEME_FONTS: Record<ThemeSlug, string> = {
   blueprint: `${plexSans.variable} ${plexMono.variable}`,
   space: `${inter.variable} ${geistMono.variable}`,
   editorial: `${playfair.variable} ${sourceSans.variable}`,
-  brutalism: `${inter.variable} ${jetbrainsMono.variable}`,
+  brutalism: `${spaceMono.variable} ${workSans.variable}`,
   maximalism: `${inter.variable} ${jetbrainsMono.variable}`,
   y2k: `${inter.variable} ${jetbrainsMono.variable}`,
 };
