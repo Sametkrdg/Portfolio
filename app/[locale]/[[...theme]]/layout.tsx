@@ -15,7 +15,6 @@ import {
   isThemeSlug,
   loadTheme,
 } from "@/src/themes/registry";
-import { themeMemoryScript } from "@/src/lib/themeScript";
 import SideNav from "@/src/components/shell/SideNav";
 import ThemeBar from "@/src/components/shell/ThemeBar";
 import LocaleSwitch from "@/src/components/shell/LocaleSwitch";
@@ -145,18 +144,6 @@ export default async function LocaleThemeLayout({
       data-theme={styledAs}
       className={`${inter.variable} ${geistMono.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <head>
-        <script
-          /* Restores the visitor's last theme on a bare `/tr` before paint. */
-          dangerouslySetInnerHTML={{
-            __html: themeMemoryScript(
-              routing.locales,
-              THEME_ORDER,
-              DEFAULT_THEME
-            ),
-          }}
-        />
-      </head>
       <body className="app-shell">
         <NextIntlClientProvider>
           <a href="#hero" className="skip-link">

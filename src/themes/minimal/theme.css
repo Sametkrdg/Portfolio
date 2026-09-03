@@ -6,7 +6,13 @@
  * `_source/minimal/design.dc.html`.
  */
 
-[data-theme="minimal"] {
+/*
+ * `:root[data-theme=...]`, not a bare attribute selector: `[data-theme="x"]`
+ * and `:root` have identical specificity, so whichever the bundler happens to
+ * emit last would win. Prefixing with :root makes the theme always beat the
+ * fallback tokens in globals.css.
+ */
+:root[data-theme="minimal"] {
   /* Surfaces */
   --surface-page: #f6f5f1;
   --surface-raised: #ffffff;

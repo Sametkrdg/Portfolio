@@ -3,9 +3,14 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    SHARED THEME TOKEN CONTRACT
 
-   Every theme MUST define all of these under `[data-theme="<slug>"]` in its
-   own `src/themes/<slug>/theme.css`. A partially defined theme is a bug.
-   The values on `:root` below are the neutral fallback that keeps the shell
+   Every theme MUST define all of these under `:root[data-theme="<slug>"]` in
+   its own `src/themes/<slug>/theme.css`. A partially defined theme is a bug.
+
+   The `:root` prefix is required, not cosmetic: a bare `[data-theme="x"]` has
+   exactly the same specificity as the `:root` block below, so the winner would
+   depend on which stylesheet the bundler emitted last.
+
+   The values on `:root` here are the neutral fallback that keeps the shell
    readable before a theme's stylesheet lands.
    ═══════════════════════════════════════════════════════════════════════════ */
 

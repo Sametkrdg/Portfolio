@@ -43,8 +43,8 @@
       "en": "I build scalable APIs and fast interfaces."
     },
     "body": {
-      "tr": "İki yıldan fazladır .NET 9 ve React 19 ile üretim projeleri geliştiriyorum. Tersan Shipyard'da platformun tek full-stack geliştiricisiydim: API mimarisinden arayüz tasarımına kadar süreci ben yürüttüm. Öncesinde Mos Otomasyon'da backend, Dekodem Yapı'da frontend tarafında çalıştım.",
-      "en": "Over two years building production projects with .NET 9 and React 19. At Tersan Shipyard I was the sole full-stack developer on the platform, running everything from API architecture to interface design. Before that, backend at Mos Otomasyon and frontend at Dekodem Yapı."
+      "tr": "İki yıldan fazladır .NET 9 ve React 19 ile üretim projeleri geliştiriyorum. Backend tarafında katmanlı mimariyle API yazıyorum; frontend tarafında arayüzü önce Figma'da tasarlayıp sonra kendim geliştiriyorum. Öncelik verdiğim şeyler: okunabilir kod, ölçülebilir performans ve her sürümü koruyan testler.",
+      "en": "Over two years building production projects with .NET 9 and React 19. On the backend I write APIs with layered architecture; on the front I design the interface in Figma and then build it myself. What I care about: readable code, measurable performance, and tests that hold up every release."
     }
   },
   "about": {
@@ -52,25 +52,15 @@
       "tr": [
         "Frontend'de başladım, backend'e geçtim, şimdi ikisini birlikte yapıyorum. Bunu bilerek seçtim: bir isteğin tarayıcıdan veritabanına kadar izlediği yolun tamamını görmek, sadece bir ucunu bilmekten daha çok işe yarıyor.",
         "Katmanlı mimariyle çalışıyorum ve kodun altı ay sonra da okunabilir olmasına dikkat ediyorum. Redis cache, Hangfire ile arka plan işleri ve Serilog ile loglama, sonradan eklenen şeyler değil; işin başında kurduğum parçalar. xUnit entegrasyon testleri de her sürümde aynı işi görüyor.",
-        "Arayüz tarafını da kendim üstleniyorum. Tersan'da platformun arayüzünü Figma'da tasarlayıp React 19 ve MUI v7 ile geliştirdim. Tasarımı devretmek yerine kendim yapmak, backend'de verdiğim kararların ekranda ne anlama geldiğini görmemi sağlıyor."
+        "Arayüz tarafını da kendim üstleniyorum. Son çalıştığım platformun arayüzünü Figma'da tasarlayıp React 19 ve MUI v7 ile geliştirdim. Tasarımı devretmek yerine kendim yapmak, backend'de verdiğim kararların ekranda ne anlama geldiğini görmemi sağlıyor."
       ],
       "en": [
         "I started in frontend, moved to backend, and now do both. That was deliberate: seeing the whole path a request takes, from the browser to the database, is more useful than knowing only one end of it.",
         "I work with layered architecture and care that the code is still readable six months later. Redis caching, background jobs with Hangfire and logging with Serilog are not things I add afterwards; I set them up at the start. xUnit integration tests do the same job on every release.",
-        "I take on the interface side myself. At Tersan I designed the platform's interface in Figma and built it with React 19 and MUI v7. Doing the design myself rather than handing it off lets me see what my backend decisions mean on screen."
+        "I take on the interface side myself. On the last platform I worked on I designed the interface in Figma and built it with React 19 and MUI v7. Doing the design myself rather than handing it off lets me see what my backend decisions mean on screen."
       ]
     },
     "stats": [
-      {
-        "value": {
-          "tr": "+%40",
-          "en": "+40%"
-        },
-        "label": {
-          "tr": "Redis cache ile çekirdek API'lerde veri erişim hızı artışı",
-          "en": "Data-access speed gain on core APIs after Redis caching"
-        }
-      },
       {
         "value": {
           "tr": "95+",
@@ -144,7 +134,7 @@
           "Katmanlı Mimari",
           "RESTful API",
           "EF Core",
-          "MySQL",
+          "MSSQL",
           "Redis",
           "Hangfire",
           "JWT + Refresh Rotation",
@@ -155,7 +145,7 @@
           "Layered Architecture",
           "RESTful APIs",
           "EF Core",
-          "MySQL",
+          "MSSQL",
           "Redis",
           "Hangfire",
           "JWT + Refresh Rotation",
@@ -173,14 +163,12 @@
         "tr": [
           "MUI v7",
           "Figma",
-          "İsviçre Tarzı Tasarım İlkeleri",
           "Responsive Tasarım",
           "Teknik SEO"
         ],
         "en": [
           "MUI v7",
           "Figma",
-          "Swiss-Style Design Principles",
           "Responsive Design",
           "Technical SEO"
         ]
@@ -248,29 +236,29 @@
       },
       "bullets": {
         "tr": [
-          "Çekirdek platform özelliklerini besleyen, MySQL üzerinde katmanlı mimari ve clean code ilkeleriyle ölçeklenebilir .NET 9 Web API'ler kurguladım.",
+          "Çekirdek platform özelliklerini besleyen, MSSQL üzerinde katmanlı mimari ve clean code ilkeleriyle ölçeklenebilir .NET 9 Web API'ler kurguladım.",
           "Seçili iç araçlar ve sunucu tarafında render edilen sayfalar için çekirdek .NET/React yığınını Node.js ve Next.js ile genişlettim.",
           "Arka plan iş süreçlerini Hangfire ile yönettim; sistem güvenilirliğini ve operasyonel verimliliği artırdım.",
           "Servisleri Docker ile konteynerledim; güvenli depolama ve secret yönetimi için AWS S3 ve Azure Key Vault entegre ettim.",
-          "Figma'da minimalist, İsviçre tarzı UI/UX tasarladım ve React 19 + MUI v7 ile üretim arayüzlerine dönüştürdüm.",
+          "Arayüzü Figma'da tasarlayıp React 19 ve MUI v7 ile üretim ortamına aldım.",
           "Sürümler boyunca güvenilirliği korumak için xUnit entegrasyon testleri yazdım.",
           "Sprint'ler boyunca platform kararlılığını korumak üzere QA ve sürüm testlerinde birlikte çalıştım.",
-          "Platformun tek full-stack geliştiricisi olarak uçtan uca teslimi üstlendim — backend mimarisi, UI/UX tasarımı ve performans."
+          "Backend mimarisi, UI/UX tasarımı ve performans dahil uçtan uca teslimi üstlendim."
         ],
         "en": [
-          "Architected scalable .NET 9 Web APIs backed by MySQL, using layered architecture and clean code principles to power core platform features.",
+          "Architected scalable .NET 9 Web APIs backed by MSSQL, using layered architecture and clean code principles to power core platform features.",
           "Extended the core .NET/React stack with Node.js and Next.js for select internal tools and server-rendered pages.",
           "Managed background job processing with Hangfire, improving system reliability and operational efficiency.",
           "Containerized services with Docker and integrated AWS S3 and Azure Key Vault for secure storage and secrets management.",
-          "Designed minimalist, Swiss-style UI/UX in Figma and translated it into production interfaces with React 19 and MUI v7.",
+          "Designed the interface in Figma and shipped it to production with React 19 and MUI v7.",
           "Wrote xUnit integration tests to safeguard reliability across releases.",
           "Collaborated on QA and release testing to maintain platform stability across sprints.",
-          "Owned end-to-end delivery — backend architecture, UI/UX design, and performance — as sole full-stack contributor on the platform."
+          "Owned end-to-end delivery, including backend architecture, UI/UX design and performance."
         ]
       },
       "stack": [
         ".NET 9",
-        "MySQL",
+        "MSSQL",
         "React 19",
         "MUI v7",
         "Hangfire",
@@ -296,8 +284,8 @@
       },
       "bullets": {
         "tr": [
-          "EF Core ve MySQL kullanarak, katmanlı mimari ve clean code ilkeleriyle ölçeklenebilir .NET 9 Web API'ler tasarlayıp geliştirdim.",
-          "Çekirdek API endpoint'lerine Redis cache uygulayarak veri erişim hızını %40 artırdım.",
+          "EF Core ve MSSQL kullanarak, katmanlı mimari ve clean code ilkeleriyle ölçeklenebilir .NET 9 Web API'ler tasarlayıp geliştirdim.",
+          "Çekirdek API endpoint'lerine Redis cache ekleyerek veri erişimini hızlandırdım.",
           "API erişimini JWT kimlik doğrulama ve refresh token rotation ile güvence altına aldım.",
           "Hangfire ile arka plan iş zamanlamasını optimize ettim; sistem verimini ve güvenilirliğini artırdım.",
           "AWS S3 üzerinde bulut tabanlı medya depolamayı yönettim; kimlik bilgilerini Azure Key Vault ile güvenceye aldım.",
@@ -305,8 +293,8 @@
           "Sürümler boyunca güvenilirliği ve sürdürülebilirliği korumak için xUnit entegrasyon testleri yazdım."
         ],
         "en": [
-          "Designed and developed scalable .NET 9 Web APIs using EF Core and MySQL, with layered architecture and clean code principles.",
-          "Increased data-access speed by 40% by implementing Redis caching across core API endpoints.",
+          "Designed and developed scalable .NET 9 Web APIs using EF Core and MSSQL, with layered architecture and clean code principles.",
+          "Sped up data access by adding Redis caching across core API endpoints.",
           "Secured API access with JWT authentication and refresh token rotation.",
           "Optimized background job scheduling with Hangfire, improving system throughput and reliability.",
           "Managed cloud-based media storage on AWS S3 and secured credentials with Azure Key Vault.",
@@ -317,7 +305,7 @@
       "stack": [
         ".NET 9",
         "EF Core",
-        "MySQL",
+        "MSSQL",
         "Redis",
         "JWT",
         "Hangfire",
@@ -341,13 +329,13 @@
       },
       "bullets": {
         "tr": [
-          "React 19, Next.js, MUI v7 ve Node.js ile yüksek performanslı front-end bileşenleri geliştirdim; Figma rehberliğinde İsviçre tarzı UI/UX ilkelerini uyguladım.",
+          "React 19, Next.js, MUI v7 ve Node.js ile yüksek performanslı front-end bileşenleri geliştirdim; arayüzü Figma tasarımlarına göre kurdum.",
           "Cloudinary ile asset yönetimini optimize ettim; sayfa yüklenme sürelerini 2 saniyenin altına çektim.",
           "Teknik SEO iyileştirmeleriyle platform performansını %50 artırdım, 95+ Lighthouse skoruna ulaştım.",
           "Gerçek zamanlı bulut veri senkronu için Firebase entegre ettim; kesintisiz bir kullanıcı deneyimi sağladım."
         ],
         "en": [
-          "Developed high-performance front-end components with React 19, Next.js, MUI v7, and Node.js, applying Swiss-style UI/UX principles guided by Figma.",
+          "Developed high-performance front-end components with React 19, Next.js, MUI v7 and Node.js, building the interface from Figma designs.",
           "Optimized asset management with Cloudinary, cutting page load times to under 2 seconds.",
           "Improved overall platform performance by 50% through technical SEO enhancements, reaching 95+ Lighthouse scores.",
           "Integrated Firebase for real-time cloud data sync, delivering a smooth, uninterrupted user experience."
@@ -372,8 +360,8 @@
       },
       "status": "in-progress",
       "problem": {
-        "tr": "Alıcı, satıcı ve admin rollerinin tek platform üzerinden beat alıp satabileceği bir pazaryeri (Beatstar benzeri).",
-        "en": "A marketplace where buyers, sellers and admins trade beats over one platform (Beatstar-style)."
+        "tr": "Alıcı, satıcı ve admin rollerinin tek platform üzerinden beat alıp satabileceği bir pazaryeri.",
+        "en": "A marketplace where buyers, sellers and admins trade beats over one platform."
       },
       "architecture": {
         "tr": "Backend ASP.NET Core ve EF Core; kimlik doğrulama JWT, loglama Serilog. Arayüz React ve TypeScript. Beat yükleme ve rol bazlı akışlar tamamlandı; ödeme altyapısı ile admin paneli geliştirme aşamasında. Blog ve yapay zekâ destekli otomasyon lansman sonrasına planlı.",
@@ -570,15 +558,15 @@
     "suggestions": {
       "tr": [
         "Stack'in ne?",
-        "En büyük etkin ne oldu?",
+        "Nasıl çalışıyorsun?",
         "Şu an müsait misin?",
-        "Tersan'da ne yaptın?"
+        "Hangi projeleri yaptın?"
       ],
       "en": [
         "What's your stack?",
-        "Biggest impact so far?",
+        "How do you work?",
         "Are you available?",
-        "What did you do at Tersan?"
+        "What have you built?"
       ]
     },
     "do": [

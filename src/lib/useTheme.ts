@@ -2,24 +2,22 @@
 
 import { useEffect } from "react";
 import type { ThemeSlug } from "./types";
-import { THEME_STORAGE_KEY } from "./themeScript";
+
+const THEME_COOKIE = "theme";
+const ONE_YEAR = 60 * 60 * 24 * 365;
 
 /**
- * The URL is the source of truth for the active theme — `/tr/y2k` renders y2k,
+ * The URL is the source of truth for the active theme — `/tr/y2k` renders y2k
  * server-side, with `data-theme` already correct in the HTML. There is no
  * client-side theme state and therefore no flash.
  *
- * localStorage only *remembers* the last choice, so a returning visitor who
- * lands on the bare `/tr` is sent to the theme they picked last time. That
- * redirect runs in a blocking script before first paint (see
- * `themeMemoryScript`), never here.
+ * This only *remembers* the choice, in a cookie rather than localStorage, so
+ * `proxy.ts` can read it and redirect a bare `/tr` to the remembered theme
+ * server-side. localStorage would have needed a blocking inline script and a
+ * second document load to do the same job.
  */
 export function useRememberTheme(slug: ThemeSlug) {
   useEffect(() => {
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, slug);
-    } catch {
-      /* Private mode / storage disabled — the URL still works. */
-    }
+    document.cookie = `${THEME_COOKIE}=${slug}; path=/; max-age=${ONE_YEAR}; samesite=lax`;
   }, [slug]);
 }
