@@ -15,8 +15,8 @@
       "en": "Open to full-stack roles"
     },
     "summary": {
-      "tr": "Yalova Üniversitesi Bilgisayar Mühendisliği mezunu; kariyeri frontend geliştirmeden backend mühendisliğine, oradan .NET 9, React 19 ve bulut tabanlı mimarilerle full-stack geliştirmeye ilerledi — ölçeklenebilir API'ler ve yüksek performanslı arayüzler (95+ Lighthouse skoru, 2 saniyenin altında yüklenme süreleri). Şu anda UI/UX tasarımına genişliyor; Figma odaklı İsviçre tarzı ilkeleri güçlü mühendislik temelleriyle birleştirerek uçtan uca dijital ürünler kuruyor.",
-      "en": "Computer Engineering graduate (Yalova University) whose career progressed from Frontend Development to Backend Engineering and now Full-Stack Development with .NET 9, React 19, and cloud-based architectures — delivering scalable APIs and high-performance interfaces (95+ Lighthouse scores, sub-2-second load times). Currently expanding into UI/UX design, blending Figma-driven, Swiss-style principles with strong engineering fundamentals to build end-to-end digital products."
+      "tr": "Yalova Üniversitesi Bilgisayar Mühendisliği mezunuyum. Frontend ile başladım, backend'e geçtim, şu anda ikisini birlikte yapıyorum: .NET 9 ile API, React 19 ile arayüz geliştiriyorum. Yayına aldığım işlerde 95+ Lighthouse skoru ve 2 saniyenin altında yüklenme süresi hedefliyorum. Son dönemde arayüz tasarımını da kendim üstleniyorum.",
+      "en": "Computer Engineering graduate from Yalova University. I started in frontend, moved to backend, and now do both: APIs with .NET 9, interfaces with React 19. On the work I have shipped I aim for 95+ Lighthouse scores and load times under two seconds. Recently I have also been handling the interface design myself."
     },
     "education": {
       "tr": "Bilgisayar Mühendisliği, Yalova Üniversitesi · 2019–2026",
@@ -33,96 +33,219 @@
     },
     "cv": "/cv/samet-karadag.pdf"
   },
-
   "hero": {
     "eyebrow": {
       "tr": ".NET 9 · React 19 · İstanbul",
       "en": ".NET 9 · React 19 · İstanbul"
     },
     "headline": {
-      "tr": "Yük altında hızlı kalan sistemler kuruyorum.",
-      "en": "I build systems that stay fast under load."
+      "tr": "Ölçeklenebilir API'ler ve hızlı arayüzler geliştiriyorum.",
+      "en": "I build scalable APIs and fast interfaces."
     },
     "body": {
-      "tr": "ASP.NET Core ve React tarafında çalışan full-stack geliştiriciyim. Hattın tamamını üstleniyorum — API mimarisi, veri erişimi, arayüz, performans bütçesi — ve framework tartışmasından çok gecikme sayılarını konuşmayı severim. İki yıldır üretim platformları yayına alıyorum; son olarak bir tersane platformunun tek full-stack geliştiricisi olarak.",
-      "en": "Full-stack developer working across ASP.NET Core and React. I own the whole line — API architecture, data access, interface, performance budget — and I'd rather argue about latency numbers than frameworks. Two years shipping production platforms, most recently as the sole full-stack contributor on an industrial shipyard platform."
+      "tr": "İki yıldan fazladır .NET 9 ve React 19 ile üretim projeleri geliştiriyorum. Tersan Shipyard'da platformun tek full-stack geliştiricisiydim: API mimarisinden arayüz tasarımına kadar süreci ben yürüttüm. Öncesinde Mos Otomasyon'da backend, Dekodem Yapı'da frontend tarafında çalıştım.",
+      "en": "Over two years building production projects with .NET 9 and React 19. At Tersan Shipyard I was the sole full-stack developer on the platform, running everything from API architecture to interface design. Before that, backend at Mos Otomasyon and frontend at Dekodem Yapı."
     }
   },
-
   "about": {
     "paragraphs": {
       "tr": [
-        "Frontend'de başladım, backend'e geçtim, şimdi ikisini birlikte yapıyorum. Bu yol bilinçliydi: bir tıklamadan sorgu planına ve geri dönüşe kadar isteğin tamamını anlamak istedim — göremediğim yarısını tahmin etmek yerine.",
-        "Varsayılanım katmanlı mimari, tutan sınırlar ve altı ay sonra bir yabancının okuyabileceği kod. Redis, Hangfire ve yapılandırılmış loglama olaydan sonra değil, en başta girer. Entegrasyon testleri sürümleri sıkıcı kılmak için var.",
-        "JSX yazmadan önce Figma'da tasarlıyorum. İsviçre tipografi disiplini — grid, hiyerarşi, kendini tutma — iyi API tasarımıyla aynı disiplin: daha az şey, tam yerinde. UI/UX'i devretmek yerine kendim üstlenmemin sebebi bu."
+        "Frontend'de başladım, backend'e geçtim, şimdi ikisini birlikte yapıyorum. Bunu bilerek seçtim: bir isteğin tarayıcıdan veritabanına kadar izlediği yolun tamamını görmek, sadece bir ucunu bilmekten daha çok işe yarıyor.",
+        "Katmanlı mimariyle çalışıyorum ve kodun altı ay sonra da okunabilir olmasına dikkat ediyorum. Redis cache, Hangfire ile arka plan işleri ve Serilog ile loglama, sonradan eklenen şeyler değil; işin başında kurduğum parçalar. xUnit entegrasyon testleri de her sürümde aynı işi görüyor.",
+        "Arayüz tarafını da kendim üstleniyorum. Tersan'da platformun arayüzünü Figma'da tasarlayıp React 19 ve MUI v7 ile geliştirdim. Tasarımı devretmek yerine kendim yapmak, backend'de verdiğim kararların ekranda ne anlama geldiğini görmemi sağlıyor."
       ],
       "en": [
-        "I started in frontend, moved to backend, and now work across both. That path was deliberate: I wanted to understand the full request — from a click, through a query plan, and back — instead of guessing at the half I couldn't see.",
-        "My default is layered architecture with boundaries that hold, and code a stranger can read in six months. Redis, Hangfire and structured logging go in early, not after the incident. Integration tests exist so releases are boring.",
-        "I design in Figma before I write JSX. Swiss-style discipline — grid, hierarchy, restraint — is the same discipline as good API design: fewer things, placed exactly. That's why I take on UI/UX myself rather than handing it off."
+        "I started in frontend, moved to backend, and now do both. That was deliberate: seeing the whole path a request takes, from the browser to the database, is more useful than knowing only one end of it.",
+        "I work with layered architecture and care that the code is still readable six months later. Redis caching, background jobs with Hangfire and logging with Serilog are not things I add afterwards; I set them up at the start. xUnit integration tests do the same job on every release.",
+        "I take on the interface side myself. At Tersan I designed the platform's interface in Figma and built it with React 19 and MUI v7. Doing the design myself rather than handing it off lets me see what my backend decisions mean on screen."
       ]
     },
     "stats": [
       {
-        "value": { "tr": "−%40", "en": "−40%" },
+        "value": {
+          "tr": "+%40",
+          "en": "+40%"
+        },
         "label": {
-          "tr": "Çekirdek endpoint'lere Redis cache sonrası veri erişim gecikmesi",
-          "en": "Data-access latency after Redis caching across core endpoints"
+          "tr": "Redis cache ile çekirdek API'lerde veri erişim hızı artışı",
+          "en": "Data-access speed gain on core APIs after Redis caching"
         }
       },
       {
-        "value": { "tr": "95+", "en": "95+" },
+        "value": {
+          "tr": "95+",
+          "en": "95+"
+        },
         "label": {
-          "tr": "Yayına alınan arayüzlerde Lighthouse skoru",
-          "en": "Lighthouse scores on shipped production frontends"
+          "tr": "Yayına aldığım arayüzlerde Lighthouse skoru",
+          "en": "Lighthouse score on the frontends I shipped"
         }
       },
       {
-        "value": { "tr": "<2s", "en": "<2s" },
+        "value": {
+          "tr": "<2s",
+          "en": "<2s"
+        },
         "label": {
-          "tr": "Asset ve dağıtım optimizasyonu sonrası sayfa yüklenme süresi",
-          "en": "Page load time after asset and delivery optimization"
+          "tr": "Asset optimizasyonu sonrası sayfa yüklenme süresi",
+          "en": "Page load time after asset optimization"
         }
       },
       {
-        "value": { "tr": "+%50", "en": "+50%" },
+        "value": {
+          "tr": "+%50",
+          "en": "+50%"
+        },
         "label": {
-          "tr": "Teknik SEO ve asset çalışmasıyla platform performans artışı",
-          "en": "Platform performance gain via technical SEO and asset work"
+          "tr": "Teknik SEO çalışmasıyla platform performans artışı",
+          "en": "Platform performance gain from technical SEO work"
         }
       }
     ]
   },
-
   "skills": [
     {
-      "group": { "tr": "Diller & Framework'ler", "en": "Languages & Frameworks" },
-      "items": ["C#", ".NET 9", "ASP.NET Core", "TypeScript", "JavaScript", "React 19", "Next.js", "Node.js", "Python"]
+      "group": {
+        "tr": "Diller & Framework'ler",
+        "en": "Languages & Frameworks"
+      },
+      "items": {
+        "tr": [
+          "C#",
+          ".NET 9",
+          "ASP.NET Core",
+          "TypeScript",
+          "JavaScript",
+          "React 19",
+          "Next.js",
+          "Node.js",
+          "Python"
+        ],
+        "en": [
+          "C#",
+          ".NET 9",
+          "ASP.NET Core",
+          "TypeScript",
+          "JavaScript",
+          "React 19",
+          "Next.js",
+          "Node.js",
+          "Python"
+        ]
+      }
     },
     {
-      "group": { "tr": "Backend & Mimari", "en": "Backend & Architecture" },
-      "items": ["Katmanlı Mimari", "RESTful API", "EF Core", "MySQL", "Redis", "Hangfire", "JWT + Refresh Rotation", "Serilog", "Clean Code"]
+      "group": {
+        "tr": "Backend & Mimari",
+        "en": "Backend & Architecture"
+      },
+      "items": {
+        "tr": [
+          "Katmanlı Mimari",
+          "RESTful API",
+          "EF Core",
+          "MySQL",
+          "Redis",
+          "Hangfire",
+          "JWT + Refresh Rotation",
+          "Serilog",
+          "Clean Code"
+        ],
+        "en": [
+          "Layered Architecture",
+          "RESTful APIs",
+          "EF Core",
+          "MySQL",
+          "Redis",
+          "Hangfire",
+          "JWT + Refresh Rotation",
+          "Serilog",
+          "Clean Code"
+        ]
+      }
     },
     {
-      "group": { "tr": "Frontend & UI/UX", "en": "Frontend & UI/UX" },
-      "items": ["MUI v7", "Figma", "Swiss-Style Systems", "Responsive Design", "Technical SEO"]
+      "group": {
+        "tr": "Frontend & UI/UX",
+        "en": "Frontend & UI/UX"
+      },
+      "items": {
+        "tr": [
+          "MUI v7",
+          "Figma",
+          "İsviçre Tarzı Tasarım İlkeleri",
+          "Responsive Tasarım",
+          "Teknik SEO"
+        ],
+        "en": [
+          "MUI v7",
+          "Figma",
+          "Swiss-Style Design Principles",
+          "Responsive Design",
+          "Technical SEO"
+        ]
+      }
     },
     {
-      "group": { "tr": "Cloud & DevOps", "en": "Cloud & DevOps" },
-      "items": ["Docker", "AWS S3", "Azure Key Vault", "Firebase", "Cloudflare", "Vercel"]
+      "group": {
+        "tr": "Cloud & DevOps",
+        "en": "Cloud & DevOps"
+      },
+      "items": {
+        "tr": [
+          "Docker",
+          "AWS S3",
+          "Azure Key Vault",
+          "Firebase",
+          "Cloudflare",
+          "Vercel"
+        ],
+        "en": [
+          "Docker",
+          "AWS S3",
+          "Azure Key Vault",
+          "Firebase",
+          "Cloudflare",
+          "Vercel"
+        ]
+      }
     },
     {
-      "group": { "tr": "Test & Araçlar", "en": "Testing & Tools" },
-      "items": ["xUnit", "Git", "GitHub", "Postman"]
+      "group": {
+        "tr": "Test & Araçlar",
+        "en": "Testing & Tools"
+      },
+      "items": {
+        "tr": [
+          "xUnit",
+          "Git",
+          "GitHub",
+          "Postman"
+        ],
+        "en": [
+          "xUnit",
+          "Git",
+          "GitHub",
+          "Postman"
+        ]
+      }
     }
   ],
-
   "experience": [
     {
       "company": "Tersan Shipyard",
-      "role": { "tr": "Full-Stack Developer", "en": "Full-Stack Developer" },
-      "period": { "tr": "Ara 2024 — Oca 2026", "en": "Dec 2024 — Jan 2026" },
-      "duration": { "tr": "1 yıl 2 ay · İstanbul", "en": "1 yr 2 mo · İstanbul" },
+      "role": {
+        "tr": "Full-Stack Developer",
+        "en": "Full-Stack Developer"
+      },
+      "period": {
+        "tr": "Ara 2024 — Oca 2026",
+        "en": "Dec 2024 — Jan 2026"
+      },
+      "duration": {
+        "tr": "1 yıl 2 ay · İstanbul",
+        "en": "1 yr 2 mo · İstanbul"
+      },
       "bullets": {
         "tr": [
           "Çekirdek platform özelliklerini besleyen, MySQL üzerinde katmanlı mimari ve clean code ilkeleriyle ölçeklenebilir .NET 9 Web API'ler kurguladım.",
@@ -145,13 +268,32 @@
           "Owned end-to-end delivery — backend architecture, UI/UX design, and performance — as sole full-stack contributor on the platform."
         ]
       },
-      "stack": [".NET 9", "MySQL", "React 19", "MUI v7", "Hangfire", "Docker", "AWS S3", "Azure Key Vault", "xUnit"]
+      "stack": [
+        ".NET 9",
+        "MySQL",
+        "React 19",
+        "MUI v7",
+        "Hangfire",
+        "Docker",
+        "AWS S3",
+        "Azure Key Vault",
+        "xUnit"
+      ]
     },
     {
       "company": "Mos Otomasyon ve Yazılım",
-      "role": { "tr": "Backend Developer", "en": "Backend Developer" },
-      "period": { "tr": "Eki 2023 — Kas 2024", "en": "Oct 2023 — Nov 2024" },
-      "duration": { "tr": "1 yıl 2 ay", "en": "1 yr 2 mo" },
+      "role": {
+        "tr": "Backend Developer",
+        "en": "Backend Developer"
+      },
+      "period": {
+        "tr": "Eki 2023 — Kas 2024",
+        "en": "Oct 2023 — Nov 2024"
+      },
+      "duration": {
+        "tr": "1 yıl 2 ay",
+        "en": "1 yr 2 mo"
+      },
       "bullets": {
         "tr": [
           "EF Core ve MySQL kullanarak, katmanlı mimari ve clean code ilkeleriyle ölçeklenebilir .NET 9 Web API'ler tasarlayıp geliştirdim.",
@@ -172,13 +314,31 @@
           "Wrote xUnit integration tests to safeguard reliability and maintainability across releases."
         ]
       },
-      "stack": [".NET 9", "EF Core", "MySQL", "Redis", "JWT", "Hangfire", "Serilog", "Docker"]
+      "stack": [
+        ".NET 9",
+        "EF Core",
+        "MySQL",
+        "Redis",
+        "JWT",
+        "Hangfire",
+        "Serilog",
+        "Docker"
+      ]
     },
     {
       "company": "Dekodem Yapı",
-      "role": { "tr": "Frontend Developer", "en": "Frontend Developer" },
-      "period": { "tr": "Haz 2023 — Eyl 2023", "en": "Jun 2023 — Sep 2023" },
-      "duration": { "tr": "4 ay", "en": "4 mo" },
+      "role": {
+        "tr": "Frontend Developer",
+        "en": "Frontend Developer"
+      },
+      "period": {
+        "tr": "Haz 2023 — Eyl 2023",
+        "en": "Jun 2023 — Sep 2023"
+      },
+      "duration": {
+        "tr": "4 ay",
+        "en": "4 mo"
+      },
       "bullets": {
         "tr": [
           "React 19, Next.js, MUI v7 ve Node.js ile yüksek performanslı front-end bileşenleri geliştirdim; Figma rehberliğinde İsviçre tarzı UI/UX ilkelerini uyguladım.",
@@ -193,127 +353,233 @@
           "Integrated Firebase for real-time cloud data sync, delivering a smooth, uninterrupted user experience."
         ]
       },
-      "stack": ["React 19", "Next.js", "MUI v7", "Node.js", "Cloudinary", "Firebase"]
+      "stack": [
+        "React 19",
+        "Next.js",
+        "MUI v7",
+        "Node.js",
+        "Cloudinary",
+        "Firebase"
+      ]
     }
   ],
-
   "projects": [
     {
       "id": "beatplus",
-      "name": "BeatPlus",
+      "name": {
+        "tr": "BeatPlus",
+        "en": "BeatPlus"
+      },
       "status": "in-progress",
       "problem": {
-        "tr": "Beat pazaryerleri tek katalog üzerinde üç ayrı rol ister — alıcı, satıcı, admin — ve lisans ile yükleme kuralları role göre değişir.",
-        "en": "Beat marketplaces need three distinct roles — buyer, seller, admin — over one catalog, with licensing and upload rules that differ per role."
+        "tr": "Alıcı, satıcı ve admin rollerinin tek platform üzerinden beat alıp satabileceği bir pazaryeri (Beatstar benzeri).",
+        "en": "A marketplace where buyers, sellers and admins trade beats over one platform (Beatstar-style)."
       },
       "architecture": {
-        "tr": "JWT kimlik doğrulama ve Serilog loglamalı ASP.NET Core + EF Core API; React + TypeScript arayüz. Beat yükleme ve rol bazlı akışlar tamam; ödeme altyapısı ile admin paneli geliştirmede, blog ve yapay zekâ destekli otomasyon lansman sonrasına planlı.",
-        "en": "ASP.NET Core + EF Core API with JWT authentication and Serilog logging; React + TypeScript client. Core beat-upload and role-based flows are complete; payment infrastructure and the admin dashboard are still in development, with a blog and AI-driven automation planned post-launch."
+        "tr": "Backend ASP.NET Core ve EF Core; kimlik doğrulama JWT, loglama Serilog. Arayüz React ve TypeScript. Beat yükleme ve rol bazlı akışlar tamamlandı; ödeme altyapısı ile admin paneli geliştirme aşamasında. Blog ve yapay zekâ destekli otomasyon lansman sonrasına planlı.",
+        "en": "ASP.NET Core and EF Core on the backend, with JWT authentication and Serilog logging. React and TypeScript on the front. Beat upload and role-based flows are done; payment infrastructure and the admin dashboard are in development. A blog and AI-driven automation are planned after launch."
       },
       "metrics": {
-        "tr": ["3 rol", "JWT + rotation"],
-        "en": ["3 roles", "JWT + rotation"]
+        "tr": [
+          "3 rol",
+          "JWT + refresh rotation"
+        ],
+        "en": [
+          "3 roles",
+          "JWT + refresh rotation"
+        ]
       },
-      "stack": ["ASP.NET Core", "EF Core", "React", "TypeScript", "Serilog"],
-      "links": [{ "kind": "code", "href": "https://github.com/Sametkrdg" }]
+      "stack": [
+        "ASP.NET Core",
+        "EF Core",
+        "React",
+        "TypeScript",
+        "Serilog"
+      ],
+      "links": [
+        {
+          "kind": "code",
+          "href": "https://github.com/Sametkrdg"
+        }
+      ]
     },
     {
       "id": "dekodem",
-      "name": "Dekodem Yapı",
+      "name": {
+        "tr": "Dekodem Yapı",
+        "en": "Dekodem Yapı"
+      },
       "status": "live",
       "problem": {
-        "tr": "İnşaat firması her metin ve fotoğraf değişikliğinde geliştirici beklemeden proje ve haber yayınlamak istiyordu.",
-        "en": "A construction firm needed to publish projects and news without a developer in the loop for every text and photo change."
+        "tr": "İnşaat firmasının proje ve haberlerini, her değişiklikte geliştirici beklemeden yayınlayabileceği kurumsal bir site.",
+        "en": "A corporate site where a construction firm can publish its projects and news without waiting for a developer on every change."
       },
       "architecture": {
-        "tr": "Hakkımızda, Projeler ve Haberler bölümlü çok sayfalı kurumsal site; fotoğraf ve metin yönetimi için admin paneli. Admin kimlik doğrulama ve içerik verisi Firebase, görsel depolama ve dağıtım Cloudflare üzerinde. Her route için teknik SEO çalışması.",
-        "en": "Multi-page corporate site (About, Projects, News) with an admin panel for managing photos and text across sections. Firebase for admin authentication and content data, Cloudflare for image storage and delivery. Technical SEO pass on every route."
+        "tr": "Hakkımızda, Projeler ve Haberler bölümlerinden oluşan çok sayfalı site; bölümlerdeki fotoğraf ve metinleri yönetmek için admin paneli. Admin kimlik doğrulama ve içerik verisi Firebase üzerinde, görsel depolama ve hosting Cloudflare üzerinde.",
+        "en": "A multi-page site with About, Projects and News sections, plus an admin panel for managing the photos and text in each. Firebase handles admin authentication and content data; Cloudflare handles image storage and hosting."
       },
       "metrics": {
-        "tr": ["<2s yükleme", "95+ Lighthouse"],
-        "en": ["<2s load", "95+ Lighthouse"]
+        "tr": [
+          "<2s yüklenme",
+          "95+ Lighthouse"
+        ],
+        "en": [
+          "<2s load",
+          "95+ Lighthouse"
+        ]
       },
-      "stack": ["React", "Next.js", "Firebase", "Cloudflare"],
-      "links": [{ "kind": "live", "href": "https://dekodemyapi.com" }]
+      "stack": [
+        "React",
+        "Next.js",
+        "Firebase",
+        "Cloudflare"
+      ],
+      "links": [
+        {
+          "kind": "live",
+          "href": "https://dekodemyapı.com"
+        }
+      ]
     },
     {
       "id": "nax-software",
-      "name": "Nax Software",
+      "name": {
+        "tr": "Nax Software",
+        "en": "Nax Software"
+      },
       "status": "live",
       "problem": {
-        "tr": "Küçük işletmelerin ve yeni girişimlerin, ajans bütçesi olmadan hızlıca yayına girecek web ürünlerine ihtiyacı vardı.",
-        "en": "Small businesses and early-stage startups needed web products that ship quickly, without an agency budget."
+        "tr": "Bir arkadaşımla kurduğum dijital yazılım ajansı; küçük işletmeler ve girişimler için web ürünleri geliştiriyoruz.",
+        "en": "A digital software agency I co-founded with a friend, building web products for small businesses and startups."
       },
       "architecture": {
-        "tr": "Bir arkadaşımla kurduğum dijital yazılım ajansı. Tanıtım sitesi ve ürün yüzeyleri, hızlı iterasyon ve yalın dağıtım için React ve Vite ile geliştirildi.",
-        "en": "A digital software agency I co-founded with a friend. Marketing site and product surfaces built with React and Vite for fast iteration and lean deployment."
+        "tr": "Tanıtım sitesi ve ürün arayüzleri React ve Vite ile geliştirildi.",
+        "en": "The marketing site and product interfaces are built with React and Vite."
       },
       "metrics": {
-        "tr": ["Ortak kuruculuk", "Müşteri projeleri"],
-        "en": ["Co-founded", "Client projects"]
+        "tr": [
+          "Ortak kurucu"
+        ],
+        "en": [
+          "Co-founder"
+        ]
       },
-      "stack": ["React", "Vite", "TypeScript", "Tailwind CSS"],
-      "links": [{ "kind": "live", "href": "https://www.naxsoftware.com/" }]
+      "stack": [
+        "React",
+        "Vite",
+        "TypeScript",
+        "Tailwind CSS"
+      ],
+      "links": [
+        {
+          "kind": "live",
+          "href": "https://www.naxsoftware.com/"
+        }
+      ]
     },
     {
       "id": "portfolio",
-      "name": "Kişisel Portfolyo",
+      "name": {
+        "tr": "Kişisel Portfolyo",
+        "en": "Personal Portfolio"
+      },
       "status": "live",
       "problem": {
-        "tr": "İşe alım tarafı hızlı tarar. Stack, etki ve müsaitliği otuz saniyede yanıtlayan tek bir sayfaya ihtiyacım vardı.",
-        "en": "Recruiters skim. I needed one page that answers stack, impact and availability in under thirty seconds."
+        "tr": "Stack'imi, yaptığım işleri ve müsaitlik durumumu tek sayfada toplayan kişisel site.",
+        "en": "A personal site that gathers my stack, my work and my availability on one page."
       },
       "architecture": {
-        "tr": "React + TypeScript ile kurulmuş tek sayfalık portfolyo; entegre sohbet asistanı ve yeni projeler tamamlandıkça güncellenen içerik.",
-        "en": "One-page portfolio built with React and TypeScript, featuring an integrated chat assistant, updated as new projects are completed."
+        "tr": "React ve TypeScript ile geliştirilmiş tek sayfalık site; entegre bir sohbet asistanı var ve yeni projeler tamamlandıkça güncelleniyor.",
+        "en": "A one-page site built with React and TypeScript, with an integrated chat assistant, updated as new projects are completed."
       },
       "metrics": {
-        "tr": ["Tek sayfa", "Sohbet asistanı"],
-        "en": ["Single page", "Chat assistant"]
+        "tr": [
+          "Tek sayfa",
+          "Sohbet asistanı"
+        ],
+        "en": [
+          "Single page",
+          "Chat assistant"
+        ]
       },
-      "stack": ["React", "TypeScript", "Next.js"],
-      "links": [{ "kind": "live", "href": "https://sametkaradag.com" }]
+      "stack": [
+        "React",
+        "TypeScript",
+        "Next.js"
+      ],
+      "links": [
+        {
+          "kind": "live",
+          "href": "https://sametkaradag.com"
+        }
+      ]
     },
     {
       "id": "block-simulation",
-      "name": "Block Simulation",
+      "name": {
+        "tr": "Block Simulation",
+        "en": "Block Simulation"
+      },
       "status": "completed",
       "problem": {
-        "tr": "Saha planlamacılarının inşaat planına geçmeden önce blok, bina ve kaplama yerleşimini ölçekli çizecek hızlı bir aracı yoktu.",
-        "en": "Site planners had no fast way to sketch block, building and paving layouts to scale before committing to a construction plan."
+        "tr": "İnşaat alanlarında blok, bina ve kaplı alan yerleşimini planlamayı kolaylaştıran bir görselleştirme aracı.",
+        "en": "A visualization tool that makes it easier to plan the layout of blocks, buildings and paved areas on construction sites."
       },
       "architecture": {
-        "tr": "Blokları, binaları ve kaplı alanları yerleştirme, boyutlandırma ve etiketleme için Unity tabanlı simülasyon aracı; saha yerleşim planlamasını görselleştirmek üzere kuruldu. WebGL çıktısı Vercel üzerinde yayında.",
-        "en": "Unity-based simulation tool for placing, resizing and labeling blocks, buildings and paved areas, built to help visualize on-site layout planning. Exported to WebGL and deployed via Vercel."
+        "tr": "Unity tabanlı simülasyon aracı: blokları, binaları ve kaplı alanları yerleştirme, boyutlandırma ve etiketleme. WebGL'e aktarılıp Vercel üzerinden yayınlandı.",
+        "en": "A Unity-based simulation tool for placing, resizing and labeling blocks, buildings and paved areas. Exported to WebGL and deployed on Vercel."
       },
       "metrics": {
-        "tr": ["Unity → WebGL", "Vercel"],
-        "en": ["Unity → WebGL", "Vercel"]
+        "tr": [
+          "Unity → WebGL",
+          "Vercel"
+        ],
+        "en": [
+          "Unity → WebGL",
+          "Vercel"
+        ]
       },
-      "stack": ["Unity", "C#", "WebGL"],
-      "links": [{ "kind": "live", "href": "https://block-simulation.vercel.app/" }]
+      "stack": [
+        "Unity",
+        "C#",
+        "WebGL"
+      ],
+      "links": [
+        {
+          "kind": "live",
+          "href": "https://block-simulation.vercel.app/"
+        }
+      ]
     }
   ],
-
   "contact": {
     "headline": {
-      "tr": ".NET veya React için mi arıyorsunuz? Konuşalım.",
-      "en": "Hiring for .NET or React? Let's talk."
+      "tr": "Bir proje ya da pozisyon için yazabilirsiniz.",
+      "en": "Get in touch about a project or a role."
     },
     "note": {
-      "tr": "En hızlı yol e-posta — bir gün içinde dönüyorum. Referans verilebilir iş geçmişi ve kod aşağıda bağlı.",
-      "en": "Fastest route is email — I reply within a day. Reference-checkable work history and code are both linked below."
+      "tr": "En hızlı yol e-posta; genelde bir gün içinde dönüyorum. CV, GitHub ve LinkedIn bağlantıları aşağıda.",
+      "en": "Email is the fastest route; I usually reply within a day. CV, GitHub and LinkedIn are linked below."
     }
   },
-
   "chatbot": {
     "persona": {
-      "tr": "Samet Karadağ'ın portfolyo sitesindeki kişisel yapay zekâ asistanısın. Samet'in sesiyle konuş: profesyonel, kendinden emin, kısa ve biraz sıcak. Türkçe cevap ver.",
-      "en": "You are the personal AI assistant on Samet Karadağ's portfolio website. Speak in Samet's voice: professional, confident, concise and slightly warm. Answer in English."
+      "tr": "Samet Karadağ'ın portfolyo sitesindeki asistanısın. Samet adına, birinci tekil şahısla konuş. Kısa ve açık cevap ver, abartma. Türkçe cevapla.",
+      "en": "You are the assistant on Samet Karadağ's portfolio site. Speak for Samet, in the first person. Keep answers short and plain, without overselling. Answer in English."
     },
     "suggestions": {
-      "tr": ["Stack'in ne?", "En büyük etkin ne oldu?", "Şu an müsait misin?", "Tersan'da ne yaptın?"],
-      "en": ["What's your stack?", "Biggest impact so far?", "Are you available?", "What did you do at Tersan?"]
+      "tr": [
+        "Stack'in ne?",
+        "En büyük etkin ne oldu?",
+        "Şu an müsait misin?",
+        "Tersan'da ne yaptın?"
+      ],
+      "en": [
+        "What's your stack?",
+        "Biggest impact so far?",
+        "Are you available?",
+        "What did you do at Tersan?"
+      ]
     },
     "do": [
       "Keep every answer to 2–3 short paragraphs at most.",

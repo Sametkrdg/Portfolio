@@ -182,7 +182,7 @@ function ProjectCard({ project, locale }: { project: ProjectEntry; locale: Local
             className="text-2xl font-black leading-tight tracking-tight text-[var(--color-text-primary)] sm:text-3xl"
             style={{ textShadow: `0 0 32px ${status.rgb}, 0.18)` }}
           >
-            {project.name}
+            {project.name[locale]}
           </h3>
 
           {/* Description */}

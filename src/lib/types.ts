@@ -59,8 +59,13 @@ export interface AboutContent {
 
 export interface SkillGroup {
   group: Localized;
-  /** Technology names — proper nouns, not translated. */
-  items: string[];
+  /**
+   * Bilingual: pure product names ("Docker", ".NET 9") repeat identically in
+   * both lists, but anything with words in it ("Layered Architecture") has a
+   * real Turkish form. A single shared array would print Turkish on the
+   * English page.
+   */
+  items: LocalizedList;
 }
 
 export interface ExperienceEntry {
@@ -83,7 +88,8 @@ export interface ProjectLink {
 
 export interface ProjectEntry {
   id: string;
-  name: string;
+  /** Proper nouns repeat in both locales; descriptive names are translated. */
+  name: Localized;
   status: ProjectStatus;
   problem: Localized;
   architecture: Localized;
