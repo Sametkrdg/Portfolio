@@ -307,7 +307,7 @@ Pilot tema `space` yerine **`minimal`** oldu: varsayılan tema o, ve sol sidebar
 
 **Kabul kriterleri — durum:** İki dilde de altı bölüm doğru sırada ve JSON'dan besleniyor · scroll-spy çalışıyor · `build` + `lint` temiz. **Görsel doğrulama Samet'te.**
 
-### Faz 3 — Kalan 6 tema
+### ✅ Faz 3 — Kalan 6 tema — TAMAMLANDI (2026-09-04)
 
 Her tema için aynı döngü (sırayla, teker teker):
 
@@ -318,7 +318,14 @@ Her tema için aynı döngü (sırayla, teker teker):
 5. `registry.ts`'e kaydedilir.
 6. İki dilde ve mobilde kontrol edilir; `build` + `lint`.
 
-Durum: ✅ `blueprint` · ✅ `editorial` · ✅ `brutalism` · ✅ `y2k` · ✅ `maximalism` · ⏭ **`space`** (kalan tek tema).
+Hepsi tamam: ✅ `blueprint` · ✅ `editorial` · ✅ `brutalism` · ✅ `y2k` · ✅ `maximalism` · ✅ `space`.
+
+**Tasarımlardan bilerek sapılan yerler** (hepsi Samet'e raporlandı):
+- Her temada scroll'a bağlı başlık büyümesi, yanıp sönen imleçler, nabız atan noktalar ve tarama süpürmeleri çıkarıldı — minimum animasyon kuralı.
+- `maximalism` (Terminal tasarımı) `blueprint` ile neredeyse aynı palet ve fontu kullanıyordu; terminal iskeleti korunup renk beşe çıkarıldı, her bölüme bir vurgu rengi verildi.
+- `editorial`'ın istediği proje "dek"leri ve ayrı pull quote içerikte yok; metin uydurmak yerine dek'ler çıkarıldı, pull quote hero başlığını tekrar diziyor.
+- Başlık satır yükseklikleri Türkçe için açıldı — `İ Ö Ü Ğ` işaretleri büyük harf yüksekliğinin üstünde duruyor, tasarımların 0.9–1.04 değerleri bunları kırpıyordu.
+- `space`'in özgün soluk metin rengi (#475569) 2.64:1 ile AA altındaydı; #7c8ba1 (5.79:1) yapıldı.
 
 `space` en sona bırakıldı: mevcut 3D siteyi yeni sözleşmeye taşımak (bölümleri `SectionProps`'a uydurmak, 3D hero'yu ve ses düğmesini korurken GSAP/framer-motion'ı çıkarmak) diğerlerinden farklı bir iş. Mevcut bileşenler o güne kadar `src/components/sections/` altında duruyor — **artık hiçbir yerden çağrılmıyorlar**, yalnızca `space` için referans.
 

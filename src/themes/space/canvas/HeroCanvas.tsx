@@ -5,7 +5,7 @@ import { Environment, Html } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { getAssetUrl } from "@/src/utils/getAssetUrl";
-import { useAudioStore } from "@/src/store/audioStore";
+import { useAudioStore } from "./audioStore";
 import ErrorBoundary from "@/src/components/utils/ErrorBoundary";
 
 const HDR_URL = getAssetUrl("hero-env.hdr");

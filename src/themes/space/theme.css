@@ -1,0 +1,656 @@
+/*
+ * space — the original site, rebuilt on the shared contract.
+ *
+ * Deep slate, neon cyan and electric purple, glass cards over a live 3D star
+ * field. This is the only theme that loads three.js, and it does so lazily:
+ * nobody on another theme pays for it.
+ *
+ * What went: every GSAP scroll reveal, every framer-motion micro-interaction,
+ * the bouncing scroll indicator. What stayed, by explicit decision: the 3D
+ * hero canvas and the audio toggle that drives it.
+ *
+ * One correction to the original palette — its muted text (#475569) measured
+ * 2.64:1 against the background, well under WCAG AA. It is #7c8ba1 here
+ * (5.79:1). Everything else is unchanged: text 18.4:1, secondary 7.8:1,
+ * cyan 11.8:1, purple 5.2:1.
+ */
+
+:root[data-theme="space"] {
+  /* Surfaces */
+  --surface-page: #05080f;
+  --surface-raised: #111827;
+  --surface-sunken: #0d1117;
+
+  /* Lines */
+  --border-hair: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(0, 217, 255, 0.35);
+
+  /* Text */
+  --text-primary: #f0f6ff;
+  --text-secondary: #94a3b8;
+  --text-muted: #7c8ba1;
+
+  /* Accent */
+  --accent: #00d9ff;
+  --accent-contrast: #05080f;
+  --accent-soft: rgba(0, 217, 255, 0.1);
+
+  /* Type */
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Shell metrics */
+  --shell-side-width: 240px;
+  --shell-top-height: 48px;
+  --nav-gap: 2px;
+  --radius: 12px;
+
+  /* Theme-local */
+  --sp-purple: #b44dff;
+  --sp-glass: rgba(13, 17, 23, 0.72);
+}
+
+/* ── Shell ──────────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .shell-top {
+  border-bottom: 1px solid var(--border-hair);
+  background: rgba(5, 8, 15, 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+[data-theme="space"] .theme-bar-item[data-active] {
+  box-shadow: 0 0 18px rgba(0, 217, 255, 0.35);
+}
+
+[data-theme="space"] .side-nav {
+  border-right: 1px solid var(--border-hair);
+  background: rgba(5, 8, 15, 0.6);
+  backdrop-filter: blur(12px);
+}
+[data-theme="space"] .side-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(0, 217, 255, 0.45);
+}
+[data-theme="space"] .side-role,
+[data-theme="space"] .side-location,
+[data-theme="space"] .side-availability {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+[data-theme="space"] .side-availability-dot {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* Active item: the neon underline the old navbar used on hover, made
+   permanent for the section you are in. The rule is on every item, so
+   nothing moves when it lights up. */
+[data-theme="space"] .sp-nav-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 2px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+[data-theme="space"] .sp-nav-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0;
+}
+[data-theme="space"] .sp-nav-item:hover {
+  color: var(--text-secondary);
+}
+[data-theme="space"] .sp-nav-item[data-active] {
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
+}
+[data-theme="space"] .sp-nav-item[data-active]::after {
+  opacity: 1;
+  box-shadow: 0 0 8px var(--accent);
+}
+[data-theme="space"] .sp-nav-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--sp-purple);
+}
+
+/* ── Section scaffold ───────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-section {
+  padding: 96px 24px;
+  border-top: 1px solid var(--border-hair);
+}
+[data-theme="space"] .sp-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+[data-theme="space"] .sp-eyebrow {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="space"] .sp-h2 {
+  margin: 0 0 40px;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+[data-theme="space"] .sp-h2 em {
+  font-style: normal;
+  color: var(--sp-purple);
+  text-shadow: 0 0 28px rgba(180, 77, 255, 0.35);
+}
+
+[data-theme="space"] .sp-card {
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius);
+  background: var(--sp-glass);
+  backdrop-filter: blur(14px);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - var(--shell-top-height));
+  padding: 96px 24px;
+  overflow-x: hidden;
+  text-align: center;
+}
+[data-theme="space"] .sp-hero-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+/* Keeps the headline legible over the star field. */
+[data-theme="space"] .sp-hero-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 50%,
+    rgba(5, 8, 15, 0.82) 0%,
+    rgba(5, 8, 15, 0.45) 55%,
+    transparent 100%
+  );
+}
+[data-theme="space"] .sp-hero-eyebrow {
+  margin: 0 0 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="space"] .sp-hero-title {
+  margin: 0 0 22px;
+  max-width: 18ch;
+  font-size: clamp(40px, 7vw, 92px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+[data-theme="space"] .sp-hero-title em {
+  font-style: normal;
+  color: var(--accent);
+  text-shadow: 0 0 32px rgba(0, 217, 255, 0.5);
+}
+[data-theme="space"] .sp-hero-body {
+  margin: 0 0 36px;
+  max-width: 60ch;
+  font-size: clamp(15px, 1.4vw, 17px);
+  line-height: 1.68;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="space"] .sp-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+[data-theme="space"] .sp-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 28px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+[data-theme="space"] .sp-cta[data-variant="primary"] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+[data-theme="space"] .sp-cta[data-variant="primary"]:hover {
+  box-shadow: 0 0 26px rgba(0, 217, 255, 0.5);
+}
+[data-theme="space"] .sp-cta[data-variant="secondary"] {
+  border-color: var(--sp-purple);
+  color: var(--sp-purple);
+}
+[data-theme="space"] .sp-cta[data-variant="secondary"]:hover {
+  background: rgba(180, 77, 255, 0.1);
+  box-shadow: 0 0 24px rgba(180, 77, 255, 0.35);
+}
+[data-theme="space"] .sp-audio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border: 1px solid var(--border-hair);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+[data-theme="space"] .sp-audio[data-playing] {
+  border-color: rgba(0, 217, 255, 0.5);
+  background: rgba(0, 217, 255, 0.06);
+  color: var(--accent);
+}
+
+/* ── Stats ──────────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+[data-theme="space"] .sp-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px 22px;
+}
+[data-theme="space"] .sp-stat::before {
+  content: "";
+  width: 32px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+}
+[data-theme="space"] .sp-stat:nth-child(even)::before {
+  background: var(--sp-purple);
+  box-shadow: 0 0 8px rgba(180, 77, 255, 0.5);
+}
+[data-theme="space"] .sp-stat-value {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+[data-theme="space"] .sp-stat:nth-child(even) .sp-stat-value {
+  color: var(--sp-purple);
+  text-shadow: 0 0 20px rgba(180, 77, 255, 0.3);
+}
+[data-theme="space"] .sp-stat-label {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+/* ── About ──────────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+[data-theme="space"] .sp-prose {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+[data-theme="space"] .sp-prose p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="space"] .sp-divider {
+  height: 1px;
+  margin-bottom: 28px;
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    var(--sp-purple),
+    transparent
+  );
+}
+[data-theme="space"] .sp-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px 22px;
+}
+[data-theme="space"] .sp-fact-key {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--sp-purple);
+}
+[data-theme="space"] .sp-fact-value {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ── Skills ─────────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-skill-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 16px;
+}
+[data-theme="space"] .sp-skill-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 22px;
+}
+[data-theme="space"] .sp-skill-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="space"] .sp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="space"] .sp-chips li {
+  padding: 5px 12px;
+  border: 1px solid var(--border-hair);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ── Experience ─────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="space"] .sp-job {
+  display: grid;
+  grid-template-columns: minmax(0, 210px) minmax(0, 1fr);
+  gap: 32px;
+  padding: 28px 24px;
+}
+[data-theme="space"] .sp-job-when {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+[data-theme="space"] .sp-job-period {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+}
+[data-theme="space"] .sp-job-duration {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+[data-theme="space"] .sp-job-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+[data-theme="space"] .sp-job-role {
+  margin: 0 0 4px;
+  font-size: clamp(19px, 2vw, 25px);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+}
+[data-theme="space"] .sp-job-company {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--sp-purple);
+}
+[data-theme="space"] .sp-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme="space"] .sp-bullets li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: var(--text-secondary);
+}
+[data-theme="space"] .sp-bullets li::before {
+  content: "▸";
+  color: var(--accent);
+}
+[data-theme="space"] .sp-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+[data-theme="space"] .sp-stack span {
+  padding: 3px 10px;
+  border: 1px solid var(--border-hair);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Projects ───────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: 20px;
+}
+[data-theme="space"] .sp-project {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  overflow: hidden;
+}
+[data-theme="space"] .sp-project::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+[data-theme="space"] .sp-project:hover {
+  border-color: rgba(0, 217, 255, 0.4);
+  box-shadow: 0 0 44px rgba(0, 217, 255, 0.14);
+}
+[data-theme="space"] .sp-project-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+[data-theme="space"] .sp-project-status {
+  padding: 3px 11px;
+  border: 1px solid rgba(0, 217, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(0, 217, 255, 0.09);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="space"] .sp-project-links {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+[data-theme="space"] .sp-project-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+[data-theme="space"] .sp-project-links a:hover {
+  color: var(--accent);
+}
+[data-theme="space"] .sp-project-title {
+  margin: 0;
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+[data-theme="space"] .sp-field-label {
+  margin: 0 0 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sp-purple);
+}
+[data-theme="space"] .sp-project p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+[data-theme="space"] .sp-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+[data-theme="space"] .sp-metrics span {
+  padding: 4px 11px;
+  border: 1px solid rgba(180, 77, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(180, 77, 255, 0.1);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #c98bff;
+}
+
+/* ── Contact ────────────────────────────────────────────────────────────── */
+
+[data-theme="space"] .sp-contact {
+  padding-bottom: 120px;
+}
+[data-theme="space"] .sp-contact-title {
+  margin: 0 0 16px;
+  max-width: 20ch;
+  font-size: clamp(28px, 4.2vw, 48px);
+  font-weight: 900;
+  line-height: 1.16;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+[data-theme="space"] .sp-contact-note {
+  margin: 0 0 34px;
+  max-width: 48ch;
+  font-size: 15.5px;
+  line-height: 1.68;
+  color: var(--text-secondary);
+}
+[data-theme="space"] .sp-contact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 16px;
+}
+[data-theme="space"] .sp-contact-list a {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 22px;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+[data-theme="space"] .sp-contact-list a:hover {
+  border-color: rgba(0, 217, 255, 0.4);
+  box-shadow: 0 0 32px rgba(0, 217, 255, 0.12);
+}
+[data-theme="space"] .sp-contact-key {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-theme="space"] .sp-contact-value {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ── Narrow screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  [data-theme="space"] .sp-about-grid,
+  [data-theme="space"] .sp-job {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-theme="space"] .sp-section {
+    padding: 64px 20px;
+  }
+  [data-theme="space"] .sp-hero {
+    padding: 64px 20px;
+  }
+}

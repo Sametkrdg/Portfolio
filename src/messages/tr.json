@@ -64,5 +64,9 @@
     "title": "Sayfa bulunamadı",
     "body": "Aradığın sayfa yok ya da taşınmış.",
     "home": "Ana sayfaya dön"
+  },
+  "audio": {
+    "play": "Deneyimi başlat",
+    "stop": "Deneyimi durdur"
   }
 }

@@ -22,8 +22,6 @@ const nextConfig: NextConfig = {
       "three",
       "@react-three/fiber",
       "@react-three/drei",
-      "framer-motion",
-      "gsap",
       "ai",
       "@ai-sdk/google",
       "zustand",
