@@ -331,13 +331,15 @@ Hepsi tamam: ✅ `blueprint` · ✅ `editorial` · ✅ `brutalism` · ✅ `y2k` 
 
 **Her temada geçerli kurallar:** kabuk yapısı değişmez; ortak token setinin tamamı doldurulur; animasyon minimumda kalır; metin/arka plan kontrastı okunabilir olmalı — `y2k`, `brutalism`, `maximalism` temalarında bu risk yüksek, kontrastı düşük kalan yerleri Samet'e bildir.
 
-### Faz 4 — Temizlik ve teslim
+### ✅ Faz 4 — Temizlik ve teslim — TAMAMLANDI (2026-09-04)
 
-1. Kullanılmayan kod, asset ve bağımlılıkların temizliği.
-2. Metadata, `hreflang`, `sitemap`, `robots` kontrolü.
-3. CV indirme bağlantıları iki dilde doğru dosyayı gösteriyor mu.
-4. `npm run build` + `npm run lint` son kez.
-5. Samet için kontrol listesi: 7 tema × 2 dil × (masaüstü + mobil) — tarayıcıda gözden geçirilecek kombinasyonlar.
+1. **Temizlik:** `gsap`, `@gsap/react`, `framer-motion` paketten çıkarıldı (hiçbir yerde kullanılmıyordu) · `next.config.ts`'teki artık girdiler silindi · `public/` altındaki 5 kullanılmayan Next varsayılan SVG'si silindi · eski bölüm bileşenleri, `Navbar`, 3D robot chatbot, `ScrollToTop`, `MotionProvider` kaldırıldı.
+2. **Metadata:** `app/sitemap.ts` (14 URL, `hreflang` alternatifleriyle) ve `app/robots.ts` yazıldı. Canonical, `hreflang` (tr/en/x-default), OG ve `<html lang>` her tema ve dilde doğrulandı. **`og:image` hâlâ yok** — görsel kararı Samet'te.
+3. **CV:** `/cv/samet-karadag.pdf` 14 sayfanın hepsinden erişilebilir (`editorial` yalnız İletişim'den, tasarımı gereği; diğerleri hem hero hem İletişim).
+4. **Doğrulama:** `build` + `lint` temiz, 19 rota üretiliyor.
+5. **Dokümanlar:** `README.md` sıfırdan yazıldı (create-next-app kalıntısıydı) · `DEPLOYMENT.md`'deki geçersiz referanslar düzeltildi (silinmiş dosya yolu, yanlış alan adı, yanlış ses dosyası adı) · `AGENTS.md` artık `CLAUDE.md`'ye yönlendiriyor; içindeki GSAP/Framer Motion talimatları bu mimariyi bozacağı için geçersiz olarak işaretlendi.
+
+**Açık kalan:** `.clauderules` hâlâ "önce `AGENTS.md`'yi oku, dosya okumayı minimumda tut" diyor; `CLAUDE.md` ise "hiçbir dosyaya dokunmadan önce beni oku" diyor. İki kural dosyası çelişiyor — Samet'in kararı gerekiyor.
 
 ---
 
