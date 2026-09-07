@@ -10,7 +10,11 @@
       "Bash(npm list *)",
       "Bash(npm run *)",
       "Bash(Test-Path \"d:\\\\Yazılım\\\\Web\\\\samet-karadag-portfolio\\\\README.md\")",
-      "Bash(Test-Path \"d:\\\\Yazılım\\\\Web\\\\samet-karadag-portfolio\\\\DEPLOYMENT.md\")"
+      "Bash(Test-Path \"d:\\\\Yazılım\\\\Web\\\\samet-karadag-portfolio\\\\DEPLOYMENT.md\")",
+      "Bash(curl -sI -m 10 \"https://pub-daf8b4ad3a474e35b7eac02aba741a60.r2.dev/hero-env.hdr\")",
+      "Bash(curl -v -m 8 \"https://pub-daf8b4ad3a474e35b7eac02aba741a60.r2.dev/hero-env.hdr\" -o /dev/null)",
+      "Bash(curl -m 8 -w \"HTTP:%{http_code}\\\\n\" -o NUL -s \"https://pub-daf8b4ad3a474e35b7eac02aba741a60.r2.dev/hero-env.hdr\")",
+      "Bash(echo \"exit:$?\")"
     ]
   }
 }
